@@ -1,0 +1,1202 @@
+{
+  "name": "Databases",
+  "icon": "database",
+  "order": 45,
+  "questions": [
+    {
+      "id": "transaction-isolation",
+      "type": "trade-off",
+      "tags": [
+        "postgresql",
+        "transactions"
+      ],
+      "question": "Explain transaction isolation levels through real anomalies, not definitions.",
+      "answer": "Use examples: dirty reads expose uncommitted data; non-repeatable reads change a row between reads; phantoms change a predicate result; write skew lets individually valid writes violate a cross-row invariant.\n\nIn PostgreSQL, Read Committed is often adequate, but business invariants may require explicit locks, atomic constraints, or Serializable with retry handling. Isolation does not replace domain-level concurrency design. State the invariant first, then choose the cheapest mechanism that preserves it.",
+      "level": "senior"
+    },
+    {
+      "id": "zero-downtime-migration",
+      "type": "scenario",
+      "tags": [
+        "migrations",
+        "deployment"
+      ],
+      "question": "How do you deploy a breaking database schema change without downtime?",
+      "answer": "Use **expand and contract**. First add the new schema in a backward-compatible form. Deploy code that can read old/new formats and dual-write if necessary. Backfill in small resumable batches, validate counts and semantics, switch reads, then stop old writes and remove the old schema later.\n\nAvoid long locks and giant transactions. Monitor replication lag, query latency, error rates, and backfill progress. Every phase needs a rollback strategy.",
+      "level": "senior"
+    },
+    {
+      "id": "debug-slow-query",
+      "type": "scenario",
+      "tags": [
+        "indexes",
+        "performance"
+      ],
+      "question": "A previously fast endpoint now spends five seconds in PostgreSQL. How do you investigate?",
+      "answer": "Start with evidence: traces, slow-query logs, query frequency, parameters, row counts, and whether latency is lock wait or execution. Inspect `EXPLAIN (ANALYZE, BUFFERS)` safely on representative data.\n\nCheck plan changes, stale statistics, missing or unused indexes, cardinality mistakes, table bloat, N+1 queries, connection pool saturation, and lock contention. Fix the cause, then validate p95/p99 latency and write amplification rather than celebrating one faster query.",
+      "level": "senior"
+    },
+    {
+      "id": "partitioning-strategy",
+      "type": "trade-off",
+      "tags": [
+        "sharding",
+        "scale"
+      ],
+      "question": "How do you choose a partition or shard key?",
+      "answer": "Choose from access patterns, distribution, growth, and locality. A good key spreads writes while keeping common queries within one partition. Tenant ID gives locality but risks hot large tenants; random IDs distribute load but make range queries expensive.\n\nDiscuss rebalancing, secondary indexes, cross-shard transactions, global uniqueness, and operational tooling. Sharding is usually a last resort after query, index, caching, archival, and vertical-scaling improvements.",
+      "level": "senior"
+    },
+    {
+      "id": "outbox-pattern",
+      "type": "architecture",
+      "tags": [
+        "events",
+        "transactions"
+      ],
+      "question": "How do you reliably publish an event after a database update?",
+      "answer": "Writing the database and broker separately creates a dual-write failure. With the **transactional outbox**, write the domain change and an outbox row in one database transaction. A relay publishes pending rows and marks them delivered.\n\nConsumers must still be idempotent because publication can repeat. Monitor outbox age and relay failures. CDC can replace polling at higher operational complexity. Explain why distributed transactions are rarely the best default.",
+      "level": "senior"
+    },
+    {
+      "id": "databases-transaction-isolation-and-concurrency-control-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "transaction-isolation-and-concurrency-control",
+        "mechanics"
+      ],
+      "question": "Explain how transaction isolation and concurrency control works internally and which details matter in production.",
+      "answer": "Isolation levels expose different anomalies; locks, MVCC, constraints, and retries protect explicit business invariants.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-transaction-isolation-and-concurrency-control-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "transaction-isolation-and-concurrency-control",
+        "design"
+      ],
+      "question": "Design a production approach for transaction isolation and concurrency control. What decisions must be explicit?",
+      "answer": "Isolation levels expose different anomalies; locks, MVCC, constraints, and retries protect explicit business invariants.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-transaction-isolation-and-concurrency-control-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "transaction-isolation-and-concurrency-control",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around transaction isolation and concurrency control?",
+      "answer": "Isolation levels expose different anomalies; locks, MVCC, constraints, and retries protect explicit business invariants.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-transaction-isolation-and-concurrency-control-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "transaction-isolation-and-concurrency-control",
+        "debugging"
+      ],
+      "question": "A production issue appears around transaction isolation and concurrency control. How do you investigate it?",
+      "answer": "Isolation levels expose different anomalies; locks, MVCC, constraints, and retries protect explicit business invariants.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-transaction-isolation-and-concurrency-control-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "transaction-isolation-and-concurrency-control",
+        "performance"
+      ],
+      "question": "How can transaction isolation and concurrency control become a performance bottleneck, and how would you improve it?",
+      "answer": "Isolation levels expose different anomalies; locks, MVCC, constraints, and retries protect explicit business invariants.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-transaction-isolation-and-concurrency-control-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "transaction-isolation-and-concurrency-control",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using transaction isolation and concurrency control?",
+      "answer": "Isolation levels expose different anomalies; locks, MVCC, constraints, and retries protect explicit business invariants.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-transaction-isolation-and-concurrency-control-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "transaction-isolation-and-concurrency-control",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around transaction isolation and concurrency control?",
+      "answer": "Isolation levels expose different anomalies; locks, MVCC, constraints, and retries protect explicit business invariants.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-transaction-isolation-and-concurrency-control-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "transaction-isolation-and-concurrency-control",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate transaction isolation and concurrency control safely in an existing system?",
+      "answer": "Isolation levels expose different anomalies; locks, MVCC, constraints, and retries protect explicit business invariants.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-transaction-isolation-and-concurrency-control-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "transaction-isolation-and-concurrency-control",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on transaction isolation and concurrency control?",
+      "answer": "Isolation levels expose different anomalies; locks, MVCC, constraints, and retries protect explicit business invariants.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-transaction-isolation-and-concurrency-control-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "transaction-isolation-and-concurrency-control",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving transaction isolation and concurrency control. Walk through your reasoning.",
+      "answer": "Isolation levels expose different anomalies; locks, MVCC, constraints, and retries protect explicit business invariants.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-indexes-and-query-planning-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "indexes-and-query-planning",
+        "mechanics"
+      ],
+      "question": "Explain how indexes and query planning works internally and which details matter in production.",
+      "answer": "Indexes accelerate selected access paths at storage and write cost; statistics and cardinality estimates guide the planner.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-indexes-and-query-planning-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "indexes-and-query-planning",
+        "design"
+      ],
+      "question": "Design a production approach for indexes and query planning. What decisions must be explicit?",
+      "answer": "Indexes accelerate selected access paths at storage and write cost; statistics and cardinality estimates guide the planner.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-indexes-and-query-planning-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "indexes-and-query-planning",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around indexes and query planning?",
+      "answer": "Indexes accelerate selected access paths at storage and write cost; statistics and cardinality estimates guide the planner.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-indexes-and-query-planning-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "indexes-and-query-planning",
+        "debugging"
+      ],
+      "question": "A production issue appears around indexes and query planning. How do you investigate it?",
+      "answer": "Indexes accelerate selected access paths at storage and write cost; statistics and cardinality estimates guide the planner.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-indexes-and-query-planning-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "indexes-and-query-planning",
+        "performance"
+      ],
+      "question": "How can indexes and query planning become a performance bottleneck, and how would you improve it?",
+      "answer": "Indexes accelerate selected access paths at storage and write cost; statistics and cardinality estimates guide the planner.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-indexes-and-query-planning-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "indexes-and-query-planning",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using indexes and query planning?",
+      "answer": "Indexes accelerate selected access paths at storage and write cost; statistics and cardinality estimates guide the planner.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-indexes-and-query-planning-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "indexes-and-query-planning",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around indexes and query planning?",
+      "answer": "Indexes accelerate selected access paths at storage and write cost; statistics and cardinality estimates guide the planner.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-indexes-and-query-planning-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "indexes-and-query-planning",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate indexes and query planning safely in an existing system?",
+      "answer": "Indexes accelerate selected access paths at storage and write cost; statistics and cardinality estimates guide the planner.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-indexes-and-query-planning-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "indexes-and-query-planning",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on indexes and query planning?",
+      "answer": "Indexes accelerate selected access paths at storage and write cost; statistics and cardinality estimates guide the planner.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-indexes-and-query-planning-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "indexes-and-query-planning",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving indexes and query planning. Walk through your reasoning.",
+      "answer": "Indexes accelerate selected access paths at storage and write cost; statistics and cardinality estimates guide the planner.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-explain-and-query-performance-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "explain-and-query-performance",
+        "mechanics"
+      ],
+      "question": "Explain how EXPLAIN and query performance works internally and which details matter in production.",
+      "answer": "Execution plans, buffers, actual rows, lock waits, and representative parameters reveal why a query is slow.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-explain-and-query-performance-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "explain-and-query-performance",
+        "design"
+      ],
+      "question": "Design a production approach for EXPLAIN and query performance. What decisions must be explicit?",
+      "answer": "Execution plans, buffers, actual rows, lock waits, and representative parameters reveal why a query is slow.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-explain-and-query-performance-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "explain-and-query-performance",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around EXPLAIN and query performance?",
+      "answer": "Execution plans, buffers, actual rows, lock waits, and representative parameters reveal why a query is slow.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-explain-and-query-performance-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "explain-and-query-performance",
+        "debugging"
+      ],
+      "question": "A production issue appears around EXPLAIN and query performance. How do you investigate it?",
+      "answer": "Execution plans, buffers, actual rows, lock waits, and representative parameters reveal why a query is slow.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-explain-and-query-performance-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "explain-and-query-performance",
+        "performance"
+      ],
+      "question": "How can EXPLAIN and query performance become a performance bottleneck, and how would you improve it?",
+      "answer": "Execution plans, buffers, actual rows, lock waits, and representative parameters reveal why a query is slow.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-explain-and-query-performance-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "explain-and-query-performance",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using EXPLAIN and query performance?",
+      "answer": "Execution plans, buffers, actual rows, lock waits, and representative parameters reveal why a query is slow.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-explain-and-query-performance-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "explain-and-query-performance",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around EXPLAIN and query performance?",
+      "answer": "Execution plans, buffers, actual rows, lock waits, and representative parameters reveal why a query is slow.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-explain-and-query-performance-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "explain-and-query-performance",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate EXPLAIN and query performance safely in an existing system?",
+      "answer": "Execution plans, buffers, actual rows, lock waits, and representative parameters reveal why a query is slow.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-explain-and-query-performance-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "explain-and-query-performance",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on EXPLAIN and query performance?",
+      "answer": "Execution plans, buffers, actual rows, lock waits, and representative parameters reveal why a query is slow.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-explain-and-query-performance-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "explain-and-query-performance",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving EXPLAIN and query performance. Walk through your reasoning.",
+      "answer": "Execution plans, buffers, actual rows, lock waits, and representative parameters reveal why a query is slow.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-schema-design-and-constraints-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "schema-design-and-constraints",
+        "mechanics"
+      ],
+      "question": "Explain how schema design and constraints works internally and which details matter in production.",
+      "answer": "Schemas should encode durable invariants with appropriate normalization, constraints, types, and ownership boundaries.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-schema-design-and-constraints-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "schema-design-and-constraints",
+        "design"
+      ],
+      "question": "Design a production approach for schema design and constraints. What decisions must be explicit?",
+      "answer": "Schemas should encode durable invariants with appropriate normalization, constraints, types, and ownership boundaries.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-schema-design-and-constraints-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "schema-design-and-constraints",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around schema design and constraints?",
+      "answer": "Schemas should encode durable invariants with appropriate normalization, constraints, types, and ownership boundaries.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-schema-design-and-constraints-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "schema-design-and-constraints",
+        "debugging"
+      ],
+      "question": "A production issue appears around schema design and constraints. How do you investigate it?",
+      "answer": "Schemas should encode durable invariants with appropriate normalization, constraints, types, and ownership boundaries.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-schema-design-and-constraints-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "schema-design-and-constraints",
+        "performance"
+      ],
+      "question": "How can schema design and constraints become a performance bottleneck, and how would you improve it?",
+      "answer": "Schemas should encode durable invariants with appropriate normalization, constraints, types, and ownership boundaries.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-schema-design-and-constraints-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "schema-design-and-constraints",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using schema design and constraints?",
+      "answer": "Schemas should encode durable invariants with appropriate normalization, constraints, types, and ownership boundaries.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-schema-design-and-constraints-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "schema-design-and-constraints",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around schema design and constraints?",
+      "answer": "Schemas should encode durable invariants with appropriate normalization, constraints, types, and ownership boundaries.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-schema-design-and-constraints-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "schema-design-and-constraints",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate schema design and constraints safely in an existing system?",
+      "answer": "Schemas should encode durable invariants with appropriate normalization, constraints, types, and ownership boundaries.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-schema-design-and-constraints-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "schema-design-and-constraints",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on schema design and constraints?",
+      "answer": "Schemas should encode durable invariants with appropriate normalization, constraints, types, and ownership boundaries.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-schema-design-and-constraints-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "schema-design-and-constraints",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving schema design and constraints. Walk through your reasoning.",
+      "answer": "Schemas should encode durable invariants with appropriate normalization, constraints, types, and ownership boundaries.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-zero-downtime-schema-migrations-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "zero-downtime-schema-migrations",
+        "mechanics"
+      ],
+      "question": "Explain how zero-downtime schema migrations works internally and which details matter in production.",
+      "answer": "Expand-contract migrations preserve compatibility through phased rollout, backfill, validation, and delayed cleanup.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-zero-downtime-schema-migrations-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "zero-downtime-schema-migrations",
+        "design"
+      ],
+      "question": "Design a production approach for zero-downtime schema migrations. What decisions must be explicit?",
+      "answer": "Expand-contract migrations preserve compatibility through phased rollout, backfill, validation, and delayed cleanup.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-zero-downtime-schema-migrations-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "zero-downtime-schema-migrations",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around zero-downtime schema migrations?",
+      "answer": "Expand-contract migrations preserve compatibility through phased rollout, backfill, validation, and delayed cleanup.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-zero-downtime-schema-migrations-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "zero-downtime-schema-migrations",
+        "debugging"
+      ],
+      "question": "A production issue appears around zero-downtime schema migrations. How do you investigate it?",
+      "answer": "Expand-contract migrations preserve compatibility through phased rollout, backfill, validation, and delayed cleanup.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-zero-downtime-schema-migrations-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "zero-downtime-schema-migrations",
+        "performance"
+      ],
+      "question": "How can zero-downtime schema migrations become a performance bottleneck, and how would you improve it?",
+      "answer": "Expand-contract migrations preserve compatibility through phased rollout, backfill, validation, and delayed cleanup.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-zero-downtime-schema-migrations-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "zero-downtime-schema-migrations",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using zero-downtime schema migrations?",
+      "answer": "Expand-contract migrations preserve compatibility through phased rollout, backfill, validation, and delayed cleanup.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-zero-downtime-schema-migrations-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "zero-downtime-schema-migrations",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around zero-downtime schema migrations?",
+      "answer": "Expand-contract migrations preserve compatibility through phased rollout, backfill, validation, and delayed cleanup.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-zero-downtime-schema-migrations-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "zero-downtime-schema-migrations",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate zero-downtime schema migrations safely in an existing system?",
+      "answer": "Expand-contract migrations preserve compatibility through phased rollout, backfill, validation, and delayed cleanup.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-zero-downtime-schema-migrations-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "zero-downtime-schema-migrations",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on zero-downtime schema migrations?",
+      "answer": "Expand-contract migrations preserve compatibility through phased rollout, backfill, validation, and delayed cleanup.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-zero-downtime-schema-migrations-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "zero-downtime-schema-migrations",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving zero-downtime schema migrations. Walk through your reasoning.",
+      "answer": "Expand-contract migrations preserve compatibility through phased rollout, backfill, validation, and delayed cleanup.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-partitioning-and-sharding-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "partitioning-and-sharding",
+        "mechanics"
+      ],
+      "question": "Explain how partitioning and sharding works internally and which details matter in production.",
+      "answer": "Partitioning helps lifecycle and pruning; sharding distributes ownership but complicates queries, transactions, and rebalancing.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-partitioning-and-sharding-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "partitioning-and-sharding",
+        "design"
+      ],
+      "question": "Design a production approach for partitioning and sharding. What decisions must be explicit?",
+      "answer": "Partitioning helps lifecycle and pruning; sharding distributes ownership but complicates queries, transactions, and rebalancing.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-partitioning-and-sharding-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "partitioning-and-sharding",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around partitioning and sharding?",
+      "answer": "Partitioning helps lifecycle and pruning; sharding distributes ownership but complicates queries, transactions, and rebalancing.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-partitioning-and-sharding-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "partitioning-and-sharding",
+        "debugging"
+      ],
+      "question": "A production issue appears around partitioning and sharding. How do you investigate it?",
+      "answer": "Partitioning helps lifecycle and pruning; sharding distributes ownership but complicates queries, transactions, and rebalancing.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-partitioning-and-sharding-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "partitioning-and-sharding",
+        "performance"
+      ],
+      "question": "How can partitioning and sharding become a performance bottleneck, and how would you improve it?",
+      "answer": "Partitioning helps lifecycle and pruning; sharding distributes ownership but complicates queries, transactions, and rebalancing.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-partitioning-and-sharding-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "partitioning-and-sharding",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using partitioning and sharding?",
+      "answer": "Partitioning helps lifecycle and pruning; sharding distributes ownership but complicates queries, transactions, and rebalancing.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-partitioning-and-sharding-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "partitioning-and-sharding",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around partitioning and sharding?",
+      "answer": "Partitioning helps lifecycle and pruning; sharding distributes ownership but complicates queries, transactions, and rebalancing.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-partitioning-and-sharding-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "partitioning-and-sharding",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate partitioning and sharding safely in an existing system?",
+      "answer": "Partitioning helps lifecycle and pruning; sharding distributes ownership but complicates queries, transactions, and rebalancing.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-partitioning-and-sharding-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "partitioning-and-sharding",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on partitioning and sharding?",
+      "answer": "Partitioning helps lifecycle and pruning; sharding distributes ownership but complicates queries, transactions, and rebalancing.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-partitioning-and-sharding-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "partitioning-and-sharding",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving partitioning and sharding. Walk through your reasoning.",
+      "answer": "Partitioning helps lifecycle and pruning; sharding distributes ownership but complicates queries, transactions, and rebalancing.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-replication-and-failover-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "replication-and-failover",
+        "mechanics"
+      ],
+      "question": "Explain how replication and failover works internally and which details matter in production.",
+      "answer": "Replication improves availability and reads but introduces lag, stale reads, failover coordination, and split-brain risk.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-replication-and-failover-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "replication-and-failover",
+        "design"
+      ],
+      "question": "Design a production approach for replication and failover. What decisions must be explicit?",
+      "answer": "Replication improves availability and reads but introduces lag, stale reads, failover coordination, and split-brain risk.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-replication-and-failover-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "replication-and-failover",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around replication and failover?",
+      "answer": "Replication improves availability and reads but introduces lag, stale reads, failover coordination, and split-brain risk.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-replication-and-failover-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "replication-and-failover",
+        "debugging"
+      ],
+      "question": "A production issue appears around replication and failover. How do you investigate it?",
+      "answer": "Replication improves availability and reads but introduces lag, stale reads, failover coordination, and split-brain risk.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-replication-and-failover-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "replication-and-failover",
+        "performance"
+      ],
+      "question": "How can replication and failover become a performance bottleneck, and how would you improve it?",
+      "answer": "Replication improves availability and reads but introduces lag, stale reads, failover coordination, and split-brain risk.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-replication-and-failover-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "replication-and-failover",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using replication and failover?",
+      "answer": "Replication improves availability and reads but introduces lag, stale reads, failover coordination, and split-brain risk.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-replication-and-failover-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "replication-and-failover",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around replication and failover?",
+      "answer": "Replication improves availability and reads but introduces lag, stale reads, failover coordination, and split-brain risk.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-replication-and-failover-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "replication-and-failover",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate replication and failover safely in an existing system?",
+      "answer": "Replication improves availability and reads but introduces lag, stale reads, failover coordination, and split-brain risk.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-replication-and-failover-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "replication-and-failover",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on replication and failover?",
+      "answer": "Replication improves availability and reads but introduces lag, stale reads, failover coordination, and split-brain risk.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-replication-and-failover-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "replication-and-failover",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving replication and failover. Walk through your reasoning.",
+      "answer": "Replication improves availability and reads but introduces lag, stale reads, failover coordination, and split-brain risk.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-connection-pooling-and-database-capacity-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "connection-pooling-and-database-capacity",
+        "mechanics"
+      ],
+      "question": "Explain how connection pooling and database capacity works internally and which details matter in production.",
+      "answer": "Connections consume resources; pool sizing, queueing, timeouts, and workload isolation protect database capacity.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-connection-pooling-and-database-capacity-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "connection-pooling-and-database-capacity",
+        "design"
+      ],
+      "question": "Design a production approach for connection pooling and database capacity. What decisions must be explicit?",
+      "answer": "Connections consume resources; pool sizing, queueing, timeouts, and workload isolation protect database capacity.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-connection-pooling-and-database-capacity-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "connection-pooling-and-database-capacity",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around connection pooling and database capacity?",
+      "answer": "Connections consume resources; pool sizing, queueing, timeouts, and workload isolation protect database capacity.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-connection-pooling-and-database-capacity-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "connection-pooling-and-database-capacity",
+        "debugging"
+      ],
+      "question": "A production issue appears around connection pooling and database capacity. How do you investigate it?",
+      "answer": "Connections consume resources; pool sizing, queueing, timeouts, and workload isolation protect database capacity.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-connection-pooling-and-database-capacity-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "connection-pooling-and-database-capacity",
+        "performance"
+      ],
+      "question": "How can connection pooling and database capacity become a performance bottleneck, and how would you improve it?",
+      "answer": "Connections consume resources; pool sizing, queueing, timeouts, and workload isolation protect database capacity.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-connection-pooling-and-database-capacity-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "connection-pooling-and-database-capacity",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using connection pooling and database capacity?",
+      "answer": "Connections consume resources; pool sizing, queueing, timeouts, and workload isolation protect database capacity.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-connection-pooling-and-database-capacity-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "connection-pooling-and-database-capacity",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around connection pooling and database capacity?",
+      "answer": "Connections consume resources; pool sizing, queueing, timeouts, and workload isolation protect database capacity.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-connection-pooling-and-database-capacity-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "connection-pooling-and-database-capacity",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate connection pooling and database capacity safely in an existing system?",
+      "answer": "Connections consume resources; pool sizing, queueing, timeouts, and workload isolation protect database capacity.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-connection-pooling-and-database-capacity-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "connection-pooling-and-database-capacity",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on connection pooling and database capacity?",
+      "answer": "Connections consume resources; pool sizing, queueing, timeouts, and workload isolation protect database capacity.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-connection-pooling-and-database-capacity-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "connection-pooling-and-database-capacity",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving connection pooling and database capacity. Walk through your reasoning.",
+      "answer": "Connections consume resources; pool sizing, queueing, timeouts, and workload isolation protect database capacity.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-backup-restore-and-data-recovery-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "backup-restore-and-data-recovery",
+        "mechanics"
+      ],
+      "question": "Explain how backup, restore, and data recovery works internally and which details matter in production.",
+      "answer": "A backup is useful only when restoration, point-in-time recovery, integrity, RPO, and RTO are regularly verified.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-backup-restore-and-data-recovery-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "backup-restore-and-data-recovery",
+        "design"
+      ],
+      "question": "Design a production approach for backup, restore, and data recovery. What decisions must be explicit?",
+      "answer": "A backup is useful only when restoration, point-in-time recovery, integrity, RPO, and RTO are regularly verified.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-backup-restore-and-data-recovery-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "backup-restore-and-data-recovery",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around backup, restore, and data recovery?",
+      "answer": "A backup is useful only when restoration, point-in-time recovery, integrity, RPO, and RTO are regularly verified.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-backup-restore-and-data-recovery-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "backup-restore-and-data-recovery",
+        "debugging"
+      ],
+      "question": "A production issue appears around backup, restore, and data recovery. How do you investigate it?",
+      "answer": "A backup is useful only when restoration, point-in-time recovery, integrity, RPO, and RTO are regularly verified.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-backup-restore-and-data-recovery-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "backup-restore-and-data-recovery",
+        "performance"
+      ],
+      "question": "How can backup, restore, and data recovery become a performance bottleneck, and how would you improve it?",
+      "answer": "A backup is useful only when restoration, point-in-time recovery, integrity, RPO, and RTO are regularly verified.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-backup-restore-and-data-recovery-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "backup-restore-and-data-recovery",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using backup, restore, and data recovery?",
+      "answer": "A backup is useful only when restoration, point-in-time recovery, integrity, RPO, and RTO are regularly verified.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-backup-restore-and-data-recovery-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "backup-restore-and-data-recovery",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around backup, restore, and data recovery?",
+      "answer": "A backup is useful only when restoration, point-in-time recovery, integrity, RPO, and RTO are regularly verified.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-backup-restore-and-data-recovery-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "backup-restore-and-data-recovery",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate backup, restore, and data recovery safely in an existing system?",
+      "answer": "A backup is useful only when restoration, point-in-time recovery, integrity, RPO, and RTO are regularly verified.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-backup-restore-and-data-recovery-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "backup-restore-and-data-recovery",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on backup, restore, and data recovery?",
+      "answer": "A backup is useful only when restoration, point-in-time recovery, integrity, RPO, and RTO are regularly verified.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-backup-restore-and-data-recovery-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "backup-restore-and-data-recovery",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving backup, restore, and data recovery. Walk through your reasoning.",
+      "answer": "A backup is useful only when restoration, point-in-time recovery, integrity, RPO, and RTO are regularly verified.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-data-modeling-across-sql-and-nosql-systems-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "data-modeling-across-sql-and-nosql-systems",
+        "mechanics"
+      ],
+      "question": "Explain how data modeling across SQL and NoSQL systems works internally and which details matter in production.",
+      "answer": "Choose models from access patterns, invariants, consistency, evolution, and operations rather than labels or fashion.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-data-modeling-across-sql-and-nosql-systems-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "databases",
+        "data-modeling-across-sql-and-nosql-systems",
+        "design"
+      ],
+      "question": "Design a production approach for data modeling across SQL and NoSQL systems. What decisions must be explicit?",
+      "answer": "Choose models from access patterns, invariants, consistency, evolution, and operations rather than labels or fashion.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-data-modeling-across-sql-and-nosql-systems-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "data-modeling-across-sql-and-nosql-systems",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around data modeling across SQL and NoSQL systems?",
+      "answer": "Choose models from access patterns, invariants, consistency, evolution, and operations rather than labels or fashion.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-data-modeling-across-sql-and-nosql-systems-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "data-modeling-across-sql-and-nosql-systems",
+        "debugging"
+      ],
+      "question": "A production issue appears around data modeling across SQL and NoSQL systems. How do you investigate it?",
+      "answer": "Choose models from access patterns, invariants, consistency, evolution, and operations rather than labels or fashion.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "databases-data-modeling-across-sql-and-nosql-systems-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "databases",
+        "data-modeling-across-sql-and-nosql-systems",
+        "performance"
+      ],
+      "question": "How can data modeling across SQL and NoSQL systems become a performance bottleneck, and how would you improve it?",
+      "answer": "Choose models from access patterns, invariants, consistency, evolution, and operations rather than labels or fashion.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

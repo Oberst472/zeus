@@ -1,0 +1,1201 @@
+{
+  "name": "Leadership & Behavioral",
+  "icon": "leadership",
+  "order": 70,
+  "questions": [
+    {
+      "id": "disagree-architecture",
+      "type": "behavioral",
+      "tags": [
+        "leadership",
+        "communication"
+      ],
+      "question": "Tell me about a time you disagreed with an architectural decision.",
+      "answer": "Use a concrete STAR story. Show that you first understood goals and constraints, then made trade-offs visible with data, prototypes, or a decision record. Explain how you invited challenge and supported the final decision even if it was not your preference.\n\nA Senior answer demonstrates judgment, influence without authority, and learning. Avoid portraying colleagues as obstacles or claiming your initial idea was obviously correct.",
+      "level": "senior"
+    },
+    {
+      "id": "prioritize-tech-debt",
+      "type": "leadership",
+      "tags": [
+        "delivery",
+        "technical-debt"
+      ],
+      "question": "How do you prioritize technical debt against product work?",
+      "answer": "Translate debt into business impact: incident risk, delivery delay, support cost, security exposure, or inability to scale. Separate routine maintenance from strategic remediation.\n\nUse evidence, define the smallest valuable intervention, and attach work to relevant product changes when sensible. Reserve capacity for recurring health work and measure outcomes. Do not demand a vague rewrite budget or hide major work inside estimates.",
+      "level": "senior"
+    },
+    {
+      "id": "mentor-engineer",
+      "type": "behavioral",
+      "tags": [
+        "mentoring"
+      ],
+      "question": "How do you help another engineer grow without becoming a bottleneck?",
+      "answer": "Agree on a specific growth goal and provide work with appropriate stretch and safety. Ask guiding questions, explain decision-making context, and give timely actionable feedback. Gradually transfer ownership rather than repeatedly rescuing the task.\n\nMeasure growth through increasing independence, quality, and scope. Adapt to the person; mentoring is not cloning your preferred style.",
+      "level": "senior"
+    },
+    {
+      "id": "ambiguous-project",
+      "type": "behavioral",
+      "tags": [
+        "execution",
+        "product"
+      ],
+      "question": "How do you lead a technically ambiguous project?",
+      "answer": "Clarify the outcome, stakeholders, constraints, and irreversible decisions. Break uncertainty into experiments, write assumptions, and establish decision points. Deliver a thin vertical slice early to expose integration and product risk.\n\nKeep stakeholders informed about trade-offs and changing confidence. A Senior engineer reduces uncertainty for the team while avoiding premature architecture.",
+      "level": "senior"
+    },
+    {
+      "id": "code-review-philosophy",
+      "type": "leadership",
+      "tags": [
+        "code-review",
+        "quality"
+      ],
+      "question": "What makes an effective Senior-level code review?",
+      "answer": "Prioritize correctness, security, maintainability, operability, and fit with system boundaries. Distinguish blocking issues from suggestions and explain the reason behind feedback.\n\nAutomate style checks, keep changes reviewable, and discuss high-bandwidth disagreements directly. Review the design and tests, not only syntax. The goal is shared ownership and better decisions, not demonstrating superiority.",
+      "level": "senior"
+    },
+    {
+      "id": "leadership-architectural-decision-making-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "architectural-decision-making",
+        "mechanics"
+      ],
+      "question": "Explain how architectural decision-making works internally and which details matter in production.",
+      "answer": "Senior engineers make constraints and trade-offs visible, seek challenge, document decisions, and revisit them as evidence changes.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-architectural-decision-making-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "architectural-decision-making",
+        "design"
+      ],
+      "question": "Design a production approach for architectural decision-making. What decisions must be explicit?",
+      "answer": "Senior engineers make constraints and trade-offs visible, seek challenge, document decisions, and revisit them as evidence changes.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-architectural-decision-making-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "architectural-decision-making",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around architectural decision-making?",
+      "answer": "Senior engineers make constraints and trade-offs visible, seek challenge, document decisions, and revisit them as evidence changes.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-architectural-decision-making-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "architectural-decision-making",
+        "debugging"
+      ],
+      "question": "A production issue appears around architectural decision-making. How do you investigate it?",
+      "answer": "Senior engineers make constraints and trade-offs visible, seek challenge, document decisions, and revisit them as evidence changes.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-architectural-decision-making-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "architectural-decision-making",
+        "performance"
+      ],
+      "question": "How can architectural decision-making become a performance bottleneck, and how would you improve it?",
+      "answer": "Senior engineers make constraints and trade-offs visible, seek challenge, document decisions, and revisit them as evidence changes.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-architectural-decision-making-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "architectural-decision-making",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using architectural decision-making?",
+      "answer": "Senior engineers make constraints and trade-offs visible, seek challenge, document decisions, and revisit them as evidence changes.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-architectural-decision-making-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "architectural-decision-making",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around architectural decision-making?",
+      "answer": "Senior engineers make constraints and trade-offs visible, seek challenge, document decisions, and revisit them as evidence changes.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-architectural-decision-making-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "architectural-decision-making",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate architectural decision-making safely in an existing system?",
+      "answer": "Senior engineers make constraints and trade-offs visible, seek challenge, document decisions, and revisit them as evidence changes.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-architectural-decision-making-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "architectural-decision-making",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on architectural decision-making?",
+      "answer": "Senior engineers make constraints and trade-offs visible, seek challenge, document decisions, and revisit them as evidence changes.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-architectural-decision-making-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "architectural-decision-making",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving architectural decision-making. Walk through your reasoning.",
+      "answer": "Senior engineers make constraints and trade-offs visible, seek challenge, document decisions, and revisit them as evidence changes.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-strategy-and-roadmap-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "technical-strategy-and-roadmap",
+        "mechanics"
+      ],
+      "question": "Explain how technical strategy and roadmap works internally and which details matter in production.",
+      "answer": "A technical roadmap connects business outcomes, risk reduction, platform investment, sequencing, and measurable checkpoints.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-strategy-and-roadmap-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "technical-strategy-and-roadmap",
+        "design"
+      ],
+      "question": "Design a production approach for technical strategy and roadmap. What decisions must be explicit?",
+      "answer": "A technical roadmap connects business outcomes, risk reduction, platform investment, sequencing, and measurable checkpoints.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-strategy-and-roadmap-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-strategy-and-roadmap",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around technical strategy and roadmap?",
+      "answer": "A technical roadmap connects business outcomes, risk reduction, platform investment, sequencing, and measurable checkpoints.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-strategy-and-roadmap-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-strategy-and-roadmap",
+        "debugging"
+      ],
+      "question": "A production issue appears around technical strategy and roadmap. How do you investigate it?",
+      "answer": "A technical roadmap connects business outcomes, risk reduction, platform investment, sequencing, and measurable checkpoints.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-strategy-and-roadmap-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-strategy-and-roadmap",
+        "performance"
+      ],
+      "question": "How can technical strategy and roadmap become a performance bottleneck, and how would you improve it?",
+      "answer": "A technical roadmap connects business outcomes, risk reduction, platform investment, sequencing, and measurable checkpoints.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-strategy-and-roadmap-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-strategy-and-roadmap",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using technical strategy and roadmap?",
+      "answer": "A technical roadmap connects business outcomes, risk reduction, platform investment, sequencing, and measurable checkpoints.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-strategy-and-roadmap-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-strategy-and-roadmap",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around technical strategy and roadmap?",
+      "answer": "A technical roadmap connects business outcomes, risk reduction, platform investment, sequencing, and measurable checkpoints.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-strategy-and-roadmap-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-strategy-and-roadmap",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate technical strategy and roadmap safely in an existing system?",
+      "answer": "A technical roadmap connects business outcomes, risk reduction, platform investment, sequencing, and measurable checkpoints.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-strategy-and-roadmap-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "technical-strategy-and-roadmap",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on technical strategy and roadmap?",
+      "answer": "A technical roadmap connects business outcomes, risk reduction, platform investment, sequencing, and measurable checkpoints.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-strategy-and-roadmap-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-strategy-and-roadmap",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving technical strategy and roadmap. Walk through your reasoning.",
+      "answer": "A technical roadmap connects business outcomes, risk reduction, platform investment, sequencing, and measurable checkpoints.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-mentoring-and-delegation-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "mentoring-and-delegation",
+        "mechanics"
+      ],
+      "question": "Explain how mentoring and delegation works internally and which details matter in production.",
+      "answer": "Effective mentoring sets growth goals, provides context and feedback, transfers ownership, and avoids creating dependency.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-mentoring-and-delegation-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "mentoring-and-delegation",
+        "design"
+      ],
+      "question": "Design a production approach for mentoring and delegation. What decisions must be explicit?",
+      "answer": "Effective mentoring sets growth goals, provides context and feedback, transfers ownership, and avoids creating dependency.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-mentoring-and-delegation-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "mentoring-and-delegation",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around mentoring and delegation?",
+      "answer": "Effective mentoring sets growth goals, provides context and feedback, transfers ownership, and avoids creating dependency.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-mentoring-and-delegation-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "mentoring-and-delegation",
+        "debugging"
+      ],
+      "question": "A production issue appears around mentoring and delegation. How do you investigate it?",
+      "answer": "Effective mentoring sets growth goals, provides context and feedback, transfers ownership, and avoids creating dependency.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-mentoring-and-delegation-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "mentoring-and-delegation",
+        "performance"
+      ],
+      "question": "How can mentoring and delegation become a performance bottleneck, and how would you improve it?",
+      "answer": "Effective mentoring sets growth goals, provides context and feedback, transfers ownership, and avoids creating dependency.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-mentoring-and-delegation-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "mentoring-and-delegation",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using mentoring and delegation?",
+      "answer": "Effective mentoring sets growth goals, provides context and feedback, transfers ownership, and avoids creating dependency.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-mentoring-and-delegation-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "mentoring-and-delegation",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around mentoring and delegation?",
+      "answer": "Effective mentoring sets growth goals, provides context and feedback, transfers ownership, and avoids creating dependency.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-mentoring-and-delegation-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "mentoring-and-delegation",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate mentoring and delegation safely in an existing system?",
+      "answer": "Effective mentoring sets growth goals, provides context and feedback, transfers ownership, and avoids creating dependency.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-mentoring-and-delegation-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "mentoring-and-delegation",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on mentoring and delegation?",
+      "answer": "Effective mentoring sets growth goals, provides context and feedback, transfers ownership, and avoids creating dependency.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-mentoring-and-delegation-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "mentoring-and-delegation",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving mentoring and delegation. Walk through your reasoning.",
+      "answer": "Effective mentoring sets growth goals, provides context and feedback, transfers ownership, and avoids creating dependency.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-code-review-and-engineering-standards-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "code-review-and-engineering-standards",
+        "mechanics"
+      ],
+      "question": "Explain how code review and engineering standards works internally and which details matter in production.",
+      "answer": "Reviews prioritize correctness, security, operability, maintainability, and shared understanding while automation handles style.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-code-review-and-engineering-standards-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "code-review-and-engineering-standards",
+        "design"
+      ],
+      "question": "Design a production approach for code review and engineering standards. What decisions must be explicit?",
+      "answer": "Reviews prioritize correctness, security, operability, maintainability, and shared understanding while automation handles style.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-code-review-and-engineering-standards-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "code-review-and-engineering-standards",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around code review and engineering standards?",
+      "answer": "Reviews prioritize correctness, security, operability, maintainability, and shared understanding while automation handles style.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-code-review-and-engineering-standards-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "code-review-and-engineering-standards",
+        "debugging"
+      ],
+      "question": "A production issue appears around code review and engineering standards. How do you investigate it?",
+      "answer": "Reviews prioritize correctness, security, operability, maintainability, and shared understanding while automation handles style.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-code-review-and-engineering-standards-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "code-review-and-engineering-standards",
+        "performance"
+      ],
+      "question": "How can code review and engineering standards become a performance bottleneck, and how would you improve it?",
+      "answer": "Reviews prioritize correctness, security, operability, maintainability, and shared understanding while automation handles style.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-code-review-and-engineering-standards-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "code-review-and-engineering-standards",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using code review and engineering standards?",
+      "answer": "Reviews prioritize correctness, security, operability, maintainability, and shared understanding while automation handles style.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-code-review-and-engineering-standards-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "code-review-and-engineering-standards",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around code review and engineering standards?",
+      "answer": "Reviews prioritize correctness, security, operability, maintainability, and shared understanding while automation handles style.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-code-review-and-engineering-standards-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "code-review-and-engineering-standards",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate code review and engineering standards safely in an existing system?",
+      "answer": "Reviews prioritize correctness, security, operability, maintainability, and shared understanding while automation handles style.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-code-review-and-engineering-standards-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "code-review-and-engineering-standards",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on code review and engineering standards?",
+      "answer": "Reviews prioritize correctness, security, operability, maintainability, and shared understanding while automation handles style.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-code-review-and-engineering-standards-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "code-review-and-engineering-standards",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving code review and engineering standards. Walk through your reasoning.",
+      "answer": "Reviews prioritize correctness, security, operability, maintainability, and shared understanding while automation handles style.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-debt-and-modernization-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "technical-debt-and-modernization",
+        "mechanics"
+      ],
+      "question": "Explain how technical debt and modernization works internally and which details matter in production.",
+      "answer": "Debt should be expressed through delivery, reliability, security, or cost impact and addressed with measurable incremental work.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-debt-and-modernization-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "technical-debt-and-modernization",
+        "design"
+      ],
+      "question": "Design a production approach for technical debt and modernization. What decisions must be explicit?",
+      "answer": "Debt should be expressed through delivery, reliability, security, or cost impact and addressed with measurable incremental work.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-debt-and-modernization-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-debt-and-modernization",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around technical debt and modernization?",
+      "answer": "Debt should be expressed through delivery, reliability, security, or cost impact and addressed with measurable incremental work.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-debt-and-modernization-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-debt-and-modernization",
+        "debugging"
+      ],
+      "question": "A production issue appears around technical debt and modernization. How do you investigate it?",
+      "answer": "Debt should be expressed through delivery, reliability, security, or cost impact and addressed with measurable incremental work.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-debt-and-modernization-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-debt-and-modernization",
+        "performance"
+      ],
+      "question": "How can technical debt and modernization become a performance bottleneck, and how would you improve it?",
+      "answer": "Debt should be expressed through delivery, reliability, security, or cost impact and addressed with measurable incremental work.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-debt-and-modernization-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-debt-and-modernization",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using technical debt and modernization?",
+      "answer": "Debt should be expressed through delivery, reliability, security, or cost impact and addressed with measurable incremental work.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-debt-and-modernization-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-debt-and-modernization",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around technical debt and modernization?",
+      "answer": "Debt should be expressed through delivery, reliability, security, or cost impact and addressed with measurable incremental work.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-debt-and-modernization-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-debt-and-modernization",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate technical debt and modernization safely in an existing system?",
+      "answer": "Debt should be expressed through delivery, reliability, security, or cost impact and addressed with measurable incremental work.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-debt-and-modernization-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "technical-debt-and-modernization",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on technical debt and modernization?",
+      "answer": "Debt should be expressed through delivery, reliability, security, or cost impact and addressed with measurable incremental work.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-technical-debt-and-modernization-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "technical-debt-and-modernization",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving technical debt and modernization. Walk through your reasoning.",
+      "answer": "Debt should be expressed through delivery, reliability, security, or cost impact and addressed with measurable incremental work.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-incident-leadership-and-blameless-learning-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "incident-leadership-and-blameless-learning",
+        "mechanics"
+      ],
+      "question": "Explain how incident leadership and blameless learning works internally and which details matter in production.",
+      "answer": "Incident leaders coordinate mitigation and communication; postmortems improve systems without hiding accountability.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-incident-leadership-and-blameless-learning-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "incident-leadership-and-blameless-learning",
+        "design"
+      ],
+      "question": "Design a production approach for incident leadership and blameless learning. What decisions must be explicit?",
+      "answer": "Incident leaders coordinate mitigation and communication; postmortems improve systems without hiding accountability.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-incident-leadership-and-blameless-learning-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "incident-leadership-and-blameless-learning",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around incident leadership and blameless learning?",
+      "answer": "Incident leaders coordinate mitigation and communication; postmortems improve systems without hiding accountability.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-incident-leadership-and-blameless-learning-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "incident-leadership-and-blameless-learning",
+        "debugging"
+      ],
+      "question": "A production issue appears around incident leadership and blameless learning. How do you investigate it?",
+      "answer": "Incident leaders coordinate mitigation and communication; postmortems improve systems without hiding accountability.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-incident-leadership-and-blameless-learning-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "incident-leadership-and-blameless-learning",
+        "performance"
+      ],
+      "question": "How can incident leadership and blameless learning become a performance bottleneck, and how would you improve it?",
+      "answer": "Incident leaders coordinate mitigation and communication; postmortems improve systems without hiding accountability.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-incident-leadership-and-blameless-learning-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "incident-leadership-and-blameless-learning",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using incident leadership and blameless learning?",
+      "answer": "Incident leaders coordinate mitigation and communication; postmortems improve systems without hiding accountability.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-incident-leadership-and-blameless-learning-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "incident-leadership-and-blameless-learning",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around incident leadership and blameless learning?",
+      "answer": "Incident leaders coordinate mitigation and communication; postmortems improve systems without hiding accountability.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-incident-leadership-and-blameless-learning-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "incident-leadership-and-blameless-learning",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate incident leadership and blameless learning safely in an existing system?",
+      "answer": "Incident leaders coordinate mitigation and communication; postmortems improve systems without hiding accountability.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-incident-leadership-and-blameless-learning-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "incident-leadership-and-blameless-learning",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on incident leadership and blameless learning?",
+      "answer": "Incident leaders coordinate mitigation and communication; postmortems improve systems without hiding accountability.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-incident-leadership-and-blameless-learning-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "incident-leadership-and-blameless-learning",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving incident leadership and blameless learning. Walk through your reasoning.",
+      "answer": "Incident leaders coordinate mitigation and communication; postmortems improve systems without hiding accountability.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-cross-functional-communication-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "cross-functional-communication",
+        "mechanics"
+      ],
+      "question": "Explain how cross-functional communication works internally and which details matter in production.",
+      "answer": "Strong communication adapts technical detail to audience, clarifies decisions and uncertainty, and ties work to product outcomes.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-cross-functional-communication-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "cross-functional-communication",
+        "design"
+      ],
+      "question": "Design a production approach for cross-functional communication. What decisions must be explicit?",
+      "answer": "Strong communication adapts technical detail to audience, clarifies decisions and uncertainty, and ties work to product outcomes.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-cross-functional-communication-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "cross-functional-communication",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around cross-functional communication?",
+      "answer": "Strong communication adapts technical detail to audience, clarifies decisions and uncertainty, and ties work to product outcomes.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-cross-functional-communication-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "cross-functional-communication",
+        "debugging"
+      ],
+      "question": "A production issue appears around cross-functional communication. How do you investigate it?",
+      "answer": "Strong communication adapts technical detail to audience, clarifies decisions and uncertainty, and ties work to product outcomes.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-cross-functional-communication-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "cross-functional-communication",
+        "performance"
+      ],
+      "question": "How can cross-functional communication become a performance bottleneck, and how would you improve it?",
+      "answer": "Strong communication adapts technical detail to audience, clarifies decisions and uncertainty, and ties work to product outcomes.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-cross-functional-communication-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "cross-functional-communication",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using cross-functional communication?",
+      "answer": "Strong communication adapts technical detail to audience, clarifies decisions and uncertainty, and ties work to product outcomes.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-cross-functional-communication-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "cross-functional-communication",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around cross-functional communication?",
+      "answer": "Strong communication adapts technical detail to audience, clarifies decisions and uncertainty, and ties work to product outcomes.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-cross-functional-communication-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "cross-functional-communication",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate cross-functional communication safely in an existing system?",
+      "answer": "Strong communication adapts technical detail to audience, clarifies decisions and uncertainty, and ties work to product outcomes.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-cross-functional-communication-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "cross-functional-communication",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on cross-functional communication?",
+      "answer": "Strong communication adapts technical detail to audience, clarifies decisions and uncertainty, and ties work to product outcomes.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-cross-functional-communication-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "cross-functional-communication",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving cross-functional communication. Walk through your reasoning.",
+      "answer": "Strong communication adapts technical detail to audience, clarifies decisions and uncertainty, and ties work to product outcomes.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-project-execution-under-ambiguity-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "project-execution-under-ambiguity",
+        "mechanics"
+      ],
+      "question": "Explain how project execution under ambiguity works internally and which details matter in production.",
+      "answer": "Senior engineers reduce uncertainty through discovery, assumptions, experiments, thin slices, risk tracking, and decision points.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-project-execution-under-ambiguity-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "project-execution-under-ambiguity",
+        "design"
+      ],
+      "question": "Design a production approach for project execution under ambiguity. What decisions must be explicit?",
+      "answer": "Senior engineers reduce uncertainty through discovery, assumptions, experiments, thin slices, risk tracking, and decision points.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-project-execution-under-ambiguity-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "project-execution-under-ambiguity",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around project execution under ambiguity?",
+      "answer": "Senior engineers reduce uncertainty through discovery, assumptions, experiments, thin slices, risk tracking, and decision points.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-project-execution-under-ambiguity-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "project-execution-under-ambiguity",
+        "debugging"
+      ],
+      "question": "A production issue appears around project execution under ambiguity. How do you investigate it?",
+      "answer": "Senior engineers reduce uncertainty through discovery, assumptions, experiments, thin slices, risk tracking, and decision points.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-project-execution-under-ambiguity-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "project-execution-under-ambiguity",
+        "performance"
+      ],
+      "question": "How can project execution under ambiguity become a performance bottleneck, and how would you improve it?",
+      "answer": "Senior engineers reduce uncertainty through discovery, assumptions, experiments, thin slices, risk tracking, and decision points.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-project-execution-under-ambiguity-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "project-execution-under-ambiguity",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using project execution under ambiguity?",
+      "answer": "Senior engineers reduce uncertainty through discovery, assumptions, experiments, thin slices, risk tracking, and decision points.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-project-execution-under-ambiguity-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "project-execution-under-ambiguity",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around project execution under ambiguity?",
+      "answer": "Senior engineers reduce uncertainty through discovery, assumptions, experiments, thin slices, risk tracking, and decision points.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-project-execution-under-ambiguity-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "project-execution-under-ambiguity",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate project execution under ambiguity safely in an existing system?",
+      "answer": "Senior engineers reduce uncertainty through discovery, assumptions, experiments, thin slices, risk tracking, and decision points.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-project-execution-under-ambiguity-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "project-execution-under-ambiguity",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on project execution under ambiguity?",
+      "answer": "Senior engineers reduce uncertainty through discovery, assumptions, experiments, thin slices, risk tracking, and decision points.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-project-execution-under-ambiguity-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "project-execution-under-ambiguity",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving project execution under ambiguity. Walk through your reasoning.",
+      "answer": "Senior engineers reduce uncertainty through discovery, assumptions, experiments, thin slices, risk tracking, and decision points.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-conflict-disagreement-and-influence-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "conflict-disagreement-and-influence",
+        "mechanics"
+      ],
+      "question": "Explain how conflict, disagreement, and influence works internally and which details matter in production.",
+      "answer": "Healthy disagreement focuses on goals and evidence, surfaces trade-offs, and supports the final decision after debate.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-conflict-disagreement-and-influence-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "conflict-disagreement-and-influence",
+        "design"
+      ],
+      "question": "Design a production approach for conflict, disagreement, and influence. What decisions must be explicit?",
+      "answer": "Healthy disagreement focuses on goals and evidence, surfaces trade-offs, and supports the final decision after debate.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-conflict-disagreement-and-influence-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "conflict-disagreement-and-influence",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around conflict, disagreement, and influence?",
+      "answer": "Healthy disagreement focuses on goals and evidence, surfaces trade-offs, and supports the final decision after debate.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-conflict-disagreement-and-influence-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "conflict-disagreement-and-influence",
+        "debugging"
+      ],
+      "question": "A production issue appears around conflict, disagreement, and influence. How do you investigate it?",
+      "answer": "Healthy disagreement focuses on goals and evidence, surfaces trade-offs, and supports the final decision after debate.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-conflict-disagreement-and-influence-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "conflict-disagreement-and-influence",
+        "performance"
+      ],
+      "question": "How can conflict, disagreement, and influence become a performance bottleneck, and how would you improve it?",
+      "answer": "Healthy disagreement focuses on goals and evidence, surfaces trade-offs, and supports the final decision after debate.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-conflict-disagreement-and-influence-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "conflict-disagreement-and-influence",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using conflict, disagreement, and influence?",
+      "answer": "Healthy disagreement focuses on goals and evidence, surfaces trade-offs, and supports the final decision after debate.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-conflict-disagreement-and-influence-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "conflict-disagreement-and-influence",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around conflict, disagreement, and influence?",
+      "answer": "Healthy disagreement focuses on goals and evidence, surfaces trade-offs, and supports the final decision after debate.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-conflict-disagreement-and-influence-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "conflict-disagreement-and-influence",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate conflict, disagreement, and influence safely in an existing system?",
+      "answer": "Healthy disagreement focuses on goals and evidence, surfaces trade-offs, and supports the final decision after debate.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-conflict-disagreement-and-influence-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "conflict-disagreement-and-influence",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on conflict, disagreement, and influence?",
+      "answer": "Healthy disagreement focuses on goals and evidence, surfaces trade-offs, and supports the final decision after debate.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-conflict-disagreement-and-influence-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "conflict-disagreement-and-influence",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving conflict, disagreement, and influence. Walk through your reasoning.",
+      "answer": "Healthy disagreement focuses on goals and evidence, surfaces trade-offs, and supports the final decision after debate.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-team-effectiveness-and-engineering-culture-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "team-effectiveness-and-engineering-culture",
+        "mechanics"
+      ],
+      "question": "Explain how team effectiveness and engineering culture works internally and which details matter in production.",
+      "answer": "Sustainable teams need clear ownership, feedback, quality practices, psychological safety, operational health, and continuous improvement.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-team-effectiveness-and-engineering-culture-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "leadership",
+        "team-effectiveness-and-engineering-culture",
+        "design"
+      ],
+      "question": "Design a production approach for team effectiveness and engineering culture. What decisions must be explicit?",
+      "answer": "Sustainable teams need clear ownership, feedback, quality practices, psychological safety, operational health, and continuous improvement.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-team-effectiveness-and-engineering-culture-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "team-effectiveness-and-engineering-culture",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around team effectiveness and engineering culture?",
+      "answer": "Sustainable teams need clear ownership, feedback, quality practices, psychological safety, operational health, and continuous improvement.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-team-effectiveness-and-engineering-culture-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "team-effectiveness-and-engineering-culture",
+        "debugging"
+      ],
+      "question": "A production issue appears around team effectiveness and engineering culture. How do you investigate it?",
+      "answer": "Sustainable teams need clear ownership, feedback, quality practices, psychological safety, operational health, and continuous improvement.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "leadership-team-effectiveness-and-engineering-culture-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "leadership",
+        "team-effectiveness-and-engineering-culture",
+        "performance"
+      ],
+      "question": "How can team effectiveness and engineering culture become a performance bottleneck, and how would you improve it?",
+      "answer": "Sustainable teams need clear ownership, feedback, quality practices, psychological safety, operational health, and continuous improvement.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

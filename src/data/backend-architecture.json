@@ -1,0 +1,1202 @@
+{
+  "name": "Backend Architecture",
+  "icon": "server",
+  "order": 50,
+  "questions": [
+    {
+      "id": "api-idempotency",
+      "type": "scenario",
+      "tags": [
+        "api",
+        "reliability"
+      ],
+      "question": "A payment request times out and the client retries. How do you prevent duplicate charges?",
+      "answer": "Accept a client-generated idempotency key scoped to the operation and actor. Persist the key, normalized request fingerprint, status, and response before returning. Concurrent requests for the same key must serialize or share the in-progress result.\n\nReject reuse with a different payload. Retain keys for an explicit window. Idempotency handles retries; it does not replace transaction boundaries, provider reconciliation, audit logs, or compensating actions.",
+      "level": "senior"
+    },
+    {
+      "id": "rest-vs-graphql",
+      "type": "trade-off",
+      "tags": [
+        "api",
+        "graphql"
+      ],
+      "question": "When is GraphQL a better choice than REST, and what costs does it introduce?",
+      "answer": "GraphQL fits products with many clients needing different compositions of a connected domain. It enables client-driven selection and a typed schema. REST is often simpler for resource-oriented APIs, HTTP caching, file operations, and bounded integrations.\n\nGraphQL costs include query complexity control, N+1 prevention, authorization at field boundaries, observability, persisted queries, schema governance, and harder CDN caching. Choose based on client and organizational needs, not fashion.",
+      "level": "senior"
+    },
+    {
+      "id": "monolith-to-services",
+      "type": "scenario",
+      "tags": [
+        "microservices",
+        "migration"
+      ],
+      "question": "A modular monolith is becoming difficult to scale organizationally. How would you extract services?",
+      "answer": "First identify whether the pain is deployment coupling, ownership, reliability, or runtime scaling. Improve module boundaries and observability before distributing the system.\n\nExtract around a clear business capability with its own data ownership. Use a strangler approach, explicit API/event contracts, and migration metrics. Avoid shared databases and synchronous call chains. The extraction is successful only if team autonomy or reliability improves enough to justify added operational cost.",
+      "level": "senior"
+    },
+    {
+      "id": "cache-strategy",
+      "type": "trade-off",
+      "tags": [
+        "cache",
+        "redis"
+      ],
+      "question": "Design a cache strategy for a read-heavy endpoint with strict freshness requirements.",
+      "answer": "First quantify acceptable staleness. Cache-aside is simple but permits stale reads and stampedes. Write-through improves freshness but couples writes to cache availability. Event-driven invalidation scales but introduces lag and ordering concerns.\n\nUse bounded TTLs, request coalescing, jitter, negative caching, versioned keys, and stale-while-revalidate where allowed. Never treat cache invalidation as an implementation detail: define consistency behavior and fallback when cache is unavailable.",
+      "level": "senior"
+    },
+    {
+      "id": "async-job-api",
+      "type": "architecture",
+      "tags": [
+        "queues",
+        "api"
+      ],
+      "question": "How should an API expose a long-running asynchronous operation?",
+      "answer": "Return `202 Accepted` with an operation resource containing ID, status, progress, timestamps, and error details. Let clients poll with backoff or subscribe to completion events. Make submission idempotent.\n\nWorkers need leases, retries, cancellation semantics, poison-message handling, and bounded concurrency. Distinguish retryable failures from permanent ones. Retain enough history for support and expose queue age and completion latency.",
+      "level": "senior"
+    },
+    {
+      "id": "backend-architecture-api-contracts-and-versioning-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "api-contracts-and-versioning",
+        "mechanics"
+      ],
+      "question": "Explain how API contracts and versioning works internally and which details matter in production.",
+      "answer": "APIs need explicit semantics, compatibility, validation, pagination, errors, deprecation, and ownership.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-api-contracts-and-versioning-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "api-contracts-and-versioning",
+        "design"
+      ],
+      "question": "Design a production approach for API contracts and versioning. What decisions must be explicit?",
+      "answer": "APIs need explicit semantics, compatibility, validation, pagination, errors, deprecation, and ownership.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-api-contracts-and-versioning-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "api-contracts-and-versioning",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around API contracts and versioning?",
+      "answer": "APIs need explicit semantics, compatibility, validation, pagination, errors, deprecation, and ownership.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-api-contracts-and-versioning-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "api-contracts-and-versioning",
+        "debugging"
+      ],
+      "question": "A production issue appears around API contracts and versioning. How do you investigate it?",
+      "answer": "APIs need explicit semantics, compatibility, validation, pagination, errors, deprecation, and ownership.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-api-contracts-and-versioning-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "api-contracts-and-versioning",
+        "performance"
+      ],
+      "question": "How can API contracts and versioning become a performance bottleneck, and how would you improve it?",
+      "answer": "APIs need explicit semantics, compatibility, validation, pagination, errors, deprecation, and ownership.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-api-contracts-and-versioning-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "api-contracts-and-versioning",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using API contracts and versioning?",
+      "answer": "APIs need explicit semantics, compatibility, validation, pagination, errors, deprecation, and ownership.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-api-contracts-and-versioning-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "api-contracts-and-versioning",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around API contracts and versioning?",
+      "answer": "APIs need explicit semantics, compatibility, validation, pagination, errors, deprecation, and ownership.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-api-contracts-and-versioning-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "api-contracts-and-versioning",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate API contracts and versioning safely in an existing system?",
+      "answer": "APIs need explicit semantics, compatibility, validation, pagination, errors, deprecation, and ownership.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-api-contracts-and-versioning-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "api-contracts-and-versioning",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on API contracts and versioning?",
+      "answer": "APIs need explicit semantics, compatibility, validation, pagination, errors, deprecation, and ownership.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-api-contracts-and-versioning-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "api-contracts-and-versioning",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving API contracts and versioning. Walk through your reasoning.",
+      "answer": "APIs need explicit semantics, compatibility, validation, pagination, errors, deprecation, and ownership.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-idempotency-and-retry-safe-operations-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "idempotency-and-retry-safe-operations",
+        "mechanics"
+      ],
+      "question": "Explain how idempotency and retry-safe operations works internally and which details matter in production.",
+      "answer": "Idempotency keys, durable operation state, request fingerprints, and concurrency control make retries safe.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-idempotency-and-retry-safe-operations-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "idempotency-and-retry-safe-operations",
+        "design"
+      ],
+      "question": "Design a production approach for idempotency and retry-safe operations. What decisions must be explicit?",
+      "answer": "Idempotency keys, durable operation state, request fingerprints, and concurrency control make retries safe.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-idempotency-and-retry-safe-operations-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "idempotency-and-retry-safe-operations",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around idempotency and retry-safe operations?",
+      "answer": "Idempotency keys, durable operation state, request fingerprints, and concurrency control make retries safe.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-idempotency-and-retry-safe-operations-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "idempotency-and-retry-safe-operations",
+        "debugging"
+      ],
+      "question": "A production issue appears around idempotency and retry-safe operations. How do you investigate it?",
+      "answer": "Idempotency keys, durable operation state, request fingerprints, and concurrency control make retries safe.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-idempotency-and-retry-safe-operations-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "idempotency-and-retry-safe-operations",
+        "performance"
+      ],
+      "question": "How can idempotency and retry-safe operations become a performance bottleneck, and how would you improve it?",
+      "answer": "Idempotency keys, durable operation state, request fingerprints, and concurrency control make retries safe.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-idempotency-and-retry-safe-operations-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "idempotency-and-retry-safe-operations",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using idempotency and retry-safe operations?",
+      "answer": "Idempotency keys, durable operation state, request fingerprints, and concurrency control make retries safe.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-idempotency-and-retry-safe-operations-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "idempotency-and-retry-safe-operations",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around idempotency and retry-safe operations?",
+      "answer": "Idempotency keys, durable operation state, request fingerprints, and concurrency control make retries safe.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-idempotency-and-retry-safe-operations-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "idempotency-and-retry-safe-operations",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate idempotency and retry-safe operations safely in an existing system?",
+      "answer": "Idempotency keys, durable operation state, request fingerprints, and concurrency control make retries safe.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-idempotency-and-retry-safe-operations-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "idempotency-and-retry-safe-operations",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on idempotency and retry-safe operations?",
+      "answer": "Idempotency keys, durable operation state, request fingerprints, and concurrency control make retries safe.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-idempotency-and-retry-safe-operations-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "idempotency-and-retry-safe-operations",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving idempotency and retry-safe operations. Walk through your reasoning.",
+      "answer": "Idempotency keys, durable operation state, request fingerprints, and concurrency control make retries safe.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-authentication-and-authorization-architecture-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "authentication-and-authorization-architecture",
+        "mechanics"
+      ],
+      "question": "Explain how authentication and authorization architecture works internally and which details matter in production.",
+      "answer": "Identity establishment, credential lifecycle, policy enforcement, tenant context, and auditability are distinct concerns.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-authentication-and-authorization-architecture-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "authentication-and-authorization-architecture",
+        "design"
+      ],
+      "question": "Design a production approach for authentication and authorization architecture. What decisions must be explicit?",
+      "answer": "Identity establishment, credential lifecycle, policy enforcement, tenant context, and auditability are distinct concerns.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-authentication-and-authorization-architecture-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "authentication-and-authorization-architecture",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around authentication and authorization architecture?",
+      "answer": "Identity establishment, credential lifecycle, policy enforcement, tenant context, and auditability are distinct concerns.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-authentication-and-authorization-architecture-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "authentication-and-authorization-architecture",
+        "debugging"
+      ],
+      "question": "A production issue appears around authentication and authorization architecture. How do you investigate it?",
+      "answer": "Identity establishment, credential lifecycle, policy enforcement, tenant context, and auditability are distinct concerns.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-authentication-and-authorization-architecture-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "authentication-and-authorization-architecture",
+        "performance"
+      ],
+      "question": "How can authentication and authorization architecture become a performance bottleneck, and how would you improve it?",
+      "answer": "Identity establishment, credential lifecycle, policy enforcement, tenant context, and auditability are distinct concerns.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-authentication-and-authorization-architecture-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "authentication-and-authorization-architecture",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using authentication and authorization architecture?",
+      "answer": "Identity establishment, credential lifecycle, policy enforcement, tenant context, and auditability are distinct concerns.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-authentication-and-authorization-architecture-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "authentication-and-authorization-architecture",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around authentication and authorization architecture?",
+      "answer": "Identity establishment, credential lifecycle, policy enforcement, tenant context, and auditability are distinct concerns.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-authentication-and-authorization-architecture-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "authentication-and-authorization-architecture",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate authentication and authorization architecture safely in an existing system?",
+      "answer": "Identity establishment, credential lifecycle, policy enforcement, tenant context, and auditability are distinct concerns.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-authentication-and-authorization-architecture-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "authentication-and-authorization-architecture",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on authentication and authorization architecture?",
+      "answer": "Identity establishment, credential lifecycle, policy enforcement, tenant context, and auditability are distinct concerns.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-authentication-and-authorization-architecture-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "authentication-and-authorization-architecture",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving authentication and authorization architecture. Walk through your reasoning.",
+      "answer": "Identity establishment, credential lifecycle, policy enforcement, tenant context, and auditability are distinct concerns.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-modular-monoliths-and-service-boundaries-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "modular-monoliths-and-service-boundaries",
+        "mechanics"
+      ],
+      "question": "Explain how modular monoliths and service boundaries works internally and which details matter in production.",
+      "answer": "Boundaries should align with business capability and ownership; distribution adds network and operational failure modes.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-modular-monoliths-and-service-boundaries-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "modular-monoliths-and-service-boundaries",
+        "design"
+      ],
+      "question": "Design a production approach for modular monoliths and service boundaries. What decisions must be explicit?",
+      "answer": "Boundaries should align with business capability and ownership; distribution adds network and operational failure modes.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-modular-monoliths-and-service-boundaries-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "modular-monoliths-and-service-boundaries",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around modular monoliths and service boundaries?",
+      "answer": "Boundaries should align with business capability and ownership; distribution adds network and operational failure modes.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-modular-monoliths-and-service-boundaries-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "modular-monoliths-and-service-boundaries",
+        "debugging"
+      ],
+      "question": "A production issue appears around modular monoliths and service boundaries. How do you investigate it?",
+      "answer": "Boundaries should align with business capability and ownership; distribution adds network and operational failure modes.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-modular-monoliths-and-service-boundaries-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "modular-monoliths-and-service-boundaries",
+        "performance"
+      ],
+      "question": "How can modular monoliths and service boundaries become a performance bottleneck, and how would you improve it?",
+      "answer": "Boundaries should align with business capability and ownership; distribution adds network and operational failure modes.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-modular-monoliths-and-service-boundaries-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "modular-monoliths-and-service-boundaries",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using modular monoliths and service boundaries?",
+      "answer": "Boundaries should align with business capability and ownership; distribution adds network and operational failure modes.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-modular-monoliths-and-service-boundaries-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "modular-monoliths-and-service-boundaries",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around modular monoliths and service boundaries?",
+      "answer": "Boundaries should align with business capability and ownership; distribution adds network and operational failure modes.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-modular-monoliths-and-service-boundaries-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "modular-monoliths-and-service-boundaries",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate modular monoliths and service boundaries safely in an existing system?",
+      "answer": "Boundaries should align with business capability and ownership; distribution adds network and operational failure modes.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-modular-monoliths-and-service-boundaries-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "modular-monoliths-and-service-boundaries",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on modular monoliths and service boundaries?",
+      "answer": "Boundaries should align with business capability and ownership; distribution adds network and operational failure modes.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-modular-monoliths-and-service-boundaries-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "modular-monoliths-and-service-boundaries",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving modular monoliths and service boundaries. Walk through your reasoning.",
+      "answer": "Boundaries should align with business capability and ownership; distribution adds network and operational failure modes.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-event-driven-architecture-and-the-outbox-pattern-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "event-driven-architecture-and-the-outbox-pattern",
+        "mechanics"
+      ],
+      "question": "Explain how event-driven architecture and the outbox pattern works internally and which details matter in production.",
+      "answer": "Events decouple producers and consumers; schemas, ordering, idempotency, outbox delivery, and replay govern correctness.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-event-driven-architecture-and-the-outbox-pattern-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "event-driven-architecture-and-the-outbox-pattern",
+        "design"
+      ],
+      "question": "Design a production approach for event-driven architecture and the outbox pattern. What decisions must be explicit?",
+      "answer": "Events decouple producers and consumers; schemas, ordering, idempotency, outbox delivery, and replay govern correctness.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-event-driven-architecture-and-the-outbox-pattern-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "event-driven-architecture-and-the-outbox-pattern",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around event-driven architecture and the outbox pattern?",
+      "answer": "Events decouple producers and consumers; schemas, ordering, idempotency, outbox delivery, and replay govern correctness.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-event-driven-architecture-and-the-outbox-pattern-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "event-driven-architecture-and-the-outbox-pattern",
+        "debugging"
+      ],
+      "question": "A production issue appears around event-driven architecture and the outbox pattern. How do you investigate it?",
+      "answer": "Events decouple producers and consumers; schemas, ordering, idempotency, outbox delivery, and replay govern correctness.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-event-driven-architecture-and-the-outbox-pattern-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "event-driven-architecture-and-the-outbox-pattern",
+        "performance"
+      ],
+      "question": "How can event-driven architecture and the outbox pattern become a performance bottleneck, and how would you improve it?",
+      "answer": "Events decouple producers and consumers; schemas, ordering, idempotency, outbox delivery, and replay govern correctness.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-event-driven-architecture-and-the-outbox-pattern-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "event-driven-architecture-and-the-outbox-pattern",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using event-driven architecture and the outbox pattern?",
+      "answer": "Events decouple producers and consumers; schemas, ordering, idempotency, outbox delivery, and replay govern correctness.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-event-driven-architecture-and-the-outbox-pattern-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "event-driven-architecture-and-the-outbox-pattern",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around event-driven architecture and the outbox pattern?",
+      "answer": "Events decouple producers and consumers; schemas, ordering, idempotency, outbox delivery, and replay govern correctness.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-event-driven-architecture-and-the-outbox-pattern-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "event-driven-architecture-and-the-outbox-pattern",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate event-driven architecture and the outbox pattern safely in an existing system?",
+      "answer": "Events decouple producers and consumers; schemas, ordering, idempotency, outbox delivery, and replay govern correctness.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-event-driven-architecture-and-the-outbox-pattern-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "event-driven-architecture-and-the-outbox-pattern",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on event-driven architecture and the outbox pattern?",
+      "answer": "Events decouple producers and consumers; schemas, ordering, idempotency, outbox delivery, and replay govern correctness.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-event-driven-architecture-and-the-outbox-pattern-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "event-driven-architecture-and-the-outbox-pattern",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving event-driven architecture and the outbox pattern. Walk through your reasoning.",
+      "answer": "Events decouple producers and consumers; schemas, ordering, idempotency, outbox delivery, and replay govern correctness.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-background-jobs-and-workflow-orchestration-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "background-jobs-and-workflow-orchestration",
+        "mechanics"
+      ],
+      "question": "Explain how background jobs and workflow orchestration works internally and which details matter in production.",
+      "answer": "Long-running work needs durable state, retries, cancellation, compensation, concurrency limits, and operator visibility.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-background-jobs-and-workflow-orchestration-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "background-jobs-and-workflow-orchestration",
+        "design"
+      ],
+      "question": "Design a production approach for background jobs and workflow orchestration. What decisions must be explicit?",
+      "answer": "Long-running work needs durable state, retries, cancellation, compensation, concurrency limits, and operator visibility.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-background-jobs-and-workflow-orchestration-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "background-jobs-and-workflow-orchestration",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around background jobs and workflow orchestration?",
+      "answer": "Long-running work needs durable state, retries, cancellation, compensation, concurrency limits, and operator visibility.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-background-jobs-and-workflow-orchestration-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "background-jobs-and-workflow-orchestration",
+        "debugging"
+      ],
+      "question": "A production issue appears around background jobs and workflow orchestration. How do you investigate it?",
+      "answer": "Long-running work needs durable state, retries, cancellation, compensation, concurrency limits, and operator visibility.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-background-jobs-and-workflow-orchestration-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "background-jobs-and-workflow-orchestration",
+        "performance"
+      ],
+      "question": "How can background jobs and workflow orchestration become a performance bottleneck, and how would you improve it?",
+      "answer": "Long-running work needs durable state, retries, cancellation, compensation, concurrency limits, and operator visibility.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-background-jobs-and-workflow-orchestration-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "background-jobs-and-workflow-orchestration",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using background jobs and workflow orchestration?",
+      "answer": "Long-running work needs durable state, retries, cancellation, compensation, concurrency limits, and operator visibility.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-background-jobs-and-workflow-orchestration-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "background-jobs-and-workflow-orchestration",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around background jobs and workflow orchestration?",
+      "answer": "Long-running work needs durable state, retries, cancellation, compensation, concurrency limits, and operator visibility.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-background-jobs-and-workflow-orchestration-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "background-jobs-and-workflow-orchestration",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate background jobs and workflow orchestration safely in an existing system?",
+      "answer": "Long-running work needs durable state, retries, cancellation, compensation, concurrency limits, and operator visibility.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-background-jobs-and-workflow-orchestration-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "background-jobs-and-workflow-orchestration",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on background jobs and workflow orchestration?",
+      "answer": "Long-running work needs durable state, retries, cancellation, compensation, concurrency limits, and operator visibility.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-background-jobs-and-workflow-orchestration-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "background-jobs-and-workflow-orchestration",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving background jobs and workflow orchestration. Walk through your reasoning.",
+      "answer": "Long-running work needs durable state, retries, cancellation, compensation, concurrency limits, and operator visibility.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-caching-and-data-consistency-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "caching-and-data-consistency",
+        "mechanics"
+      ],
+      "question": "Explain how caching and data consistency works internally and which details matter in production.",
+      "answer": "Cache strategy must define staleness, invalidation, stampede protection, fallback, and source-of-truth behavior.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-caching-and-data-consistency-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "caching-and-data-consistency",
+        "design"
+      ],
+      "question": "Design a production approach for caching and data consistency. What decisions must be explicit?",
+      "answer": "Cache strategy must define staleness, invalidation, stampede protection, fallback, and source-of-truth behavior.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-caching-and-data-consistency-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "caching-and-data-consistency",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around caching and data consistency?",
+      "answer": "Cache strategy must define staleness, invalidation, stampede protection, fallback, and source-of-truth behavior.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-caching-and-data-consistency-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "caching-and-data-consistency",
+        "debugging"
+      ],
+      "question": "A production issue appears around caching and data consistency. How do you investigate it?",
+      "answer": "Cache strategy must define staleness, invalidation, stampede protection, fallback, and source-of-truth behavior.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-caching-and-data-consistency-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "caching-and-data-consistency",
+        "performance"
+      ],
+      "question": "How can caching and data consistency become a performance bottleneck, and how would you improve it?",
+      "answer": "Cache strategy must define staleness, invalidation, stampede protection, fallback, and source-of-truth behavior.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-caching-and-data-consistency-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "caching-and-data-consistency",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using caching and data consistency?",
+      "answer": "Cache strategy must define staleness, invalidation, stampede protection, fallback, and source-of-truth behavior.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-caching-and-data-consistency-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "caching-and-data-consistency",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around caching and data consistency?",
+      "answer": "Cache strategy must define staleness, invalidation, stampede protection, fallback, and source-of-truth behavior.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-caching-and-data-consistency-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "caching-and-data-consistency",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate caching and data consistency safely in an existing system?",
+      "answer": "Cache strategy must define staleness, invalidation, stampede protection, fallback, and source-of-truth behavior.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-caching-and-data-consistency-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "caching-and-data-consistency",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on caching and data consistency?",
+      "answer": "Cache strategy must define staleness, invalidation, stampede protection, fallback, and source-of-truth behavior.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-caching-and-data-consistency-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "caching-and-data-consistency",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving caching and data consistency. Walk through your reasoning.",
+      "answer": "Cache strategy must define staleness, invalidation, stampede protection, fallback, and source-of-truth behavior.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-dependency-resilience-and-external-integrations-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "dependency-resilience-and-external-integrations",
+        "mechanics"
+      ],
+      "question": "Explain how dependency resilience and external integrations works internally and which details matter in production.",
+      "answer": "External calls require timeouts, budgets, retries, circuit breaking, reconciliation, and explicit degraded behavior.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-dependency-resilience-and-external-integrations-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "dependency-resilience-and-external-integrations",
+        "design"
+      ],
+      "question": "Design a production approach for dependency resilience and external integrations. What decisions must be explicit?",
+      "answer": "External calls require timeouts, budgets, retries, circuit breaking, reconciliation, and explicit degraded behavior.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-dependency-resilience-and-external-integrations-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "dependency-resilience-and-external-integrations",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around dependency resilience and external integrations?",
+      "answer": "External calls require timeouts, budgets, retries, circuit breaking, reconciliation, and explicit degraded behavior.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-dependency-resilience-and-external-integrations-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "dependency-resilience-and-external-integrations",
+        "debugging"
+      ],
+      "question": "A production issue appears around dependency resilience and external integrations. How do you investigate it?",
+      "answer": "External calls require timeouts, budgets, retries, circuit breaking, reconciliation, and explicit degraded behavior.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-dependency-resilience-and-external-integrations-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "dependency-resilience-and-external-integrations",
+        "performance"
+      ],
+      "question": "How can dependency resilience and external integrations become a performance bottleneck, and how would you improve it?",
+      "answer": "External calls require timeouts, budgets, retries, circuit breaking, reconciliation, and explicit degraded behavior.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-dependency-resilience-and-external-integrations-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "dependency-resilience-and-external-integrations",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using dependency resilience and external integrations?",
+      "answer": "External calls require timeouts, budgets, retries, circuit breaking, reconciliation, and explicit degraded behavior.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-dependency-resilience-and-external-integrations-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "dependency-resilience-and-external-integrations",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around dependency resilience and external integrations?",
+      "answer": "External calls require timeouts, budgets, retries, circuit breaking, reconciliation, and explicit degraded behavior.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-dependency-resilience-and-external-integrations-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "dependency-resilience-and-external-integrations",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate dependency resilience and external integrations safely in an existing system?",
+      "answer": "External calls require timeouts, budgets, retries, circuit breaking, reconciliation, and explicit degraded behavior.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-dependency-resilience-and-external-integrations-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "dependency-resilience-and-external-integrations",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on dependency resilience and external integrations?",
+      "answer": "External calls require timeouts, budgets, retries, circuit breaking, reconciliation, and explicit degraded behavior.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-dependency-resilience-and-external-integrations-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "dependency-resilience-and-external-integrations",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving dependency resilience and external integrations. Walk through your reasoning.",
+      "answer": "External calls require timeouts, budgets, retries, circuit breaking, reconciliation, and explicit degraded behavior.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-multi-tenant-backend-design-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "multi-tenant-backend-design",
+        "mechanics"
+      ],
+      "question": "Explain how multi-tenant backend design works internally and which details matter in production.",
+      "answer": "Tenant isolation spans identity, data, caches, jobs, logs, quotas, billing, and support tooling.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-multi-tenant-backend-design-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "multi-tenant-backend-design",
+        "design"
+      ],
+      "question": "Design a production approach for multi-tenant backend design. What decisions must be explicit?",
+      "answer": "Tenant isolation spans identity, data, caches, jobs, logs, quotas, billing, and support tooling.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-multi-tenant-backend-design-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "multi-tenant-backend-design",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around multi-tenant backend design?",
+      "answer": "Tenant isolation spans identity, data, caches, jobs, logs, quotas, billing, and support tooling.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-multi-tenant-backend-design-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "multi-tenant-backend-design",
+        "debugging"
+      ],
+      "question": "A production issue appears around multi-tenant backend design. How do you investigate it?",
+      "answer": "Tenant isolation spans identity, data, caches, jobs, logs, quotas, billing, and support tooling.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-multi-tenant-backend-design-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "multi-tenant-backend-design",
+        "performance"
+      ],
+      "question": "How can multi-tenant backend design become a performance bottleneck, and how would you improve it?",
+      "answer": "Tenant isolation spans identity, data, caches, jobs, logs, quotas, billing, and support tooling.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-multi-tenant-backend-design-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "multi-tenant-backend-design",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using multi-tenant backend design?",
+      "answer": "Tenant isolation spans identity, data, caches, jobs, logs, quotas, billing, and support tooling.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-multi-tenant-backend-design-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "multi-tenant-backend-design",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around multi-tenant backend design?",
+      "answer": "Tenant isolation spans identity, data, caches, jobs, logs, quotas, billing, and support tooling.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-multi-tenant-backend-design-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "multi-tenant-backend-design",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate multi-tenant backend design safely in an existing system?",
+      "answer": "Tenant isolation spans identity, data, caches, jobs, logs, quotas, billing, and support tooling.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-multi-tenant-backend-design-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "multi-tenant-backend-design",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on multi-tenant backend design?",
+      "answer": "Tenant isolation spans identity, data, caches, jobs, logs, quotas, billing, and support tooling.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-multi-tenant-backend-design-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "multi-tenant-backend-design",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving multi-tenant backend design. Walk through your reasoning.",
+      "answer": "Tenant isolation spans identity, data, caches, jobs, logs, quotas, billing, and support tooling.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-backend-observability-and-operability-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "backend-observability-and-operability",
+        "mechanics"
+      ],
+      "question": "Explain how backend observability and operability works internally and which details matter in production.",
+      "answer": "Services need user-centered SLIs, structured events, traces, runbooks, safe controls, and explainable failure behavior.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-backend-observability-and-operability-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "backend-architecture",
+        "backend-observability-and-operability",
+        "design"
+      ],
+      "question": "Design a production approach for backend observability and operability. What decisions must be explicit?",
+      "answer": "Services need user-centered SLIs, structured events, traces, runbooks, safe controls, and explainable failure behavior.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-backend-observability-and-operability-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "backend-observability-and-operability",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around backend observability and operability?",
+      "answer": "Services need user-centered SLIs, structured events, traces, runbooks, safe controls, and explainable failure behavior.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-backend-observability-and-operability-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "backend-observability-and-operability",
+        "debugging"
+      ],
+      "question": "A production issue appears around backend observability and operability. How do you investigate it?",
+      "answer": "Services need user-centered SLIs, structured events, traces, runbooks, safe controls, and explainable failure behavior.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "backend-architecture-backend-observability-and-operability-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "backend-architecture",
+        "backend-observability-and-operability",
+        "performance"
+      ],
+      "question": "How can backend observability and operability become a performance bottleneck, and how would you improve it?",
+      "answer": "Services need user-centered SLIs, structured events, traces, runbooks, safe controls, and explainable failure behavior.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

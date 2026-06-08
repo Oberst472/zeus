@@ -1,0 +1,1202 @@
+{
+  "name": "Frontend Architecture",
+  "icon": "frontend",
+  "order": 55,
+  "questions": [
+    {
+      "id": "frontend-performance-plan",
+      "type": "scenario",
+      "tags": [
+        "performance",
+        "web-vitals"
+      ],
+      "question": "A production web app feels slow. How do you create a performance improvement plan?",
+      "answer": "Start with field data segmented by page, device, geography, and release. Use Core Web Vitals plus business metrics; lab scores alone are insufficient.\n\nAttribute time across network, backend, rendering, hydration, JavaScript execution, images, and third parties. Set budgets and fix the largest user-visible bottleneck first. Validate with controlled rollout and real-user monitoring. Guard gains with CI budgets and regression alerts.",
+      "level": "senior"
+    },
+    {
+      "id": "state-management-boundaries",
+      "type": "architecture",
+      "tags": [
+        "state",
+        "frontend"
+      ],
+      "question": "How do you decide where frontend state should live?",
+      "answer": "Classify state before choosing a library: server cache, URL/navigation state, local UI state, form state, and durable client preferences have different lifecycles.\n\nKeep state as close as possible to its owner. Treat server data as a synchronized cache with invalidation and loading/error semantics, not as generic global state. Put shareable navigation state in the URL. Introduce a global store only for genuinely cross-cutting client state.",
+      "level": "senior"
+    },
+    {
+      "id": "micro-frontends",
+      "type": "trade-off",
+      "tags": [
+        "architecture",
+        "teams"
+      ],
+      "question": "When are micro-frontends justified?",
+      "answer": "They are justified primarily by independent team ownership and release cadence, not component reuse. Costs include duplicated dependencies, inconsistent UX, routing and authentication coordination, performance, testing, and harder debugging.\n\nPrefer a modular frontend and shared design system first. If adopted, define ownership boundaries, shell contracts, dependency policy, observability, and failure isolation. Measure whether deployment autonomy actually improves.",
+      "level": "senior"
+    },
+    {
+      "id": "accessible-component",
+      "type": "scenario",
+      "tags": [
+        "accessibility",
+        "ui"
+      ],
+      "question": "What makes a reusable interactive component production-grade and accessible?",
+      "answer": "Start with native semantics and keyboard behavior. Define focus management, accessible name, states, errors, disabled behavior, reduced motion, contrast, and screen-reader announcements.\n\nA production component also needs controlled/uncontrolled APIs, predictable events, testability, theming constraints, documentation, and visual regression coverage. Test with keyboard and real assistive technology; ARIA attributes alone do not prove accessibility.",
+      "level": "senior"
+    },
+    {
+      "id": "ssr-csr-islands",
+      "type": "trade-off",
+      "tags": [
+        "rendering",
+        "performance"
+      ],
+      "question": "How do you choose between CSR, SSR, static generation, and islands?",
+      "answer": "Choose per route and user need. Static generation gives cheap, fast delivery for stable public content. SSR improves first response and discoverability for dynamic pages but adds server cost and hydration complexity. CSR suits highly interactive authenticated apps where SEO is irrelevant. Islands reduce shipped JavaScript by hydrating only interactive regions.\n\nDiscuss caching, personalization, data freshness, failure behavior, and operational complexity rather than selecting one rendering mode for the entire product.",
+      "level": "senior"
+    },
+    {
+      "id": "frontend-architecture-frontend-state-ownership-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-state-ownership",
+        "mechanics"
+      ],
+      "question": "Explain how frontend state ownership works internally and which details matter in production.",
+      "answer": "Server cache, URL state, local UI state, forms, and durable preferences have different owners and lifecycles.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-state-ownership-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-state-ownership",
+        "design"
+      ],
+      "question": "Design a production approach for frontend state ownership. What decisions must be explicit?",
+      "answer": "Server cache, URL state, local UI state, forms, and durable preferences have different owners and lifecycles.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-state-ownership-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-state-ownership",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around frontend state ownership?",
+      "answer": "Server cache, URL state, local UI state, forms, and durable preferences have different owners and lifecycles.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-state-ownership-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-state-ownership",
+        "debugging"
+      ],
+      "question": "A production issue appears around frontend state ownership. How do you investigate it?",
+      "answer": "Server cache, URL state, local UI state, forms, and durable preferences have different owners and lifecycles.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-state-ownership-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-state-ownership",
+        "performance"
+      ],
+      "question": "How can frontend state ownership become a performance bottleneck, and how would you improve it?",
+      "answer": "Server cache, URL state, local UI state, forms, and durable preferences have different owners and lifecycles.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-state-ownership-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-state-ownership",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using frontend state ownership?",
+      "answer": "Server cache, URL state, local UI state, forms, and durable preferences have different owners and lifecycles.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-state-ownership-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-state-ownership",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around frontend state ownership?",
+      "answer": "Server cache, URL state, local UI state, forms, and durable preferences have different owners and lifecycles.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-state-ownership-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-state-ownership",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate frontend state ownership safely in an existing system?",
+      "answer": "Server cache, URL state, local UI state, forms, and durable preferences have different owners and lifecycles.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-state-ownership-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-state-ownership",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on frontend state ownership?",
+      "answer": "Server cache, URL state, local UI state, forms, and durable preferences have different owners and lifecycles.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-state-ownership-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-state-ownership",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving frontend state ownership. Walk through your reasoning.",
+      "answer": "Server cache, URL state, local UI state, forms, and durable preferences have different owners and lifecycles.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-rendering-strategy-csr-ssr-static-and-islands-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "rendering-strategy-csr-ssr-static-and-islands",
+        "mechanics"
+      ],
+      "question": "Explain how rendering strategy: CSR, SSR, static, and islands works internally and which details matter in production.",
+      "answer": "Rendering choices trade server cost, JavaScript delivery, freshness, personalization, resilience, and time-to-content.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-rendering-strategy-csr-ssr-static-and-islands-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "rendering-strategy-csr-ssr-static-and-islands",
+        "design"
+      ],
+      "question": "Design a production approach for rendering strategy: CSR, SSR, static, and islands. What decisions must be explicit?",
+      "answer": "Rendering choices trade server cost, JavaScript delivery, freshness, personalization, resilience, and time-to-content.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-rendering-strategy-csr-ssr-static-and-islands-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "rendering-strategy-csr-ssr-static-and-islands",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around rendering strategy: CSR, SSR, static, and islands?",
+      "answer": "Rendering choices trade server cost, JavaScript delivery, freshness, personalization, resilience, and time-to-content.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-rendering-strategy-csr-ssr-static-and-islands-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "rendering-strategy-csr-ssr-static-and-islands",
+        "debugging"
+      ],
+      "question": "A production issue appears around rendering strategy: CSR, SSR, static, and islands. How do you investigate it?",
+      "answer": "Rendering choices trade server cost, JavaScript delivery, freshness, personalization, resilience, and time-to-content.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-rendering-strategy-csr-ssr-static-and-islands-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "rendering-strategy-csr-ssr-static-and-islands",
+        "performance"
+      ],
+      "question": "How can rendering strategy: CSR, SSR, static, and islands become a performance bottleneck, and how would you improve it?",
+      "answer": "Rendering choices trade server cost, JavaScript delivery, freshness, personalization, resilience, and time-to-content.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-rendering-strategy-csr-ssr-static-and-islands-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "rendering-strategy-csr-ssr-static-and-islands",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using rendering strategy: CSR, SSR, static, and islands?",
+      "answer": "Rendering choices trade server cost, JavaScript delivery, freshness, personalization, resilience, and time-to-content.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-rendering-strategy-csr-ssr-static-and-islands-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "rendering-strategy-csr-ssr-static-and-islands",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around rendering strategy: CSR, SSR, static, and islands?",
+      "answer": "Rendering choices trade server cost, JavaScript delivery, freshness, personalization, resilience, and time-to-content.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-rendering-strategy-csr-ssr-static-and-islands-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "rendering-strategy-csr-ssr-static-and-islands",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate rendering strategy: CSR, SSR, static, and islands safely in an existing system?",
+      "answer": "Rendering choices trade server cost, JavaScript delivery, freshness, personalization, resilience, and time-to-content.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-rendering-strategy-csr-ssr-static-and-islands-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "rendering-strategy-csr-ssr-static-and-islands",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on rendering strategy: CSR, SSR, static, and islands?",
+      "answer": "Rendering choices trade server cost, JavaScript delivery, freshness, personalization, resilience, and time-to-content.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-rendering-strategy-csr-ssr-static-and-islands-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "rendering-strategy-csr-ssr-static-and-islands",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving rendering strategy: CSR, SSR, static, and islands. Walk through your reasoning.",
+      "answer": "Rendering choices trade server cost, JavaScript delivery, freshness, personalization, resilience, and time-to-content.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-web-performance-and-core-web-vitals-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "web-performance-and-core-web-vitals",
+        "mechanics"
+      ],
+      "question": "Explain how web performance and Core Web Vitals works internally and which details matter in production.",
+      "answer": "Field data, loading, rendering, responsiveness, layout stability, and business outcomes guide performance work.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-web-performance-and-core-web-vitals-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "web-performance-and-core-web-vitals",
+        "design"
+      ],
+      "question": "Design a production approach for web performance and Core Web Vitals. What decisions must be explicit?",
+      "answer": "Field data, loading, rendering, responsiveness, layout stability, and business outcomes guide performance work.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-web-performance-and-core-web-vitals-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "web-performance-and-core-web-vitals",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around web performance and Core Web Vitals?",
+      "answer": "Field data, loading, rendering, responsiveness, layout stability, and business outcomes guide performance work.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-web-performance-and-core-web-vitals-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "web-performance-and-core-web-vitals",
+        "debugging"
+      ],
+      "question": "A production issue appears around web performance and Core Web Vitals. How do you investigate it?",
+      "answer": "Field data, loading, rendering, responsiveness, layout stability, and business outcomes guide performance work.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-web-performance-and-core-web-vitals-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "web-performance-and-core-web-vitals",
+        "performance"
+      ],
+      "question": "How can web performance and Core Web Vitals become a performance bottleneck, and how would you improve it?",
+      "answer": "Field data, loading, rendering, responsiveness, layout stability, and business outcomes guide performance work.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-web-performance-and-core-web-vitals-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "web-performance-and-core-web-vitals",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using web performance and Core Web Vitals?",
+      "answer": "Field data, loading, rendering, responsiveness, layout stability, and business outcomes guide performance work.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-web-performance-and-core-web-vitals-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "web-performance-and-core-web-vitals",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around web performance and Core Web Vitals?",
+      "answer": "Field data, loading, rendering, responsiveness, layout stability, and business outcomes guide performance work.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-web-performance-and-core-web-vitals-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "web-performance-and-core-web-vitals",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate web performance and Core Web Vitals safely in an existing system?",
+      "answer": "Field data, loading, rendering, responsiveness, layout stability, and business outcomes guide performance work.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-web-performance-and-core-web-vitals-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "web-performance-and-core-web-vitals",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on web performance and Core Web Vitals?",
+      "answer": "Field data, loading, rendering, responsiveness, layout stability, and business outcomes guide performance work.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-web-performance-and-core-web-vitals-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "web-performance-and-core-web-vitals",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving web performance and Core Web Vitals. Walk through your reasoning.",
+      "answer": "Field data, loading, rendering, responsiveness, layout stability, and business outcomes guide performance work.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-design-systems-and-component-apis-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "design-systems-and-component-apis",
+        "mechanics"
+      ],
+      "question": "Explain how design systems and component APIs works internally and which details matter in production.",
+      "answer": "Design systems combine accessible primitives, tokens, governance, versioning, documentation, and adoption strategy.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-design-systems-and-component-apis-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "design-systems-and-component-apis",
+        "design"
+      ],
+      "question": "Design a production approach for design systems and component APIs. What decisions must be explicit?",
+      "answer": "Design systems combine accessible primitives, tokens, governance, versioning, documentation, and adoption strategy.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-design-systems-and-component-apis-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "design-systems-and-component-apis",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around design systems and component APIs?",
+      "answer": "Design systems combine accessible primitives, tokens, governance, versioning, documentation, and adoption strategy.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-design-systems-and-component-apis-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "design-systems-and-component-apis",
+        "debugging"
+      ],
+      "question": "A production issue appears around design systems and component APIs. How do you investigate it?",
+      "answer": "Design systems combine accessible primitives, tokens, governance, versioning, documentation, and adoption strategy.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-design-systems-and-component-apis-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "design-systems-and-component-apis",
+        "performance"
+      ],
+      "question": "How can design systems and component APIs become a performance bottleneck, and how would you improve it?",
+      "answer": "Design systems combine accessible primitives, tokens, governance, versioning, documentation, and adoption strategy.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-design-systems-and-component-apis-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "design-systems-and-component-apis",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using design systems and component APIs?",
+      "answer": "Design systems combine accessible primitives, tokens, governance, versioning, documentation, and adoption strategy.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-design-systems-and-component-apis-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "design-systems-and-component-apis",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around design systems and component APIs?",
+      "answer": "Design systems combine accessible primitives, tokens, governance, versioning, documentation, and adoption strategy.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-design-systems-and-component-apis-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "design-systems-and-component-apis",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate design systems and component APIs safely in an existing system?",
+      "answer": "Design systems combine accessible primitives, tokens, governance, versioning, documentation, and adoption strategy.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-design-systems-and-component-apis-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "design-systems-and-component-apis",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on design systems and component APIs?",
+      "answer": "Design systems combine accessible primitives, tokens, governance, versioning, documentation, and adoption strategy.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-design-systems-and-component-apis-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "design-systems-and-component-apis",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving design systems and component APIs. Walk through your reasoning.",
+      "answer": "Design systems combine accessible primitives, tokens, governance, versioning, documentation, and adoption strategy.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-data-fetching-and-caching-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-data-fetching-and-caching",
+        "mechanics"
+      ],
+      "question": "Explain how frontend data fetching and caching works internally and which details matter in production.",
+      "answer": "Client data layers coordinate requests, stale data, cancellation, optimistic updates, pagination, and error recovery.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-data-fetching-and-caching-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-data-fetching-and-caching",
+        "design"
+      ],
+      "question": "Design a production approach for frontend data fetching and caching. What decisions must be explicit?",
+      "answer": "Client data layers coordinate requests, stale data, cancellation, optimistic updates, pagination, and error recovery.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-data-fetching-and-caching-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-data-fetching-and-caching",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around frontend data fetching and caching?",
+      "answer": "Client data layers coordinate requests, stale data, cancellation, optimistic updates, pagination, and error recovery.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-data-fetching-and-caching-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-data-fetching-and-caching",
+        "debugging"
+      ],
+      "question": "A production issue appears around frontend data fetching and caching. How do you investigate it?",
+      "answer": "Client data layers coordinate requests, stale data, cancellation, optimistic updates, pagination, and error recovery.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-data-fetching-and-caching-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-data-fetching-and-caching",
+        "performance"
+      ],
+      "question": "How can frontend data fetching and caching become a performance bottleneck, and how would you improve it?",
+      "answer": "Client data layers coordinate requests, stale data, cancellation, optimistic updates, pagination, and error recovery.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-data-fetching-and-caching-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-data-fetching-and-caching",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using frontend data fetching and caching?",
+      "answer": "Client data layers coordinate requests, stale data, cancellation, optimistic updates, pagination, and error recovery.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-data-fetching-and-caching-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-data-fetching-and-caching",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around frontend data fetching and caching?",
+      "answer": "Client data layers coordinate requests, stale data, cancellation, optimistic updates, pagination, and error recovery.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-data-fetching-and-caching-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-data-fetching-and-caching",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate frontend data fetching and caching safely in an existing system?",
+      "answer": "Client data layers coordinate requests, stale data, cancellation, optimistic updates, pagination, and error recovery.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-data-fetching-and-caching-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-data-fetching-and-caching",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on frontend data fetching and caching?",
+      "answer": "Client data layers coordinate requests, stale data, cancellation, optimistic updates, pagination, and error recovery.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-data-fetching-and-caching-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-data-fetching-and-caching",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving frontend data fetching and caching. Walk through your reasoning.",
+      "answer": "Client data layers coordinate requests, stale data, cancellation, optimistic updates, pagination, and error recovery.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-accessibility-architecture-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "accessibility-architecture",
+        "mechanics"
+      ],
+      "question": "Explain how accessibility architecture works internally and which details matter in production.",
+      "answer": "Semantic HTML, keyboard interaction, focus, names, states, contrast, and assistive-technology testing are system requirements.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-accessibility-architecture-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "accessibility-architecture",
+        "design"
+      ],
+      "question": "Design a production approach for accessibility architecture. What decisions must be explicit?",
+      "answer": "Semantic HTML, keyboard interaction, focus, names, states, contrast, and assistive-technology testing are system requirements.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-accessibility-architecture-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "accessibility-architecture",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around accessibility architecture?",
+      "answer": "Semantic HTML, keyboard interaction, focus, names, states, contrast, and assistive-technology testing are system requirements.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-accessibility-architecture-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "accessibility-architecture",
+        "debugging"
+      ],
+      "question": "A production issue appears around accessibility architecture. How do you investigate it?",
+      "answer": "Semantic HTML, keyboard interaction, focus, names, states, contrast, and assistive-technology testing are system requirements.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-accessibility-architecture-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "accessibility-architecture",
+        "performance"
+      ],
+      "question": "How can accessibility architecture become a performance bottleneck, and how would you improve it?",
+      "answer": "Semantic HTML, keyboard interaction, focus, names, states, contrast, and assistive-technology testing are system requirements.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-accessibility-architecture-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "accessibility-architecture",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using accessibility architecture?",
+      "answer": "Semantic HTML, keyboard interaction, focus, names, states, contrast, and assistive-technology testing are system requirements.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-accessibility-architecture-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "accessibility-architecture",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around accessibility architecture?",
+      "answer": "Semantic HTML, keyboard interaction, focus, names, states, contrast, and assistive-technology testing are system requirements.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-accessibility-architecture-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "accessibility-architecture",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate accessibility architecture safely in an existing system?",
+      "answer": "Semantic HTML, keyboard interaction, focus, names, states, contrast, and assistive-technology testing are system requirements.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-accessibility-architecture-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "accessibility-architecture",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on accessibility architecture?",
+      "answer": "Semantic HTML, keyboard interaction, focus, names, states, contrast, and assistive-technology testing are system requirements.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-accessibility-architecture-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "accessibility-architecture",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving accessibility architecture. Walk through your reasoning.",
+      "answer": "Semantic HTML, keyboard interaction, focus, names, states, contrast, and assistive-technology testing are system requirements.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-micro-frontends-and-team-boundaries-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "micro-frontends-and-team-boundaries",
+        "mechanics"
+      ],
+      "question": "Explain how micro-frontends and team boundaries works internally and which details matter in production.",
+      "answer": "Micro-frontends buy release autonomy at the cost of performance, consistency, integration, and platform complexity.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-micro-frontends-and-team-boundaries-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "micro-frontends-and-team-boundaries",
+        "design"
+      ],
+      "question": "Design a production approach for micro-frontends and team boundaries. What decisions must be explicit?",
+      "answer": "Micro-frontends buy release autonomy at the cost of performance, consistency, integration, and platform complexity.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-micro-frontends-and-team-boundaries-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "micro-frontends-and-team-boundaries",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around micro-frontends and team boundaries?",
+      "answer": "Micro-frontends buy release autonomy at the cost of performance, consistency, integration, and platform complexity.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-micro-frontends-and-team-boundaries-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "micro-frontends-and-team-boundaries",
+        "debugging"
+      ],
+      "question": "A production issue appears around micro-frontends and team boundaries. How do you investigate it?",
+      "answer": "Micro-frontends buy release autonomy at the cost of performance, consistency, integration, and platform complexity.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-micro-frontends-and-team-boundaries-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "micro-frontends-and-team-boundaries",
+        "performance"
+      ],
+      "question": "How can micro-frontends and team boundaries become a performance bottleneck, and how would you improve it?",
+      "answer": "Micro-frontends buy release autonomy at the cost of performance, consistency, integration, and platform complexity.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-micro-frontends-and-team-boundaries-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "micro-frontends-and-team-boundaries",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using micro-frontends and team boundaries?",
+      "answer": "Micro-frontends buy release autonomy at the cost of performance, consistency, integration, and platform complexity.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-micro-frontends-and-team-boundaries-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "micro-frontends-and-team-boundaries",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around micro-frontends and team boundaries?",
+      "answer": "Micro-frontends buy release autonomy at the cost of performance, consistency, integration, and platform complexity.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-micro-frontends-and-team-boundaries-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "micro-frontends-and-team-boundaries",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate micro-frontends and team boundaries safely in an existing system?",
+      "answer": "Micro-frontends buy release autonomy at the cost of performance, consistency, integration, and platform complexity.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-micro-frontends-and-team-boundaries-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "micro-frontends-and-team-boundaries",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on micro-frontends and team boundaries?",
+      "answer": "Micro-frontends buy release autonomy at the cost of performance, consistency, integration, and platform complexity.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-micro-frontends-and-team-boundaries-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "micro-frontends-and-team-boundaries",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving micro-frontends and team boundaries. Walk through your reasoning.",
+      "answer": "Micro-frontends buy release autonomy at the cost of performance, consistency, integration, and platform complexity.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-security-and-browser-trust-boundaries-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-security-and-browser-trust-boundaries",
+        "mechanics"
+      ],
+      "question": "Explain how frontend security and browser trust boundaries works internally and which details matter in production.",
+      "answer": "XSS, CSRF, CSP, dependency risk, token handling, navigation, and untrusted content shape browser security.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-security-and-browser-trust-boundaries-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-security-and-browser-trust-boundaries",
+        "design"
+      ],
+      "question": "Design a production approach for frontend security and browser trust boundaries. What decisions must be explicit?",
+      "answer": "XSS, CSRF, CSP, dependency risk, token handling, navigation, and untrusted content shape browser security.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-security-and-browser-trust-boundaries-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-security-and-browser-trust-boundaries",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around frontend security and browser trust boundaries?",
+      "answer": "XSS, CSRF, CSP, dependency risk, token handling, navigation, and untrusted content shape browser security.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-security-and-browser-trust-boundaries-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-security-and-browser-trust-boundaries",
+        "debugging"
+      ],
+      "question": "A production issue appears around frontend security and browser trust boundaries. How do you investigate it?",
+      "answer": "XSS, CSRF, CSP, dependency risk, token handling, navigation, and untrusted content shape browser security.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-security-and-browser-trust-boundaries-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-security-and-browser-trust-boundaries",
+        "performance"
+      ],
+      "question": "How can frontend security and browser trust boundaries become a performance bottleneck, and how would you improve it?",
+      "answer": "XSS, CSRF, CSP, dependency risk, token handling, navigation, and untrusted content shape browser security.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-security-and-browser-trust-boundaries-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-security-and-browser-trust-boundaries",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using frontend security and browser trust boundaries?",
+      "answer": "XSS, CSRF, CSP, dependency risk, token handling, navigation, and untrusted content shape browser security.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-security-and-browser-trust-boundaries-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-security-and-browser-trust-boundaries",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around frontend security and browser trust boundaries?",
+      "answer": "XSS, CSRF, CSP, dependency risk, token handling, navigation, and untrusted content shape browser security.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-security-and-browser-trust-boundaries-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-security-and-browser-trust-boundaries",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate frontend security and browser trust boundaries safely in an existing system?",
+      "answer": "XSS, CSRF, CSP, dependency risk, token handling, navigation, and untrusted content shape browser security.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-security-and-browser-trust-boundaries-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-security-and-browser-trust-boundaries",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on frontend security and browser trust boundaries?",
+      "answer": "XSS, CSRF, CSP, dependency risk, token handling, navigation, and untrusted content shape browser security.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-security-and-browser-trust-boundaries-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-security-and-browser-trust-boundaries",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving frontend security and browser trust boundaries. Walk through your reasoning.",
+      "answer": "XSS, CSRF, CSP, dependency risk, token handling, navigation, and untrusted content shape browser security.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-testing-strategy-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-testing-strategy",
+        "mechanics"
+      ],
+      "question": "Explain how frontend testing strategy works internally and which details matter in production.",
+      "answer": "A balanced strategy validates pure logic, component contracts, integration behavior, accessibility, visuals, and critical journeys.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-testing-strategy-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-testing-strategy",
+        "design"
+      ],
+      "question": "Design a production approach for frontend testing strategy. What decisions must be explicit?",
+      "answer": "A balanced strategy validates pure logic, component contracts, integration behavior, accessibility, visuals, and critical journeys.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-testing-strategy-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-testing-strategy",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around frontend testing strategy?",
+      "answer": "A balanced strategy validates pure logic, component contracts, integration behavior, accessibility, visuals, and critical journeys.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-testing-strategy-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-testing-strategy",
+        "debugging"
+      ],
+      "question": "A production issue appears around frontend testing strategy. How do you investigate it?",
+      "answer": "A balanced strategy validates pure logic, component contracts, integration behavior, accessibility, visuals, and critical journeys.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-testing-strategy-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-testing-strategy",
+        "performance"
+      ],
+      "question": "How can frontend testing strategy become a performance bottleneck, and how would you improve it?",
+      "answer": "A balanced strategy validates pure logic, component contracts, integration behavior, accessibility, visuals, and critical journeys.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-testing-strategy-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-testing-strategy",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using frontend testing strategy?",
+      "answer": "A balanced strategy validates pure logic, component contracts, integration behavior, accessibility, visuals, and critical journeys.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-testing-strategy-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-testing-strategy",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around frontend testing strategy?",
+      "answer": "A balanced strategy validates pure logic, component contracts, integration behavior, accessibility, visuals, and critical journeys.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-testing-strategy-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-testing-strategy",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate frontend testing strategy safely in an existing system?",
+      "answer": "A balanced strategy validates pure logic, component contracts, integration behavior, accessibility, visuals, and critical journeys.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-testing-strategy-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-testing-strategy",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on frontend testing strategy?",
+      "answer": "A balanced strategy validates pure logic, component contracts, integration behavior, accessibility, visuals, and critical journeys.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-testing-strategy-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-testing-strategy",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving frontend testing strategy. Walk through your reasoning.",
+      "answer": "A balanced strategy validates pure logic, component contracts, integration behavior, accessibility, visuals, and critical journeys.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-observability-and-release-safety-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-observability-and-release-safety",
+        "mechanics"
+      ],
+      "question": "Explain how frontend observability and release safety works internally and which details matter in production.",
+      "answer": "Real-user monitoring, errors, traces, feature flags, source maps, and release correlation make client failures actionable.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-observability-and-release-safety-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "frontend-architecture",
+        "frontend-observability-and-release-safety",
+        "design"
+      ],
+      "question": "Design a production approach for frontend observability and release safety. What decisions must be explicit?",
+      "answer": "Real-user monitoring, errors, traces, feature flags, source maps, and release correlation make client failures actionable.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-observability-and-release-safety-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-observability-and-release-safety",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around frontend observability and release safety?",
+      "answer": "Real-user monitoring, errors, traces, feature flags, source maps, and release correlation make client failures actionable.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-observability-and-release-safety-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-observability-and-release-safety",
+        "debugging"
+      ],
+      "question": "A production issue appears around frontend observability and release safety. How do you investigate it?",
+      "answer": "Real-user monitoring, errors, traces, feature flags, source maps, and release correlation make client failures actionable.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "frontend-architecture-frontend-observability-and-release-safety-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "frontend-architecture",
+        "frontend-observability-and-release-safety",
+        "performance"
+      ],
+      "question": "How can frontend observability and release safety become a performance bottleneck, and how would you improve it?",
+      "answer": "Real-user monitoring, errors, traces, feature flags, source maps, and release correlation make client failures actionable.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

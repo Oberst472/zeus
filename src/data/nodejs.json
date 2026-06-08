@@ -1,0 +1,1197 @@
+{
+  "name": "Node.js",
+  "icon": "nodejs",
+  "order": 10,
+  "questions": [
+    {
+      "id": "event-loop",
+      "question": "What is the Node.js event loop?",
+      "answer": "The event loop is the mechanism that lets Node.js perform non-blocking I/O on a single thread by offloading operations to the system kernel and processing their callbacks in phases.\n\nMain phases (in order):\n\n1. **timers** — `setTimeout` / `setInterval` callbacks\n2. **pending callbacks** — deferred I/O callbacks\n3. **idle, prepare** — internal\n4. **poll** — retrieves new I/O events, executes I/O callbacks\n5. **check** — `setImmediate` callbacks\n6. **close callbacks** — e.g., `socket.on('close')`\n\nBetween every phase, the **microtask queue** is drained: `process.nextTick` first, then resolved Promise callbacks.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "nodejs"
+      ]
+    },
+    {
+      "id": "settimeout-vs-setimmediate",
+      "question": "Difference between setTimeout(fn, 0), setImmediate(fn), and process.nextTick(fn)?",
+      "answer": "- `process.nextTick(fn)` — runs **before** the event loop continues, after the current operation finishes. Highest priority.\n- `setImmediate(fn)` — runs in the **check** phase, after the poll phase.\n- `setTimeout(fn, 0)` — runs in the **timers** phase, with at least 1ms delay (clamped).\n\nInside an I/O callback `setImmediate` always fires before `setTimeout(fn, 0)`. Outside one, the order is non-deterministic.\n\n```js\nsetTimeout(() => console.log('timeout'), 0)\nsetImmediate(() => console.log('immediate'))\nprocess.nextTick(() => console.log('nextTick'))\n// nextTick → timeout|immediate (order varies) → ...\n```",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "nodejs"
+      ]
+    },
+    {
+      "id": "streams",
+      "question": "What are Node.js streams and what types exist?",
+      "answer": "Streams are abstractions for processing data **piece by piece** instead of loading it all in memory.\n\nFour types:\n\n| Type | Example |\n|---|---|\n| **Readable** | `fs.createReadStream`, HTTP request |\n| **Writable** | `fs.createWriteStream`, HTTP response |\n| **Duplex** | TCP socket |\n| **Transform** | `zlib.createGzip`, crypto cipher |\n\nUse `pipeline()` from `node:stream` over `.pipe()` — it handles cleanup and errors automatically:\n\n```js\nimport { pipeline } from 'node:stream/promises'\nimport { createReadStream, createWriteStream } from 'node:fs'\nimport { createGzip } from 'node:zlib'\n\nawait pipeline(\n  createReadStream('in.txt'),\n  createGzip(),\n  createWriteStream('in.txt.gz')\n)\n```",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "nodejs"
+      ]
+    },
+    {
+      "id": "cluster-vs-worker-threads",
+      "question": "Cluster vs Worker Threads — when to use which?",
+      "answer": "**Cluster** — forks multiple Node **processes** sharing a server port. Each has its own memory and event loop. Use it for **I/O-bound** workloads (HTTP servers) to use all CPU cores.\n\n**Worker Threads** — real OS threads inside one process, sharing memory via `SharedArrayBuffer`. Use it for **CPU-bound** work (hashing, image processing, parsing) so the main event loop stays responsive.\n\nRule of thumb: cluster for scaling a web server horizontally on one machine; worker threads for offloading heavy computation.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "nodejs"
+      ]
+    },
+    {
+      "id": "require-vs-import",
+      "question": "CommonJS require vs ES modules import?",
+      "answer": "- `require` is **synchronous** and dynamic — you can `require()` anywhere.\n- `import` is **static**, hoisted, and analyzed at parse time → enables tree-shaking.\n- ESM files use `.mjs` or `\"type\": \"module\"` in package.json.\n- ESM has `import.meta.url` instead of `__dirname`/`__filename`.\n- You can `await import()` for dynamic loading in ESM.\n\nInterop: ESM can import CJS, but CJS importing ESM requires dynamic `import()`.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "nodejs"
+      ]
+    },
+    {
+      "id": "nodejs-the-node-js-event-loop-and-libuv-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "the-node-js-event-loop-and-libuv",
+        "mechanics"
+      ],
+      "question": "Explain how the Node.js event loop and libuv works internally and which details matter in production.",
+      "answer": "Node coordinates non-blocking I/O through event-loop phases and libuv; blocking CPU work and callback starvation damage tail latency.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-the-node-js-event-loop-and-libuv-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "the-node-js-event-loop-and-libuv",
+        "design"
+      ],
+      "question": "Design a production approach for the Node.js event loop and libuv. What decisions must be explicit?",
+      "answer": "Node coordinates non-blocking I/O through event-loop phases and libuv; blocking CPU work and callback starvation damage tail latency.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-the-node-js-event-loop-and-libuv-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "the-node-js-event-loop-and-libuv",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around the Node.js event loop and libuv?",
+      "answer": "Node coordinates non-blocking I/O through event-loop phases and libuv; blocking CPU work and callback starvation damage tail latency.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-the-node-js-event-loop-and-libuv-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "the-node-js-event-loop-and-libuv",
+        "debugging"
+      ],
+      "question": "A production issue appears around the Node.js event loop and libuv. How do you investigate it?",
+      "answer": "Node coordinates non-blocking I/O through event-loop phases and libuv; blocking CPU work and callback starvation damage tail latency.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-the-node-js-event-loop-and-libuv-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "the-node-js-event-loop-and-libuv",
+        "performance"
+      ],
+      "question": "How can the Node.js event loop and libuv become a performance bottleneck, and how would you improve it?",
+      "answer": "Node coordinates non-blocking I/O through event-loop phases and libuv; blocking CPU work and callback starvation damage tail latency.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-the-node-js-event-loop-and-libuv-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "the-node-js-event-loop-and-libuv",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using the Node.js event loop and libuv?",
+      "answer": "Node coordinates non-blocking I/O through event-loop phases and libuv; blocking CPU work and callback starvation damage tail latency.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-the-node-js-event-loop-and-libuv-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "the-node-js-event-loop-and-libuv",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around the Node.js event loop and libuv?",
+      "answer": "Node coordinates non-blocking I/O through event-loop phases and libuv; blocking CPU work and callback starvation damage tail latency.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-the-node-js-event-loop-and-libuv-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "the-node-js-event-loop-and-libuv",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate the Node.js event loop and libuv safely in an existing system?",
+      "answer": "Node coordinates non-blocking I/O through event-loop phases and libuv; blocking CPU work and callback starvation damage tail latency.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-the-node-js-event-loop-and-libuv-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "the-node-js-event-loop-and-libuv",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on the Node.js event loop and libuv?",
+      "answer": "Node coordinates non-blocking I/O through event-loop phases and libuv; blocking CPU work and callback starvation damage tail latency.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-the-node-js-event-loop-and-libuv-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "the-node-js-event-loop-and-libuv",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving the Node.js event loop and libuv. Walk through your reasoning.",
+      "answer": "Node coordinates non-blocking I/O through event-loop phases and libuv; blocking CPU work and callback starvation damage tail latency.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-streams-and-backpressure-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "streams-and-backpressure",
+        "mechanics"
+      ],
+      "question": "Explain how streams and backpressure works internally and which details matter in production.",
+      "answer": "Streams process data incrementally; backpressure, error propagation, cleanup, and pipeline composition prevent memory growth and corruption.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-streams-and-backpressure-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "streams-and-backpressure",
+        "design"
+      ],
+      "question": "Design a production approach for streams and backpressure. What decisions must be explicit?",
+      "answer": "Streams process data incrementally; backpressure, error propagation, cleanup, and pipeline composition prevent memory growth and corruption.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-streams-and-backpressure-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "streams-and-backpressure",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around streams and backpressure?",
+      "answer": "Streams process data incrementally; backpressure, error propagation, cleanup, and pipeline composition prevent memory growth and corruption.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-streams-and-backpressure-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "streams-and-backpressure",
+        "debugging"
+      ],
+      "question": "A production issue appears around streams and backpressure. How do you investigate it?",
+      "answer": "Streams process data incrementally; backpressure, error propagation, cleanup, and pipeline composition prevent memory growth and corruption.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-streams-and-backpressure-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "streams-and-backpressure",
+        "performance"
+      ],
+      "question": "How can streams and backpressure become a performance bottleneck, and how would you improve it?",
+      "answer": "Streams process data incrementally; backpressure, error propagation, cleanup, and pipeline composition prevent memory growth and corruption.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-streams-and-backpressure-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "streams-and-backpressure",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using streams and backpressure?",
+      "answer": "Streams process data incrementally; backpressure, error propagation, cleanup, and pipeline composition prevent memory growth and corruption.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-streams-and-backpressure-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "streams-and-backpressure",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around streams and backpressure?",
+      "answer": "Streams process data incrementally; backpressure, error propagation, cleanup, and pipeline composition prevent memory growth and corruption.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-streams-and-backpressure-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "streams-and-backpressure",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate streams and backpressure safely in an existing system?",
+      "answer": "Streams process data incrementally; backpressure, error propagation, cleanup, and pipeline composition prevent memory growth and corruption.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-streams-and-backpressure-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "streams-and-backpressure",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on streams and backpressure?",
+      "answer": "Streams process data incrementally; backpressure, error propagation, cleanup, and pipeline composition prevent memory growth and corruption.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-streams-and-backpressure-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "streams-and-backpressure",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving streams and backpressure. Walk through your reasoning.",
+      "answer": "Streams process data incrementally; backpressure, error propagation, cleanup, and pipeline composition prevent memory growth and corruption.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-worker-threads-and-process-scaling-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "worker-threads-and-process-scaling",
+        "mechanics"
+      ],
+      "question": "Explain how worker threads and process scaling works internally and which details matter in production.",
+      "answer": "Workers help CPU-bound tasks while processes isolate failures; serialization, shared memory, pools, and operational cost guide the choice.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-worker-threads-and-process-scaling-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "worker-threads-and-process-scaling",
+        "design"
+      ],
+      "question": "Design a production approach for worker threads and process scaling. What decisions must be explicit?",
+      "answer": "Workers help CPU-bound tasks while processes isolate failures; serialization, shared memory, pools, and operational cost guide the choice.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-worker-threads-and-process-scaling-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "worker-threads-and-process-scaling",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around worker threads and process scaling?",
+      "answer": "Workers help CPU-bound tasks while processes isolate failures; serialization, shared memory, pools, and operational cost guide the choice.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-worker-threads-and-process-scaling-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "worker-threads-and-process-scaling",
+        "debugging"
+      ],
+      "question": "A production issue appears around worker threads and process scaling. How do you investigate it?",
+      "answer": "Workers help CPU-bound tasks while processes isolate failures; serialization, shared memory, pools, and operational cost guide the choice.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-worker-threads-and-process-scaling-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "worker-threads-and-process-scaling",
+        "performance"
+      ],
+      "question": "How can worker threads and process scaling become a performance bottleneck, and how would you improve it?",
+      "answer": "Workers help CPU-bound tasks while processes isolate failures; serialization, shared memory, pools, and operational cost guide the choice.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-worker-threads-and-process-scaling-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "worker-threads-and-process-scaling",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using worker threads and process scaling?",
+      "answer": "Workers help CPU-bound tasks while processes isolate failures; serialization, shared memory, pools, and operational cost guide the choice.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-worker-threads-and-process-scaling-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "worker-threads-and-process-scaling",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around worker threads and process scaling?",
+      "answer": "Workers help CPU-bound tasks while processes isolate failures; serialization, shared memory, pools, and operational cost guide the choice.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-worker-threads-and-process-scaling-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "worker-threads-and-process-scaling",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate worker threads and process scaling safely in an existing system?",
+      "answer": "Workers help CPU-bound tasks while processes isolate failures; serialization, shared memory, pools, and operational cost guide the choice.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-worker-threads-and-process-scaling-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "worker-threads-and-process-scaling",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on worker threads and process scaling?",
+      "answer": "Workers help CPU-bound tasks while processes isolate failures; serialization, shared memory, pools, and operational cost guide the choice.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-worker-threads-and-process-scaling-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "worker-threads-and-process-scaling",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving worker threads and process scaling. Walk through your reasoning.",
+      "answer": "Workers help CPU-bound tasks while processes isolate failures; serialization, shared memory, pools, and operational cost guide the choice.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-asynclocalstorage-and-request-context-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "asynclocalstorage-and-request-context",
+        "mechanics"
+      ],
+      "question": "Explain how AsyncLocalStorage and request context works internally and which details matter in production.",
+      "answer": "Async context can propagate tracing and request metadata, but lifecycle mistakes and unsupported boundaries can lose or leak context.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-asynclocalstorage-and-request-context-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "asynclocalstorage-and-request-context",
+        "design"
+      ],
+      "question": "Design a production approach for AsyncLocalStorage and request context. What decisions must be explicit?",
+      "answer": "Async context can propagate tracing and request metadata, but lifecycle mistakes and unsupported boundaries can lose or leak context.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-asynclocalstorage-and-request-context-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "asynclocalstorage-and-request-context",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around AsyncLocalStorage and request context?",
+      "answer": "Async context can propagate tracing and request metadata, but lifecycle mistakes and unsupported boundaries can lose or leak context.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-asynclocalstorage-and-request-context-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "asynclocalstorage-and-request-context",
+        "debugging"
+      ],
+      "question": "A production issue appears around AsyncLocalStorage and request context. How do you investigate it?",
+      "answer": "Async context can propagate tracing and request metadata, but lifecycle mistakes and unsupported boundaries can lose or leak context.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-asynclocalstorage-and-request-context-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "asynclocalstorage-and-request-context",
+        "performance"
+      ],
+      "question": "How can AsyncLocalStorage and request context become a performance bottleneck, and how would you improve it?",
+      "answer": "Async context can propagate tracing and request metadata, but lifecycle mistakes and unsupported boundaries can lose or leak context.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-asynclocalstorage-and-request-context-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "asynclocalstorage-and-request-context",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using AsyncLocalStorage and request context?",
+      "answer": "Async context can propagate tracing and request metadata, but lifecycle mistakes and unsupported boundaries can lose or leak context.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-asynclocalstorage-and-request-context-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "asynclocalstorage-and-request-context",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around AsyncLocalStorage and request context?",
+      "answer": "Async context can propagate tracing and request metadata, but lifecycle mistakes and unsupported boundaries can lose or leak context.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-asynclocalstorage-and-request-context-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "asynclocalstorage-and-request-context",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate AsyncLocalStorage and request context safely in an existing system?",
+      "answer": "Async context can propagate tracing and request metadata, but lifecycle mistakes and unsupported boundaries can lose or leak context.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-asynclocalstorage-and-request-context-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "asynclocalstorage-and-request-context",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on AsyncLocalStorage and request context?",
+      "answer": "Async context can propagate tracing and request metadata, but lifecycle mistakes and unsupported boundaries can lose or leak context.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-asynclocalstorage-and-request-context-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "asynclocalstorage-and-request-context",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving AsyncLocalStorage and request context. Walk through your reasoning.",
+      "answer": "Async context can propagate tracing and request metadata, but lifecycle mistakes and unsupported boundaries can lose or leak context.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-memory-and-garbage-collection-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "node-js-memory-and-garbage-collection",
+        "mechanics"
+      ],
+      "question": "Explain how Node.js memory and garbage collection works internally and which details matter in production.",
+      "answer": "Heap limits, buffers, native memory, retained objects, and GC pauses require different diagnostics and mitigations.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-memory-and-garbage-collection-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "node-js-memory-and-garbage-collection",
+        "design"
+      ],
+      "question": "Design a production approach for Node.js memory and garbage collection. What decisions must be explicit?",
+      "answer": "Heap limits, buffers, native memory, retained objects, and GC pauses require different diagnostics and mitigations.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-memory-and-garbage-collection-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-memory-and-garbage-collection",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Node.js memory and garbage collection?",
+      "answer": "Heap limits, buffers, native memory, retained objects, and GC pauses require different diagnostics and mitigations.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-memory-and-garbage-collection-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-memory-and-garbage-collection",
+        "debugging"
+      ],
+      "question": "A production issue appears around Node.js memory and garbage collection. How do you investigate it?",
+      "answer": "Heap limits, buffers, native memory, retained objects, and GC pauses require different diagnostics and mitigations.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-memory-and-garbage-collection-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-memory-and-garbage-collection",
+        "performance"
+      ],
+      "question": "How can Node.js memory and garbage collection become a performance bottleneck, and how would you improve it?",
+      "answer": "Heap limits, buffers, native memory, retained objects, and GC pauses require different diagnostics and mitigations.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-memory-and-garbage-collection-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-memory-and-garbage-collection",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Node.js memory and garbage collection?",
+      "answer": "Heap limits, buffers, native memory, retained objects, and GC pauses require different diagnostics and mitigations.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-memory-and-garbage-collection-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-memory-and-garbage-collection",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Node.js memory and garbage collection?",
+      "answer": "Heap limits, buffers, native memory, retained objects, and GC pauses require different diagnostics and mitigations.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-memory-and-garbage-collection-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-memory-and-garbage-collection",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Node.js memory and garbage collection safely in an existing system?",
+      "answer": "Heap limits, buffers, native memory, retained objects, and GC pauses require different diagnostics and mitigations.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-memory-and-garbage-collection-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "node-js-memory-and-garbage-collection",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Node.js memory and garbage collection?",
+      "answer": "Heap limits, buffers, native memory, retained objects, and GC pauses require different diagnostics and mitigations.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-memory-and-garbage-collection-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-memory-and-garbage-collection",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Node.js memory and garbage collection. Walk through your reasoning.",
+      "answer": "Heap limits, buffers, native memory, retained objects, and GC pauses require different diagnostics and mitigations.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-http-servers-timeouts-and-connection-management-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "http-servers-timeouts-and-connection-management",
+        "mechanics"
+      ],
+      "question": "Explain how HTTP servers, timeouts, and connection management works internally and which details matter in production.",
+      "answer": "Production HTTP requires explicit timeouts, keep-alive policy, body limits, graceful shutdown, and overload protection.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-http-servers-timeouts-and-connection-management-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "http-servers-timeouts-and-connection-management",
+        "design"
+      ],
+      "question": "Design a production approach for HTTP servers, timeouts, and connection management. What decisions must be explicit?",
+      "answer": "Production HTTP requires explicit timeouts, keep-alive policy, body limits, graceful shutdown, and overload protection.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-http-servers-timeouts-and-connection-management-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "http-servers-timeouts-and-connection-management",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around HTTP servers, timeouts, and connection management?",
+      "answer": "Production HTTP requires explicit timeouts, keep-alive policy, body limits, graceful shutdown, and overload protection.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-http-servers-timeouts-and-connection-management-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "http-servers-timeouts-and-connection-management",
+        "debugging"
+      ],
+      "question": "A production issue appears around HTTP servers, timeouts, and connection management. How do you investigate it?",
+      "answer": "Production HTTP requires explicit timeouts, keep-alive policy, body limits, graceful shutdown, and overload protection.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-http-servers-timeouts-and-connection-management-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "http-servers-timeouts-and-connection-management",
+        "performance"
+      ],
+      "question": "How can HTTP servers, timeouts, and connection management become a performance bottleneck, and how would you improve it?",
+      "answer": "Production HTTP requires explicit timeouts, keep-alive policy, body limits, graceful shutdown, and overload protection.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-http-servers-timeouts-and-connection-management-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "http-servers-timeouts-and-connection-management",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using HTTP servers, timeouts, and connection management?",
+      "answer": "Production HTTP requires explicit timeouts, keep-alive policy, body limits, graceful shutdown, and overload protection.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-http-servers-timeouts-and-connection-management-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "http-servers-timeouts-and-connection-management",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around HTTP servers, timeouts, and connection management?",
+      "answer": "Production HTTP requires explicit timeouts, keep-alive policy, body limits, graceful shutdown, and overload protection.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-http-servers-timeouts-and-connection-management-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "http-servers-timeouts-and-connection-management",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate HTTP servers, timeouts, and connection management safely in an existing system?",
+      "answer": "Production HTTP requires explicit timeouts, keep-alive policy, body limits, graceful shutdown, and overload protection.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-http-servers-timeouts-and-connection-management-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "http-servers-timeouts-and-connection-management",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on HTTP servers, timeouts, and connection management?",
+      "answer": "Production HTTP requires explicit timeouts, keep-alive policy, body limits, graceful shutdown, and overload protection.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-http-servers-timeouts-and-connection-management-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "http-servers-timeouts-and-connection-management",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving HTTP servers, timeouts, and connection management. Walk through your reasoning.",
+      "answer": "Production HTTP requires explicit timeouts, keep-alive policy, body limits, graceful shutdown, and overload protection.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-modules-packages-and-dependency-loading-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "modules-packages-and-dependency-loading",
+        "mechanics"
+      ],
+      "question": "Explain how modules, packages, and dependency loading works internally and which details matter in production.",
+      "answer": "ESM and CommonJS differ in resolution and execution; exports, cycles, dual packages, and side effects affect compatibility.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-modules-packages-and-dependency-loading-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "modules-packages-and-dependency-loading",
+        "design"
+      ],
+      "question": "Design a production approach for modules, packages, and dependency loading. What decisions must be explicit?",
+      "answer": "ESM and CommonJS differ in resolution and execution; exports, cycles, dual packages, and side effects affect compatibility.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-modules-packages-and-dependency-loading-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "modules-packages-and-dependency-loading",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around modules, packages, and dependency loading?",
+      "answer": "ESM and CommonJS differ in resolution and execution; exports, cycles, dual packages, and side effects affect compatibility.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-modules-packages-and-dependency-loading-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "modules-packages-and-dependency-loading",
+        "debugging"
+      ],
+      "question": "A production issue appears around modules, packages, and dependency loading. How do you investigate it?",
+      "answer": "ESM and CommonJS differ in resolution and execution; exports, cycles, dual packages, and side effects affect compatibility.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-modules-packages-and-dependency-loading-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "modules-packages-and-dependency-loading",
+        "performance"
+      ],
+      "question": "How can modules, packages, and dependency loading become a performance bottleneck, and how would you improve it?",
+      "answer": "ESM and CommonJS differ in resolution and execution; exports, cycles, dual packages, and side effects affect compatibility.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-modules-packages-and-dependency-loading-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "modules-packages-and-dependency-loading",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using modules, packages, and dependency loading?",
+      "answer": "ESM and CommonJS differ in resolution and execution; exports, cycles, dual packages, and side effects affect compatibility.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-modules-packages-and-dependency-loading-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "modules-packages-and-dependency-loading",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around modules, packages, and dependency loading?",
+      "answer": "ESM and CommonJS differ in resolution and execution; exports, cycles, dual packages, and side effects affect compatibility.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-modules-packages-and-dependency-loading-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "modules-packages-and-dependency-loading",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate modules, packages, and dependency loading safely in an existing system?",
+      "answer": "ESM and CommonJS differ in resolution and execution; exports, cycles, dual packages, and side effects affect compatibility.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-modules-packages-and-dependency-loading-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "modules-packages-and-dependency-loading",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on modules, packages, and dependency loading?",
+      "answer": "ESM and CommonJS differ in resolution and execution; exports, cycles, dual packages, and side effects affect compatibility.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-modules-packages-and-dependency-loading-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "modules-packages-and-dependency-loading",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving modules, packages, and dependency loading. Walk through your reasoning.",
+      "answer": "ESM and CommonJS differ in resolution and execution; exports, cycles, dual packages, and side effects affect compatibility.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-errors-cancellation-and-graceful-shutdown-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "errors-cancellation-and-graceful-shutdown",
+        "mechanics"
+      ],
+      "question": "Explain how errors, cancellation, and graceful shutdown works internally and which details matter in production.",
+      "answer": "Errors need ownership; cancellation and shutdown must stop new work, drain in-flight operations, and release resources predictably.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-errors-cancellation-and-graceful-shutdown-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "errors-cancellation-and-graceful-shutdown",
+        "design"
+      ],
+      "question": "Design a production approach for errors, cancellation, and graceful shutdown. What decisions must be explicit?",
+      "answer": "Errors need ownership; cancellation and shutdown must stop new work, drain in-flight operations, and release resources predictably.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-errors-cancellation-and-graceful-shutdown-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "errors-cancellation-and-graceful-shutdown",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around errors, cancellation, and graceful shutdown?",
+      "answer": "Errors need ownership; cancellation and shutdown must stop new work, drain in-flight operations, and release resources predictably.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-errors-cancellation-and-graceful-shutdown-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "errors-cancellation-and-graceful-shutdown",
+        "debugging"
+      ],
+      "question": "A production issue appears around errors, cancellation, and graceful shutdown. How do you investigate it?",
+      "answer": "Errors need ownership; cancellation and shutdown must stop new work, drain in-flight operations, and release resources predictably.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-errors-cancellation-and-graceful-shutdown-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "errors-cancellation-and-graceful-shutdown",
+        "performance"
+      ],
+      "question": "How can errors, cancellation, and graceful shutdown become a performance bottleneck, and how would you improve it?",
+      "answer": "Errors need ownership; cancellation and shutdown must stop new work, drain in-flight operations, and release resources predictably.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-errors-cancellation-and-graceful-shutdown-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "errors-cancellation-and-graceful-shutdown",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using errors, cancellation, and graceful shutdown?",
+      "answer": "Errors need ownership; cancellation and shutdown must stop new work, drain in-flight operations, and release resources predictably.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-errors-cancellation-and-graceful-shutdown-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "errors-cancellation-and-graceful-shutdown",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around errors, cancellation, and graceful shutdown?",
+      "answer": "Errors need ownership; cancellation and shutdown must stop new work, drain in-flight operations, and release resources predictably.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-errors-cancellation-and-graceful-shutdown-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "errors-cancellation-and-graceful-shutdown",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate errors, cancellation, and graceful shutdown safely in an existing system?",
+      "answer": "Errors need ownership; cancellation and shutdown must stop new work, drain in-flight operations, and release resources predictably.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-errors-cancellation-and-graceful-shutdown-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "errors-cancellation-and-graceful-shutdown",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on errors, cancellation, and graceful shutdown?",
+      "answer": "Errors need ownership; cancellation and shutdown must stop new work, drain in-flight operations, and release resources predictably.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-errors-cancellation-and-graceful-shutdown-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "errors-cancellation-and-graceful-shutdown",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving errors, cancellation, and graceful shutdown. Walk through your reasoning.",
+      "answer": "Errors need ownership; cancellation and shutdown must stop new work, drain in-flight operations, and release resources predictably.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-diagnostics-and-observability-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "node-js-diagnostics-and-observability",
+        "mechanics"
+      ],
+      "question": "Explain how Node.js diagnostics and observability works internally and which details matter in production.",
+      "answer": "Profiles, heap snapshots, event-loop delay, async traces, metrics, and structured logs help distinguish CPU, memory, and I/O failures.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-diagnostics-and-observability-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "node-js-diagnostics-and-observability",
+        "design"
+      ],
+      "question": "Design a production approach for Node.js diagnostics and observability. What decisions must be explicit?",
+      "answer": "Profiles, heap snapshots, event-loop delay, async traces, metrics, and structured logs help distinguish CPU, memory, and I/O failures.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-diagnostics-and-observability-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-diagnostics-and-observability",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Node.js diagnostics and observability?",
+      "answer": "Profiles, heap snapshots, event-loop delay, async traces, metrics, and structured logs help distinguish CPU, memory, and I/O failures.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-diagnostics-and-observability-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-diagnostics-and-observability",
+        "debugging"
+      ],
+      "question": "A production issue appears around Node.js diagnostics and observability. How do you investigate it?",
+      "answer": "Profiles, heap snapshots, event-loop delay, async traces, metrics, and structured logs help distinguish CPU, memory, and I/O failures.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-diagnostics-and-observability-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-diagnostics-and-observability",
+        "performance"
+      ],
+      "question": "How can Node.js diagnostics and observability become a performance bottleneck, and how would you improve it?",
+      "answer": "Profiles, heap snapshots, event-loop delay, async traces, metrics, and structured logs help distinguish CPU, memory, and I/O failures.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-diagnostics-and-observability-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-diagnostics-and-observability",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Node.js diagnostics and observability?",
+      "answer": "Profiles, heap snapshots, event-loop delay, async traces, metrics, and structured logs help distinguish CPU, memory, and I/O failures.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-diagnostics-and-observability-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-diagnostics-and-observability",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Node.js diagnostics and observability?",
+      "answer": "Profiles, heap snapshots, event-loop delay, async traces, metrics, and structured logs help distinguish CPU, memory, and I/O failures.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-diagnostics-and-observability-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-diagnostics-and-observability",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Node.js diagnostics and observability safely in an existing system?",
+      "answer": "Profiles, heap snapshots, event-loop delay, async traces, metrics, and structured logs help distinguish CPU, memory, and I/O failures.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-diagnostics-and-observability-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "node-js-diagnostics-and-observability",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Node.js diagnostics and observability?",
+      "answer": "Profiles, heap snapshots, event-loop delay, async traces, metrics, and structured logs help distinguish CPU, memory, and I/O failures.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-node-js-diagnostics-and-observability-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "node-js-diagnostics-and-observability",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Node.js diagnostics and observability. Walk through your reasoning.",
+      "answer": "Profiles, heap snapshots, event-loop delay, async traces, metrics, and structured logs help distinguish CPU, memory, and I/O failures.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-secure-node-js-service-design-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "secure-node-js-service-design",
+        "mechanics"
+      ],
+      "question": "Explain how secure Node.js service design works internally and which details matter in production.",
+      "answer": "Input limits, dependency risk, secrets, unsafe APIs, authorization, and denial-of-service resistance belong in the service design.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-secure-node-js-service-design-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "nodejs",
+        "secure-node-js-service-design",
+        "design"
+      ],
+      "question": "Design a production approach for secure Node.js service design. What decisions must be explicit?",
+      "answer": "Input limits, dependency risk, secrets, unsafe APIs, authorization, and denial-of-service resistance belong in the service design.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-secure-node-js-service-design-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "secure-node-js-service-design",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around secure Node.js service design?",
+      "answer": "Input limits, dependency risk, secrets, unsafe APIs, authorization, and denial-of-service resistance belong in the service design.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-secure-node-js-service-design-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "secure-node-js-service-design",
+        "debugging"
+      ],
+      "question": "A production issue appears around secure Node.js service design. How do you investigate it?",
+      "answer": "Input limits, dependency risk, secrets, unsafe APIs, authorization, and denial-of-service resistance belong in the service design.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "nodejs-secure-node-js-service-design-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "nodejs",
+        "secure-node-js-service-design",
+        "performance"
+      ],
+      "question": "How can secure Node.js service design become a performance bottleneck, and how would you improve it?",
+      "answer": "Input limits, dependency risk, secrets, unsafe APIs, authorization, and denial-of-service resistance belong in the service design.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

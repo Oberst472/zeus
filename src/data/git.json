@@ -1,0 +1,1197 @@
+{
+  "name": "Git",
+  "icon": "git",
+  "order": 30,
+  "questions": [
+    {
+      "id": "merge-vs-rebase",
+      "question": "merge vs rebase — when to use each?",
+      "answer": "- **Merge** preserves history exactly as it happened, adding a merge commit. Use on shared/public branches where rewriting history would break others.\n- **Rebase** replays your commits on top of another branch, producing a linear history. Use on your **local** feature branch before opening a PR to keep history clean.\n\nGolden rule: **never rebase commits that others have pulled.**",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "git"
+      ]
+    },
+    {
+      "id": "reset-vs-revert",
+      "question": "git reset vs git revert?",
+      "answer": "- `git revert <sha>` — creates a **new commit** that undoes a previous one. Safe on shared branches. History is preserved.\n- `git reset <sha>` — **moves** the branch pointer backwards. Rewrites history.\n  - `--soft` — keeps changes staged\n  - `--mixed` (default) — keeps changes unstaged\n  - `--hard` — discards changes (destructive!)\n\nOn a pushed branch, always `revert`. On local-only work, `reset` is fine.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "git"
+      ]
+    },
+    {
+      "id": "stash",
+      "question": "What does git stash do?",
+      "answer": "Saves your dirty working directory + index to a stack so you can switch branches with a clean state, then come back.\n\n```bash\ngit stash push -m \"wip: form validation\"\ngit checkout main\n# ... do something ...\ngit checkout feature\ngit stash pop          # apply and remove top stash\ngit stash list          # show stack\ngit stash apply stash@{2}  # apply without removing\n```\n\nUse `--include-untracked` (`-u`) to also stash new files.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "git"
+      ]
+    },
+    {
+      "id": "cherry-pick",
+      "question": "What is cherry-pick used for?",
+      "answer": "`git cherry-pick <sha>` takes a single commit from any branch and applies it on top of the current branch as a **new commit** (with a different SHA).\n\nTypical use: backporting a bugfix from `main` into a release branch without merging unrelated changes.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "git"
+      ]
+    },
+    {
+      "id": "ff-vs-no-ff",
+      "question": "Fast-forward merge vs --no-ff?",
+      "answer": "- **Fast-forward** (default when possible) — the target branch pointer just moves forward to the source branch tip. No merge commit, history stays linear.\n- `git merge --no-ff` — always creates a merge commit, even when fast-forward is possible. Preserves the fact that a feature branch existed.\n\nMany teams enforce `--no-ff` for PR merges so each feature shows up as a clear group in `git log --graph`.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "git"
+      ]
+    },
+    {
+      "id": "git-git-objects-refs-and-the-commit-graph-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "git",
+        "git-objects-refs-and-the-commit-graph",
+        "mechanics"
+      ],
+      "question": "Explain how Git objects, refs, and the commit graph works internally and which details matter in production.",
+      "answer": "Git stores content-addressed blobs, trees, commits, and annotated tags; refs name commits and the graph drives history operations.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-git-objects-refs-and-the-commit-graph-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "git",
+        "git-objects-refs-and-the-commit-graph",
+        "design"
+      ],
+      "question": "Design a production approach for Git objects, refs, and the commit graph. What decisions must be explicit?",
+      "answer": "Git stores content-addressed blobs, trees, commits, and annotated tags; refs name commits and the graph drives history operations.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-git-objects-refs-and-the-commit-graph-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "git",
+        "git-objects-refs-and-the-commit-graph",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Git objects, refs, and the commit graph?",
+      "answer": "Git stores content-addressed blobs, trees, commits, and annotated tags; refs name commits and the graph drives history operations.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-git-objects-refs-and-the-commit-graph-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "git",
+        "git-objects-refs-and-the-commit-graph",
+        "debugging"
+      ],
+      "question": "A production issue appears around Git objects, refs, and the commit graph. How do you investigate it?",
+      "answer": "Git stores content-addressed blobs, trees, commits, and annotated tags; refs name commits and the graph drives history operations.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-git-objects-refs-and-the-commit-graph-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "git",
+        "git-objects-refs-and-the-commit-graph",
+        "performance"
+      ],
+      "question": "How can Git objects, refs, and the commit graph become a performance bottleneck, and how would you improve it?",
+      "answer": "Git stores content-addressed blobs, trees, commits, and annotated tags; refs name commits and the graph drives history operations.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-git-objects-refs-and-the-commit-graph-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "git",
+        "git-objects-refs-and-the-commit-graph",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Git objects, refs, and the commit graph?",
+      "answer": "Git stores content-addressed blobs, trees, commits, and annotated tags; refs name commits and the graph drives history operations.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-git-objects-refs-and-the-commit-graph-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "git",
+        "git-objects-refs-and-the-commit-graph",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Git objects, refs, and the commit graph?",
+      "answer": "Git stores content-addressed blobs, trees, commits, and annotated tags; refs name commits and the graph drives history operations.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-git-objects-refs-and-the-commit-graph-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "git",
+        "git-objects-refs-and-the-commit-graph",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Git objects, refs, and the commit graph safely in an existing system?",
+      "answer": "Git stores content-addressed blobs, trees, commits, and annotated tags; refs name commits and the graph drives history operations.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-git-objects-refs-and-the-commit-graph-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "git",
+        "git-objects-refs-and-the-commit-graph",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Git objects, refs, and the commit graph?",
+      "answer": "Git stores content-addressed blobs, trees, commits, and annotated tags; refs name commits and the graph drives history operations.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-git-objects-refs-and-the-commit-graph-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "git",
+        "git-objects-refs-and-the-commit-graph",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Git objects, refs, and the commit graph. Walk through your reasoning.",
+      "answer": "Git stores content-addressed blobs, trees, commits, and annotated tags; refs name commits and the graph drives history operations.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-merge-rebase-and-history-strategy-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "git",
+        "merge-rebase-and-history-strategy",
+        "mechanics"
+      ],
+      "question": "Explain how merge, rebase, and history strategy works internally and which details matter in production.",
+      "answer": "Merge preserves topology while rebase rewrites commits; the right policy balances collaboration, auditability, and readability.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-merge-rebase-and-history-strategy-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "git",
+        "merge-rebase-and-history-strategy",
+        "design"
+      ],
+      "question": "Design a production approach for merge, rebase, and history strategy. What decisions must be explicit?",
+      "answer": "Merge preserves topology while rebase rewrites commits; the right policy balances collaboration, auditability, and readability.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-merge-rebase-and-history-strategy-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "git",
+        "merge-rebase-and-history-strategy",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around merge, rebase, and history strategy?",
+      "answer": "Merge preserves topology while rebase rewrites commits; the right policy balances collaboration, auditability, and readability.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-merge-rebase-and-history-strategy-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "git",
+        "merge-rebase-and-history-strategy",
+        "debugging"
+      ],
+      "question": "A production issue appears around merge, rebase, and history strategy. How do you investigate it?",
+      "answer": "Merge preserves topology while rebase rewrites commits; the right policy balances collaboration, auditability, and readability.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-merge-rebase-and-history-strategy-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "git",
+        "merge-rebase-and-history-strategy",
+        "performance"
+      ],
+      "question": "How can merge, rebase, and history strategy become a performance bottleneck, and how would you improve it?",
+      "answer": "Merge preserves topology while rebase rewrites commits; the right policy balances collaboration, auditability, and readability.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-merge-rebase-and-history-strategy-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "git",
+        "merge-rebase-and-history-strategy",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using merge, rebase, and history strategy?",
+      "answer": "Merge preserves topology while rebase rewrites commits; the right policy balances collaboration, auditability, and readability.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-merge-rebase-and-history-strategy-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "git",
+        "merge-rebase-and-history-strategy",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around merge, rebase, and history strategy?",
+      "answer": "Merge preserves topology while rebase rewrites commits; the right policy balances collaboration, auditability, and readability.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-merge-rebase-and-history-strategy-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "git",
+        "merge-rebase-and-history-strategy",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate merge, rebase, and history strategy safely in an existing system?",
+      "answer": "Merge preserves topology while rebase rewrites commits; the right policy balances collaboration, auditability, and readability.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-merge-rebase-and-history-strategy-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "git",
+        "merge-rebase-and-history-strategy",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on merge, rebase, and history strategy?",
+      "answer": "Merge preserves topology while rebase rewrites commits; the right policy balances collaboration, auditability, and readability.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-merge-rebase-and-history-strategy-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "git",
+        "merge-rebase-and-history-strategy",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving merge, rebase, and history strategy. Walk through your reasoning.",
+      "answer": "Merge preserves topology while rebase rewrites commits; the right policy balances collaboration, auditability, and readability.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-reflog-and-recovery-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "git",
+        "reflog-and-recovery",
+        "mechanics"
+      ],
+      "question": "Explain how reflog and recovery works internally and which details matter in production.",
+      "answer": "Reflogs record local ref movement and often recover lost commits, but retention and remote visibility are limited.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-reflog-and-recovery-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "git",
+        "reflog-and-recovery",
+        "design"
+      ],
+      "question": "Design a production approach for reflog and recovery. What decisions must be explicit?",
+      "answer": "Reflogs record local ref movement and often recover lost commits, but retention and remote visibility are limited.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-reflog-and-recovery-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "git",
+        "reflog-and-recovery",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around reflog and recovery?",
+      "answer": "Reflogs record local ref movement and often recover lost commits, but retention and remote visibility are limited.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-reflog-and-recovery-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "git",
+        "reflog-and-recovery",
+        "debugging"
+      ],
+      "question": "A production issue appears around reflog and recovery. How do you investigate it?",
+      "answer": "Reflogs record local ref movement and often recover lost commits, but retention and remote visibility are limited.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-reflog-and-recovery-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "git",
+        "reflog-and-recovery",
+        "performance"
+      ],
+      "question": "How can reflog and recovery become a performance bottleneck, and how would you improve it?",
+      "answer": "Reflogs record local ref movement and often recover lost commits, but retention and remote visibility are limited.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-reflog-and-recovery-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "git",
+        "reflog-and-recovery",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using reflog and recovery?",
+      "answer": "Reflogs record local ref movement and often recover lost commits, but retention and remote visibility are limited.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-reflog-and-recovery-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "git",
+        "reflog-and-recovery",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around reflog and recovery?",
+      "answer": "Reflogs record local ref movement and often recover lost commits, but retention and remote visibility are limited.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-reflog-and-recovery-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "git",
+        "reflog-and-recovery",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate reflog and recovery safely in an existing system?",
+      "answer": "Reflogs record local ref movement and often recover lost commits, but retention and remote visibility are limited.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-reflog-and-recovery-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "git",
+        "reflog-and-recovery",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on reflog and recovery?",
+      "answer": "Reflogs record local ref movement and often recover lost commits, but retention and remote visibility are limited.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-reflog-and-recovery-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "git",
+        "reflog-and-recovery",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving reflog and recovery. Walk through your reasoning.",
+      "answer": "Reflogs record local ref movement and often recover lost commits, but retention and remote visibility are limited.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-bisect-and-regression-debugging-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "git",
+        "bisect-and-regression-debugging",
+        "mechanics"
+      ],
+      "question": "Explain how bisect and regression debugging works internally and which details matter in production.",
+      "answer": "Bisect uses the commit graph to narrow regressions; reliable tests and handling skipped commits determine effectiveness.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-bisect-and-regression-debugging-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "git",
+        "bisect-and-regression-debugging",
+        "design"
+      ],
+      "question": "Design a production approach for bisect and regression debugging. What decisions must be explicit?",
+      "answer": "Bisect uses the commit graph to narrow regressions; reliable tests and handling skipped commits determine effectiveness.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-bisect-and-regression-debugging-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "git",
+        "bisect-and-regression-debugging",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around bisect and regression debugging?",
+      "answer": "Bisect uses the commit graph to narrow regressions; reliable tests and handling skipped commits determine effectiveness.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-bisect-and-regression-debugging-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "git",
+        "bisect-and-regression-debugging",
+        "debugging"
+      ],
+      "question": "A production issue appears around bisect and regression debugging. How do you investigate it?",
+      "answer": "Bisect uses the commit graph to narrow regressions; reliable tests and handling skipped commits determine effectiveness.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-bisect-and-regression-debugging-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "git",
+        "bisect-and-regression-debugging",
+        "performance"
+      ],
+      "question": "How can bisect and regression debugging become a performance bottleneck, and how would you improve it?",
+      "answer": "Bisect uses the commit graph to narrow regressions; reliable tests and handling skipped commits determine effectiveness.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-bisect-and-regression-debugging-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "git",
+        "bisect-and-regression-debugging",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using bisect and regression debugging?",
+      "answer": "Bisect uses the commit graph to narrow regressions; reliable tests and handling skipped commits determine effectiveness.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-bisect-and-regression-debugging-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "git",
+        "bisect-and-regression-debugging",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around bisect and regression debugging?",
+      "answer": "Bisect uses the commit graph to narrow regressions; reliable tests and handling skipped commits determine effectiveness.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-bisect-and-regression-debugging-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "git",
+        "bisect-and-regression-debugging",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate bisect and regression debugging safely in an existing system?",
+      "answer": "Bisect uses the commit graph to narrow regressions; reliable tests and handling skipped commits determine effectiveness.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-bisect-and-regression-debugging-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "git",
+        "bisect-and-regression-debugging",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on bisect and regression debugging?",
+      "answer": "Bisect uses the commit graph to narrow regressions; reliable tests and handling skipped commits determine effectiveness.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-bisect-and-regression-debugging-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "git",
+        "bisect-and-regression-debugging",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving bisect and regression debugging. Walk through your reasoning.",
+      "answer": "Bisect uses the commit graph to narrow regressions; reliable tests and handling skipped commits determine effectiveness.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-cherry-pick-revert-and-backports-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "git",
+        "cherry-pick-revert-and-backports",
+        "mechanics"
+      ],
+      "question": "Explain how cherry-pick, revert, and backports works internally and which details matter in production.",
+      "answer": "Cherry-pick copies changes, revert records inverse changes, and backports require compatibility and release discipline.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-cherry-pick-revert-and-backports-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "git",
+        "cherry-pick-revert-and-backports",
+        "design"
+      ],
+      "question": "Design a production approach for cherry-pick, revert, and backports. What decisions must be explicit?",
+      "answer": "Cherry-pick copies changes, revert records inverse changes, and backports require compatibility and release discipline.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-cherry-pick-revert-and-backports-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "git",
+        "cherry-pick-revert-and-backports",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around cherry-pick, revert, and backports?",
+      "answer": "Cherry-pick copies changes, revert records inverse changes, and backports require compatibility and release discipline.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-cherry-pick-revert-and-backports-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "git",
+        "cherry-pick-revert-and-backports",
+        "debugging"
+      ],
+      "question": "A production issue appears around cherry-pick, revert, and backports. How do you investigate it?",
+      "answer": "Cherry-pick copies changes, revert records inverse changes, and backports require compatibility and release discipline.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-cherry-pick-revert-and-backports-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "git",
+        "cherry-pick-revert-and-backports",
+        "performance"
+      ],
+      "question": "How can cherry-pick, revert, and backports become a performance bottleneck, and how would you improve it?",
+      "answer": "Cherry-pick copies changes, revert records inverse changes, and backports require compatibility and release discipline.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-cherry-pick-revert-and-backports-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "git",
+        "cherry-pick-revert-and-backports",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using cherry-pick, revert, and backports?",
+      "answer": "Cherry-pick copies changes, revert records inverse changes, and backports require compatibility and release discipline.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-cherry-pick-revert-and-backports-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "git",
+        "cherry-pick-revert-and-backports",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around cherry-pick, revert, and backports?",
+      "answer": "Cherry-pick copies changes, revert records inverse changes, and backports require compatibility and release discipline.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-cherry-pick-revert-and-backports-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "git",
+        "cherry-pick-revert-and-backports",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate cherry-pick, revert, and backports safely in an existing system?",
+      "answer": "Cherry-pick copies changes, revert records inverse changes, and backports require compatibility and release discipline.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-cherry-pick-revert-and-backports-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "git",
+        "cherry-pick-revert-and-backports",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on cherry-pick, revert, and backports?",
+      "answer": "Cherry-pick copies changes, revert records inverse changes, and backports require compatibility and release discipline.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-cherry-pick-revert-and-backports-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "git",
+        "cherry-pick-revert-and-backports",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving cherry-pick, revert, and backports. Walk through your reasoning.",
+      "answer": "Cherry-pick copies changes, revert records inverse changes, and backports require compatibility and release discipline.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-worktrees-sparse-checkout-and-large-repositories-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "git",
+        "worktrees-sparse-checkout-and-large-repositories",
+        "mechanics"
+      ],
+      "question": "Explain how worktrees, sparse checkout, and large repositories works internally and which details matter in production.",
+      "answer": "Worktrees support parallel branches; sparse checkout and repository design reduce local cost without changing history semantics.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-worktrees-sparse-checkout-and-large-repositories-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "git",
+        "worktrees-sparse-checkout-and-large-repositories",
+        "design"
+      ],
+      "question": "Design a production approach for worktrees, sparse checkout, and large repositories. What decisions must be explicit?",
+      "answer": "Worktrees support parallel branches; sparse checkout and repository design reduce local cost without changing history semantics.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-worktrees-sparse-checkout-and-large-repositories-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "git",
+        "worktrees-sparse-checkout-and-large-repositories",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around worktrees, sparse checkout, and large repositories?",
+      "answer": "Worktrees support parallel branches; sparse checkout and repository design reduce local cost without changing history semantics.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-worktrees-sparse-checkout-and-large-repositories-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "git",
+        "worktrees-sparse-checkout-and-large-repositories",
+        "debugging"
+      ],
+      "question": "A production issue appears around worktrees, sparse checkout, and large repositories. How do you investigate it?",
+      "answer": "Worktrees support parallel branches; sparse checkout and repository design reduce local cost without changing history semantics.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-worktrees-sparse-checkout-and-large-repositories-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "git",
+        "worktrees-sparse-checkout-and-large-repositories",
+        "performance"
+      ],
+      "question": "How can worktrees, sparse checkout, and large repositories become a performance bottleneck, and how would you improve it?",
+      "answer": "Worktrees support parallel branches; sparse checkout and repository design reduce local cost without changing history semantics.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-worktrees-sparse-checkout-and-large-repositories-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "git",
+        "worktrees-sparse-checkout-and-large-repositories",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using worktrees, sparse checkout, and large repositories?",
+      "answer": "Worktrees support parallel branches; sparse checkout and repository design reduce local cost without changing history semantics.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-worktrees-sparse-checkout-and-large-repositories-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "git",
+        "worktrees-sparse-checkout-and-large-repositories",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around worktrees, sparse checkout, and large repositories?",
+      "answer": "Worktrees support parallel branches; sparse checkout and repository design reduce local cost without changing history semantics.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-worktrees-sparse-checkout-and-large-repositories-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "git",
+        "worktrees-sparse-checkout-and-large-repositories",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate worktrees, sparse checkout, and large repositories safely in an existing system?",
+      "answer": "Worktrees support parallel branches; sparse checkout and repository design reduce local cost without changing history semantics.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-worktrees-sparse-checkout-and-large-repositories-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "git",
+        "worktrees-sparse-checkout-and-large-repositories",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on worktrees, sparse checkout, and large repositories?",
+      "answer": "Worktrees support parallel branches; sparse checkout and repository design reduce local cost without changing history semantics.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-worktrees-sparse-checkout-and-large-repositories-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "git",
+        "worktrees-sparse-checkout-and-large-repositories",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving worktrees, sparse checkout, and large repositories. Walk through your reasoning.",
+      "answer": "Worktrees support parallel branches; sparse checkout and repository design reduce local cost without changing history semantics.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-submodules-monorepos-and-repository-boundaries-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "git",
+        "submodules-monorepos-and-repository-boundaries",
+        "mechanics"
+      ],
+      "question": "Explain how submodules, monorepos, and repository boundaries works internally and which details matter in production.",
+      "answer": "Repository structure affects ownership, atomic changes, tooling, dependency versioning, and operational complexity.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-submodules-monorepos-and-repository-boundaries-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "git",
+        "submodules-monorepos-and-repository-boundaries",
+        "design"
+      ],
+      "question": "Design a production approach for submodules, monorepos, and repository boundaries. What decisions must be explicit?",
+      "answer": "Repository structure affects ownership, atomic changes, tooling, dependency versioning, and operational complexity.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-submodules-monorepos-and-repository-boundaries-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "git",
+        "submodules-monorepos-and-repository-boundaries",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around submodules, monorepos, and repository boundaries?",
+      "answer": "Repository structure affects ownership, atomic changes, tooling, dependency versioning, and operational complexity.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-submodules-monorepos-and-repository-boundaries-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "git",
+        "submodules-monorepos-and-repository-boundaries",
+        "debugging"
+      ],
+      "question": "A production issue appears around submodules, monorepos, and repository boundaries. How do you investigate it?",
+      "answer": "Repository structure affects ownership, atomic changes, tooling, dependency versioning, and operational complexity.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-submodules-monorepos-and-repository-boundaries-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "git",
+        "submodules-monorepos-and-repository-boundaries",
+        "performance"
+      ],
+      "question": "How can submodules, monorepos, and repository boundaries become a performance bottleneck, and how would you improve it?",
+      "answer": "Repository structure affects ownership, atomic changes, tooling, dependency versioning, and operational complexity.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-submodules-monorepos-and-repository-boundaries-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "git",
+        "submodules-monorepos-and-repository-boundaries",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using submodules, monorepos, and repository boundaries?",
+      "answer": "Repository structure affects ownership, atomic changes, tooling, dependency versioning, and operational complexity.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-submodules-monorepos-and-repository-boundaries-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "git",
+        "submodules-monorepos-and-repository-boundaries",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around submodules, monorepos, and repository boundaries?",
+      "answer": "Repository structure affects ownership, atomic changes, tooling, dependency versioning, and operational complexity.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-submodules-monorepos-and-repository-boundaries-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "git",
+        "submodules-monorepos-and-repository-boundaries",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate submodules, monorepos, and repository boundaries safely in an existing system?",
+      "answer": "Repository structure affects ownership, atomic changes, tooling, dependency versioning, and operational complexity.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-submodules-monorepos-and-repository-boundaries-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "git",
+        "submodules-monorepos-and-repository-boundaries",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on submodules, monorepos, and repository boundaries?",
+      "answer": "Repository structure affects ownership, atomic changes, tooling, dependency versioning, and operational complexity.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-submodules-monorepos-and-repository-boundaries-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "git",
+        "submodules-monorepos-and-repository-boundaries",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving submodules, monorepos, and repository boundaries. Walk through your reasoning.",
+      "answer": "Repository structure affects ownership, atomic changes, tooling, dependency versioning, and operational complexity.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-hooks-signing-and-repository-security-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "git",
+        "hooks-signing-and-repository-security",
+        "mechanics"
+      ],
+      "question": "Explain how hooks, signing, and repository security works internally and which details matter in production.",
+      "answer": "Hooks automate local or server policy; signed commits and protected workflows strengthen provenance but require key and policy management.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-hooks-signing-and-repository-security-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "git",
+        "hooks-signing-and-repository-security",
+        "design"
+      ],
+      "question": "Design a production approach for hooks, signing, and repository security. What decisions must be explicit?",
+      "answer": "Hooks automate local or server policy; signed commits and protected workflows strengthen provenance but require key and policy management.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-hooks-signing-and-repository-security-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "git",
+        "hooks-signing-and-repository-security",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around hooks, signing, and repository security?",
+      "answer": "Hooks automate local or server policy; signed commits and protected workflows strengthen provenance but require key and policy management.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-hooks-signing-and-repository-security-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "git",
+        "hooks-signing-and-repository-security",
+        "debugging"
+      ],
+      "question": "A production issue appears around hooks, signing, and repository security. How do you investigate it?",
+      "answer": "Hooks automate local or server policy; signed commits and protected workflows strengthen provenance but require key and policy management.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-hooks-signing-and-repository-security-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "git",
+        "hooks-signing-and-repository-security",
+        "performance"
+      ],
+      "question": "How can hooks, signing, and repository security become a performance bottleneck, and how would you improve it?",
+      "answer": "Hooks automate local or server policy; signed commits and protected workflows strengthen provenance but require key and policy management.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-hooks-signing-and-repository-security-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "git",
+        "hooks-signing-and-repository-security",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using hooks, signing, and repository security?",
+      "answer": "Hooks automate local or server policy; signed commits and protected workflows strengthen provenance but require key and policy management.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-hooks-signing-and-repository-security-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "git",
+        "hooks-signing-and-repository-security",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around hooks, signing, and repository security?",
+      "answer": "Hooks automate local or server policy; signed commits and protected workflows strengthen provenance but require key and policy management.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-hooks-signing-and-repository-security-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "git",
+        "hooks-signing-and-repository-security",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate hooks, signing, and repository security safely in an existing system?",
+      "answer": "Hooks automate local or server policy; signed commits and protected workflows strengthen provenance but require key and policy management.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-hooks-signing-and-repository-security-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "git",
+        "hooks-signing-and-repository-security",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on hooks, signing, and repository security?",
+      "answer": "Hooks automate local or server policy; signed commits and protected workflows strengthen provenance but require key and policy management.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-hooks-signing-and-repository-security-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "git",
+        "hooks-signing-and-repository-security",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving hooks, signing, and repository security. Walk through your reasoning.",
+      "answer": "Hooks automate local or server policy; signed commits and protected workflows strengthen provenance but require key and policy management.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-conflict-resolution-and-rerere-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "git",
+        "conflict-resolution-and-rerere",
+        "mechanics"
+      ],
+      "question": "Explain how conflict resolution and rerere works internally and which details matter in production.",
+      "answer": "Conflicts represent competing intent, not textual inconvenience; rerere can reuse resolutions but still requires semantic verification.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-conflict-resolution-and-rerere-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "git",
+        "conflict-resolution-and-rerere",
+        "design"
+      ],
+      "question": "Design a production approach for conflict resolution and rerere. What decisions must be explicit?",
+      "answer": "Conflicts represent competing intent, not textual inconvenience; rerere can reuse resolutions but still requires semantic verification.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-conflict-resolution-and-rerere-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "git",
+        "conflict-resolution-and-rerere",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around conflict resolution and rerere?",
+      "answer": "Conflicts represent competing intent, not textual inconvenience; rerere can reuse resolutions but still requires semantic verification.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-conflict-resolution-and-rerere-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "git",
+        "conflict-resolution-and-rerere",
+        "debugging"
+      ],
+      "question": "A production issue appears around conflict resolution and rerere. How do you investigate it?",
+      "answer": "Conflicts represent competing intent, not textual inconvenience; rerere can reuse resolutions but still requires semantic verification.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-conflict-resolution-and-rerere-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "git",
+        "conflict-resolution-and-rerere",
+        "performance"
+      ],
+      "question": "How can conflict resolution and rerere become a performance bottleneck, and how would you improve it?",
+      "answer": "Conflicts represent competing intent, not textual inconvenience; rerere can reuse resolutions but still requires semantic verification.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-conflict-resolution-and-rerere-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "git",
+        "conflict-resolution-and-rerere",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using conflict resolution and rerere?",
+      "answer": "Conflicts represent competing intent, not textual inconvenience; rerere can reuse resolutions but still requires semantic verification.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-conflict-resolution-and-rerere-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "git",
+        "conflict-resolution-and-rerere",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around conflict resolution and rerere?",
+      "answer": "Conflicts represent competing intent, not textual inconvenience; rerere can reuse resolutions but still requires semantic verification.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-conflict-resolution-and-rerere-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "git",
+        "conflict-resolution-and-rerere",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate conflict resolution and rerere safely in an existing system?",
+      "answer": "Conflicts represent competing intent, not textual inconvenience; rerere can reuse resolutions but still requires semantic verification.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-conflict-resolution-and-rerere-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "git",
+        "conflict-resolution-and-rerere",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on conflict resolution and rerere?",
+      "answer": "Conflicts represent competing intent, not textual inconvenience; rerere can reuse resolutions but still requires semantic verification.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-conflict-resolution-and-rerere-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "git",
+        "conflict-resolution-and-rerere",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving conflict resolution and rerere. Walk through your reasoning.",
+      "answer": "Conflicts represent competing intent, not textual inconvenience; rerere can reuse resolutions but still requires semantic verification.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-collaborative-git-workflows-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "git",
+        "collaborative-git-workflows",
+        "mechanics"
+      ],
+      "question": "Explain how collaborative Git workflows works internally and which details matter in production.",
+      "answer": "A workflow should optimize review, release, recovery, and team autonomy rather than enforce history aesthetics alone.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-collaborative-git-workflows-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "git",
+        "collaborative-git-workflows",
+        "design"
+      ],
+      "question": "Design a production approach for collaborative Git workflows. What decisions must be explicit?",
+      "answer": "A workflow should optimize review, release, recovery, and team autonomy rather than enforce history aesthetics alone.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-collaborative-git-workflows-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "git",
+        "collaborative-git-workflows",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around collaborative Git workflows?",
+      "answer": "A workflow should optimize review, release, recovery, and team autonomy rather than enforce history aesthetics alone.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-collaborative-git-workflows-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "git",
+        "collaborative-git-workflows",
+        "debugging"
+      ],
+      "question": "A production issue appears around collaborative Git workflows. How do you investigate it?",
+      "answer": "A workflow should optimize review, release, recovery, and team autonomy rather than enforce history aesthetics alone.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "git-collaborative-git-workflows-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "git",
+        "collaborative-git-workflows",
+        "performance"
+      ],
+      "question": "How can collaborative Git workflows become a performance bottleneck, and how would you improve it?",
+      "answer": "A workflow should optimize review, release, recovery, and team autonomy rather than enforce history aesthetics alone.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

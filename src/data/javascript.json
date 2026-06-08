@@ -1,0 +1,1195 @@
+{
+  "name": "JavaScript",
+  "icon": "javascript",
+  "order": 5,
+  "questions": [
+    {
+      "id": "closure",
+      "question": "What is a closure?",
+      "answer": "A closure is a function that **remembers the variables from its lexical scope** even after that scope has exited.\n\n```js\nfunction counter() {\n  let n = 0\n  return () => ++n\n}\nconst tick = counter()\ntick() // 1\ntick() // 2\n```\n\n`tick` retains a reference to `n` even though `counter` has returned. Closures power data privacy, partial application, and module patterns.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "javascript"
+      ]
+    },
+    {
+      "id": "hoisting",
+      "question": "Explain hoisting. How do var, let, const differ?",
+      "answer": "Hoisting moves declarations to the top of their scope at compile time. Initialization stays in place.\n\n- `var` — hoisted and initialized to `undefined`. Function-scoped.\n- `let` / `const` — hoisted but **not initialized** → accessing before declaration throws `ReferenceError` (the **Temporal Dead Zone**). Block-scoped.\n- Function declarations are fully hoisted (you can call them above their definition).\n- Function expressions / arrow functions follow the variable's hoisting rules.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "javascript"
+      ]
+    },
+    {
+      "id": "event-loop-browser",
+      "question": "How does the browser event loop schedule microtasks vs macrotasks?",
+      "answer": "Each turn of the event loop:\n\n1. Pick **one** macrotask (script, `setTimeout`, I/O, UI event) and run it to completion.\n2. Drain the **entire** microtask queue (`Promise.then`, `queueMicrotask`, `MutationObserver`).\n3. Render if needed.\n4. Repeat.\n\n```js\nconsole.log('A')\nsetTimeout(() => console.log('B'))\nPromise.resolve().then(() => console.log('C'))\nconsole.log('D')\n// A, D, C, B\n```\n\nKey takeaway: a runaway microtask chain can starve rendering and timers.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "javascript"
+      ]
+    },
+    {
+      "id": "this",
+      "question": "How is `this` determined?",
+      "answer": "Rules, in priority order:\n\n1. `new Foo()` → `this` is the new object.\n2. Explicit binding (`.call/.apply/.bind`) → `this` is the supplied value.\n3. Method call (`obj.fn()`) → `this` is `obj`.\n4. Plain call (`fn()`) → `undefined` in strict mode, global object otherwise.\n5. **Arrow functions** ignore all the above and inherit `this` from the enclosing lexical scope.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "javascript"
+      ]
+    },
+    {
+      "id": "promise-vs-async",
+      "question": "Promise.all vs Promise.allSettled vs Promise.race vs Promise.any?",
+      "answer": "- `Promise.all([...])` — resolves when **all** resolve; rejects on the **first** rejection.\n- `Promise.allSettled([...])` — always resolves with `{status, value|reason}[]` after all settle.\n- `Promise.race([...])` — resolves/rejects as soon as **any** settles (first to finish, success or failure).\n- `Promise.any([...])` — resolves on the **first fulfillment**; rejects with `AggregateError` only if **all** reject.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "javascript"
+      ]
+    },
+    {
+      "id": "deep-clone",
+      "question": "How do you deep clone an object in modern JS?",
+      "answer": "Use the built-in `structuredClone`:\n\n```js\nconst copy = structuredClone(obj)\n```\n\nIt handles cycles, Map, Set, Date, TypedArrays, but **not** functions, DOM nodes, or class prototypes (the result becomes a plain object).\n\nAlternatives:\n- `JSON.parse(JSON.stringify(obj))` — fast but loses `Date`, `undefined`, `Map`, functions, cycles.\n- `lodash.cloneDeep` — most flexible, supports custom types.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "javascript"
+      ]
+    },
+    {
+      "id": "javascript-the-event-loop-and-task-queues-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "the-event-loop-and-task-queues",
+        "mechanics"
+      ],
+      "question": "Explain how the event loop and task queues works internally and which details matter in production.",
+      "answer": "JavaScript runs work to completion; microtasks are drained at defined checkpoints and can starve rendering or I/O when abused.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-the-event-loop-and-task-queues-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "the-event-loop-and-task-queues",
+        "design"
+      ],
+      "question": "Design a production approach for the event loop and task queues. What decisions must be explicit?",
+      "answer": "JavaScript runs work to completion; microtasks are drained at defined checkpoints and can starve rendering or I/O when abused.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-the-event-loop-and-task-queues-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "the-event-loop-and-task-queues",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around the event loop and task queues?",
+      "answer": "JavaScript runs work to completion; microtasks are drained at defined checkpoints and can starve rendering or I/O when abused.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-the-event-loop-and-task-queues-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "the-event-loop-and-task-queues",
+        "debugging"
+      ],
+      "question": "A production issue appears around the event loop and task queues. How do you investigate it?",
+      "answer": "JavaScript runs work to completion; microtasks are drained at defined checkpoints and can starve rendering or I/O when abused.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-the-event-loop-and-task-queues-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "the-event-loop-and-task-queues",
+        "performance"
+      ],
+      "question": "How can the event loop and task queues become a performance bottleneck, and how would you improve it?",
+      "answer": "JavaScript runs work to completion; microtasks are drained at defined checkpoints and can starve rendering or I/O when abused.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-the-event-loop-and-task-queues-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "the-event-loop-and-task-queues",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using the event loop and task queues?",
+      "answer": "JavaScript runs work to completion; microtasks are drained at defined checkpoints and can starve rendering or I/O when abused.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-the-event-loop-and-task-queues-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "the-event-loop-and-task-queues",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around the event loop and task queues?",
+      "answer": "JavaScript runs work to completion; microtasks are drained at defined checkpoints and can starve rendering or I/O when abused.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-the-event-loop-and-task-queues-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "the-event-loop-and-task-queues",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate the event loop and task queues safely in an existing system?",
+      "answer": "JavaScript runs work to completion; microtasks are drained at defined checkpoints and can starve rendering or I/O when abused.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-the-event-loop-and-task-queues-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "the-event-loop-and-task-queues",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on the event loop and task queues?",
+      "answer": "JavaScript runs work to completion; microtasks are drained at defined checkpoints and can starve rendering or I/O when abused.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-the-event-loop-and-task-queues-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "the-event-loop-and-task-queues",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving the event loop and task queues. Walk through your reasoning.",
+      "answer": "JavaScript runs work to completion; microtasks are drained at defined checkpoints and can starve rendering or I/O when abused.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-closures-and-lexical-environments-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "closures-and-lexical-environments",
+        "mechanics"
+      ],
+      "question": "Explain how closures and lexical environments works internally and which details matter in production.",
+      "answer": "Closures retain access to lexical state; they enable encapsulation but can extend object lifetimes and create accidental memory retention.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-closures-and-lexical-environments-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "closures-and-lexical-environments",
+        "design"
+      ],
+      "question": "Design a production approach for closures and lexical environments. What decisions must be explicit?",
+      "answer": "Closures retain access to lexical state; they enable encapsulation but can extend object lifetimes and create accidental memory retention.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-closures-and-lexical-environments-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "closures-and-lexical-environments",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around closures and lexical environments?",
+      "answer": "Closures retain access to lexical state; they enable encapsulation but can extend object lifetimes and create accidental memory retention.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-closures-and-lexical-environments-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "closures-and-lexical-environments",
+        "debugging"
+      ],
+      "question": "A production issue appears around closures and lexical environments. How do you investigate it?",
+      "answer": "Closures retain access to lexical state; they enable encapsulation but can extend object lifetimes and create accidental memory retention.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-closures-and-lexical-environments-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "closures-and-lexical-environments",
+        "performance"
+      ],
+      "question": "How can closures and lexical environments become a performance bottleneck, and how would you improve it?",
+      "answer": "Closures retain access to lexical state; they enable encapsulation but can extend object lifetimes and create accidental memory retention.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-closures-and-lexical-environments-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "closures-and-lexical-environments",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using closures and lexical environments?",
+      "answer": "Closures retain access to lexical state; they enable encapsulation but can extend object lifetimes and create accidental memory retention.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-closures-and-lexical-environments-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "closures-and-lexical-environments",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around closures and lexical environments?",
+      "answer": "Closures retain access to lexical state; they enable encapsulation but can extend object lifetimes and create accidental memory retention.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-closures-and-lexical-environments-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "closures-and-lexical-environments",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate closures and lexical environments safely in an existing system?",
+      "answer": "Closures retain access to lexical state; they enable encapsulation but can extend object lifetimes and create accidental memory retention.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-closures-and-lexical-environments-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "closures-and-lexical-environments",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on closures and lexical environments?",
+      "answer": "Closures retain access to lexical state; they enable encapsulation but can extend object lifetimes and create accidental memory retention.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-closures-and-lexical-environments-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "closures-and-lexical-environments",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving closures and lexical environments. Walk through your reasoning.",
+      "answer": "Closures retain access to lexical state; they enable encapsulation but can extend object lifetimes and create accidental memory retention.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-prototypes-and-property-lookup-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "prototypes-and-property-lookup",
+        "mechanics"
+      ],
+      "question": "Explain how prototypes and property lookup works internally and which details matter in production.",
+      "answer": "Property access follows the prototype chain; descriptors, inheritance, and mutation influence correctness, performance, and security.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-prototypes-and-property-lookup-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "prototypes-and-property-lookup",
+        "design"
+      ],
+      "question": "Design a production approach for prototypes and property lookup. What decisions must be explicit?",
+      "answer": "Property access follows the prototype chain; descriptors, inheritance, and mutation influence correctness, performance, and security.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-prototypes-and-property-lookup-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "prototypes-and-property-lookup",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around prototypes and property lookup?",
+      "answer": "Property access follows the prototype chain; descriptors, inheritance, and mutation influence correctness, performance, and security.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-prototypes-and-property-lookup-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "prototypes-and-property-lookup",
+        "debugging"
+      ],
+      "question": "A production issue appears around prototypes and property lookup. How do you investigate it?",
+      "answer": "Property access follows the prototype chain; descriptors, inheritance, and mutation influence correctness, performance, and security.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-prototypes-and-property-lookup-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "prototypes-and-property-lookup",
+        "performance"
+      ],
+      "question": "How can prototypes and property lookup become a performance bottleneck, and how would you improve it?",
+      "answer": "Property access follows the prototype chain; descriptors, inheritance, and mutation influence correctness, performance, and security.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-prototypes-and-property-lookup-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "prototypes-and-property-lookup",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using prototypes and property lookup?",
+      "answer": "Property access follows the prototype chain; descriptors, inheritance, and mutation influence correctness, performance, and security.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-prototypes-and-property-lookup-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "prototypes-and-property-lookup",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around prototypes and property lookup?",
+      "answer": "Property access follows the prototype chain; descriptors, inheritance, and mutation influence correctness, performance, and security.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-prototypes-and-property-lookup-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "prototypes-and-property-lookup",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate prototypes and property lookup safely in an existing system?",
+      "answer": "Property access follows the prototype chain; descriptors, inheritance, and mutation influence correctness, performance, and security.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-prototypes-and-property-lookup-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "prototypes-and-property-lookup",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on prototypes and property lookup?",
+      "answer": "Property access follows the prototype chain; descriptors, inheritance, and mutation influence correctness, performance, and security.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-prototypes-and-property-lookup-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "prototypes-and-property-lookup",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving prototypes and property lookup. Walk through your reasoning.",
+      "answer": "Property access follows the prototype chain; descriptors, inheritance, and mutation influence correctness, performance, and security.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-promises-and-async-control-flow-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "promises-and-async-control-flow",
+        "mechanics"
+      ],
+      "question": "Explain how Promises and async control flow works internally and which details matter in production.",
+      "answer": "Promises model eventual results; composition, cancellation strategy, bounded concurrency, and rejection handling determine production behavior.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-promises-and-async-control-flow-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "promises-and-async-control-flow",
+        "design"
+      ],
+      "question": "Design a production approach for Promises and async control flow. What decisions must be explicit?",
+      "answer": "Promises model eventual results; composition, cancellation strategy, bounded concurrency, and rejection handling determine production behavior.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-promises-and-async-control-flow-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "promises-and-async-control-flow",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Promises and async control flow?",
+      "answer": "Promises model eventual results; composition, cancellation strategy, bounded concurrency, and rejection handling determine production behavior.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-promises-and-async-control-flow-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "promises-and-async-control-flow",
+        "debugging"
+      ],
+      "question": "A production issue appears around Promises and async control flow. How do you investigate it?",
+      "answer": "Promises model eventual results; composition, cancellation strategy, bounded concurrency, and rejection handling determine production behavior.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-promises-and-async-control-flow-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "promises-and-async-control-flow",
+        "performance"
+      ],
+      "question": "How can Promises and async control flow become a performance bottleneck, and how would you improve it?",
+      "answer": "Promises model eventual results; composition, cancellation strategy, bounded concurrency, and rejection handling determine production behavior.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-promises-and-async-control-flow-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "promises-and-async-control-flow",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Promises and async control flow?",
+      "answer": "Promises model eventual results; composition, cancellation strategy, bounded concurrency, and rejection handling determine production behavior.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-promises-and-async-control-flow-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "promises-and-async-control-flow",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Promises and async control flow?",
+      "answer": "Promises model eventual results; composition, cancellation strategy, bounded concurrency, and rejection handling determine production behavior.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-promises-and-async-control-flow-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "promises-and-async-control-flow",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Promises and async control flow safely in an existing system?",
+      "answer": "Promises model eventual results; composition, cancellation strategy, bounded concurrency, and rejection handling determine production behavior.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-promises-and-async-control-flow-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "promises-and-async-control-flow",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Promises and async control flow?",
+      "answer": "Promises model eventual results; composition, cancellation strategy, bounded concurrency, and rejection handling determine production behavior.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-promises-and-async-control-flow-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "promises-and-async-control-flow",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Promises and async control flow. Walk through your reasoning.",
+      "answer": "Promises model eventual results; composition, cancellation strategy, bounded concurrency, and rejection handling determine production behavior.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-memory-management-and-garbage-collection-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "memory-management-and-garbage-collection",
+        "mechanics"
+      ],
+      "question": "Explain how memory management and garbage collection works internally and which details matter in production.",
+      "answer": "Reachability drives collection; leaks commonly come from retained listeners, caches, closures, timers, and detached objects.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-memory-management-and-garbage-collection-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "memory-management-and-garbage-collection",
+        "design"
+      ],
+      "question": "Design a production approach for memory management and garbage collection. What decisions must be explicit?",
+      "answer": "Reachability drives collection; leaks commonly come from retained listeners, caches, closures, timers, and detached objects.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-memory-management-and-garbage-collection-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "memory-management-and-garbage-collection",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around memory management and garbage collection?",
+      "answer": "Reachability drives collection; leaks commonly come from retained listeners, caches, closures, timers, and detached objects.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-memory-management-and-garbage-collection-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "memory-management-and-garbage-collection",
+        "debugging"
+      ],
+      "question": "A production issue appears around memory management and garbage collection. How do you investigate it?",
+      "answer": "Reachability drives collection; leaks commonly come from retained listeners, caches, closures, timers, and detached objects.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-memory-management-and-garbage-collection-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "memory-management-and-garbage-collection",
+        "performance"
+      ],
+      "question": "How can memory management and garbage collection become a performance bottleneck, and how would you improve it?",
+      "answer": "Reachability drives collection; leaks commonly come from retained listeners, caches, closures, timers, and detached objects.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-memory-management-and-garbage-collection-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "memory-management-and-garbage-collection",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using memory management and garbage collection?",
+      "answer": "Reachability drives collection; leaks commonly come from retained listeners, caches, closures, timers, and detached objects.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-memory-management-and-garbage-collection-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "memory-management-and-garbage-collection",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around memory management and garbage collection?",
+      "answer": "Reachability drives collection; leaks commonly come from retained listeners, caches, closures, timers, and detached objects.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-memory-management-and-garbage-collection-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "memory-management-and-garbage-collection",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate memory management and garbage collection safely in an existing system?",
+      "answer": "Reachability drives collection; leaks commonly come from retained listeners, caches, closures, timers, and detached objects.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-memory-management-and-garbage-collection-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "memory-management-and-garbage-collection",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on memory management and garbage collection?",
+      "answer": "Reachability drives collection; leaks commonly come from retained listeners, caches, closures, timers, and detached objects.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-memory-management-and-garbage-collection-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "memory-management-and-garbage-collection",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving memory management and garbage collection. Walk through your reasoning.",
+      "answer": "Reachability drives collection; leaks commonly come from retained listeners, caches, closures, timers, and detached objects.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-modules-and-package-boundaries-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "modules-and-package-boundaries",
+        "mechanics"
+      ],
+      "question": "Explain how modules and package boundaries works internally and which details matter in production.",
+      "answer": "ES modules have static structure and live bindings; package exports, cycles, side effects, and tree shaking shape maintainability and delivery.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-modules-and-package-boundaries-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "modules-and-package-boundaries",
+        "design"
+      ],
+      "question": "Design a production approach for modules and package boundaries. What decisions must be explicit?",
+      "answer": "ES modules have static structure and live bindings; package exports, cycles, side effects, and tree shaking shape maintainability and delivery.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-modules-and-package-boundaries-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "modules-and-package-boundaries",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around modules and package boundaries?",
+      "answer": "ES modules have static structure and live bindings; package exports, cycles, side effects, and tree shaking shape maintainability and delivery.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-modules-and-package-boundaries-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "modules-and-package-boundaries",
+        "debugging"
+      ],
+      "question": "A production issue appears around modules and package boundaries. How do you investigate it?",
+      "answer": "ES modules have static structure and live bindings; package exports, cycles, side effects, and tree shaking shape maintainability and delivery.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-modules-and-package-boundaries-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "modules-and-package-boundaries",
+        "performance"
+      ],
+      "question": "How can modules and package boundaries become a performance bottleneck, and how would you improve it?",
+      "answer": "ES modules have static structure and live bindings; package exports, cycles, side effects, and tree shaking shape maintainability and delivery.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-modules-and-package-boundaries-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "modules-and-package-boundaries",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using modules and package boundaries?",
+      "answer": "ES modules have static structure and live bindings; package exports, cycles, side effects, and tree shaking shape maintainability and delivery.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-modules-and-package-boundaries-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "modules-and-package-boundaries",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around modules and package boundaries?",
+      "answer": "ES modules have static structure and live bindings; package exports, cycles, side effects, and tree shaking shape maintainability and delivery.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-modules-and-package-boundaries-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "modules-and-package-boundaries",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate modules and package boundaries safely in an existing system?",
+      "answer": "ES modules have static structure and live bindings; package exports, cycles, side effects, and tree shaking shape maintainability and delivery.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-modules-and-package-boundaries-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "modules-and-package-boundaries",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on modules and package boundaries?",
+      "answer": "ES modules have static structure and live bindings; package exports, cycles, side effects, and tree shaking shape maintainability and delivery.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-modules-and-package-boundaries-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "modules-and-package-boundaries",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving modules and package boundaries. Walk through your reasoning.",
+      "answer": "ES modules have static structure and live bindings; package exports, cycles, side effects, and tree shaking shape maintainability and delivery.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-object-identity-equality-and-immutability-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "object-identity-equality-and-immutability",
+        "mechanics"
+      ],
+      "question": "Explain how object identity, equality, and immutability works internally and which details matter in production.",
+      "answer": "Reference identity affects comparison, caching, memoization, and state updates; copying does not automatically provide deep immutability.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-object-identity-equality-and-immutability-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "object-identity-equality-and-immutability",
+        "design"
+      ],
+      "question": "Design a production approach for object identity, equality, and immutability. What decisions must be explicit?",
+      "answer": "Reference identity affects comparison, caching, memoization, and state updates; copying does not automatically provide deep immutability.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-object-identity-equality-and-immutability-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "object-identity-equality-and-immutability",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around object identity, equality, and immutability?",
+      "answer": "Reference identity affects comparison, caching, memoization, and state updates; copying does not automatically provide deep immutability.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-object-identity-equality-and-immutability-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "object-identity-equality-and-immutability",
+        "debugging"
+      ],
+      "question": "A production issue appears around object identity, equality, and immutability. How do you investigate it?",
+      "answer": "Reference identity affects comparison, caching, memoization, and state updates; copying does not automatically provide deep immutability.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-object-identity-equality-and-immutability-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "object-identity-equality-and-immutability",
+        "performance"
+      ],
+      "question": "How can object identity, equality, and immutability become a performance bottleneck, and how would you improve it?",
+      "answer": "Reference identity affects comparison, caching, memoization, and state updates; copying does not automatically provide deep immutability.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-object-identity-equality-and-immutability-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "object-identity-equality-and-immutability",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using object identity, equality, and immutability?",
+      "answer": "Reference identity affects comparison, caching, memoization, and state updates; copying does not automatically provide deep immutability.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-object-identity-equality-and-immutability-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "object-identity-equality-and-immutability",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around object identity, equality, and immutability?",
+      "answer": "Reference identity affects comparison, caching, memoization, and state updates; copying does not automatically provide deep immutability.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-object-identity-equality-and-immutability-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "object-identity-equality-and-immutability",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate object identity, equality, and immutability safely in an existing system?",
+      "answer": "Reference identity affects comparison, caching, memoization, and state updates; copying does not automatically provide deep immutability.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-object-identity-equality-and-immutability-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "object-identity-equality-and-immutability",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on object identity, equality, and immutability?",
+      "answer": "Reference identity affects comparison, caching, memoization, and state updates; copying does not automatically provide deep immutability.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-object-identity-equality-and-immutability-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "object-identity-equality-and-immutability",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving object identity, equality, and immutability. Walk through your reasoning.",
+      "answer": "Reference identity affects comparison, caching, memoization, and state updates; copying does not automatically provide deep immutability.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-iterators-generators-and-lazy-processing-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "iterators-generators-and-lazy-processing",
+        "mechanics"
+      ],
+      "question": "Explain how iterators, generators, and lazy processing works internally and which details matter in production.",
+      "answer": "Iterator protocols enable pull-based lazy sequences; generators simplify stateful iteration but require clear error and cleanup semantics.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-iterators-generators-and-lazy-processing-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "iterators-generators-and-lazy-processing",
+        "design"
+      ],
+      "question": "Design a production approach for iterators, generators, and lazy processing. What decisions must be explicit?",
+      "answer": "Iterator protocols enable pull-based lazy sequences; generators simplify stateful iteration but require clear error and cleanup semantics.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-iterators-generators-and-lazy-processing-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "iterators-generators-and-lazy-processing",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around iterators, generators, and lazy processing?",
+      "answer": "Iterator protocols enable pull-based lazy sequences; generators simplify stateful iteration but require clear error and cleanup semantics.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-iterators-generators-and-lazy-processing-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "iterators-generators-and-lazy-processing",
+        "debugging"
+      ],
+      "question": "A production issue appears around iterators, generators, and lazy processing. How do you investigate it?",
+      "answer": "Iterator protocols enable pull-based lazy sequences; generators simplify stateful iteration but require clear error and cleanup semantics.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-iterators-generators-and-lazy-processing-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "iterators-generators-and-lazy-processing",
+        "performance"
+      ],
+      "question": "How can iterators, generators, and lazy processing become a performance bottleneck, and how would you improve it?",
+      "answer": "Iterator protocols enable pull-based lazy sequences; generators simplify stateful iteration but require clear error and cleanup semantics.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-iterators-generators-and-lazy-processing-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "iterators-generators-and-lazy-processing",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using iterators, generators, and lazy processing?",
+      "answer": "Iterator protocols enable pull-based lazy sequences; generators simplify stateful iteration but require clear error and cleanup semantics.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-iterators-generators-and-lazy-processing-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "iterators-generators-and-lazy-processing",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around iterators, generators, and lazy processing?",
+      "answer": "Iterator protocols enable pull-based lazy sequences; generators simplify stateful iteration but require clear error and cleanup semantics.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-iterators-generators-and-lazy-processing-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "iterators-generators-and-lazy-processing",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate iterators, generators, and lazy processing safely in an existing system?",
+      "answer": "Iterator protocols enable pull-based lazy sequences; generators simplify stateful iteration but require clear error and cleanup semantics.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-iterators-generators-and-lazy-processing-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "iterators-generators-and-lazy-processing",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on iterators, generators, and lazy processing?",
+      "answer": "Iterator protocols enable pull-based lazy sequences; generators simplify stateful iteration but require clear error and cleanup semantics.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-iterators-generators-and-lazy-processing-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "iterators-generators-and-lazy-processing",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving iterators, generators, and lazy processing. Walk through your reasoning.",
+      "answer": "Iterator protocols enable pull-based lazy sequences; generators simplify stateful iteration but require clear error and cleanup semantics.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-browser-concurrency-and-web-workers-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "browser-concurrency-and-web-workers",
+        "mechanics"
+      ],
+      "question": "Explain how browser concurrency and Web Workers works internally and which details matter in production.",
+      "answer": "Workers provide isolated execution contexts and message passing; transferables and structured cloning affect throughput and ownership.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-browser-concurrency-and-web-workers-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "browser-concurrency-and-web-workers",
+        "design"
+      ],
+      "question": "Design a production approach for browser concurrency and Web Workers. What decisions must be explicit?",
+      "answer": "Workers provide isolated execution contexts and message passing; transferables and structured cloning affect throughput and ownership.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-browser-concurrency-and-web-workers-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "browser-concurrency-and-web-workers",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around browser concurrency and Web Workers?",
+      "answer": "Workers provide isolated execution contexts and message passing; transferables and structured cloning affect throughput and ownership.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-browser-concurrency-and-web-workers-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "browser-concurrency-and-web-workers",
+        "debugging"
+      ],
+      "question": "A production issue appears around browser concurrency and Web Workers. How do you investigate it?",
+      "answer": "Workers provide isolated execution contexts and message passing; transferables and structured cloning affect throughput and ownership.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-browser-concurrency-and-web-workers-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "browser-concurrency-and-web-workers",
+        "performance"
+      ],
+      "question": "How can browser concurrency and Web Workers become a performance bottleneck, and how would you improve it?",
+      "answer": "Workers provide isolated execution contexts and message passing; transferables and structured cloning affect throughput and ownership.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-browser-concurrency-and-web-workers-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "browser-concurrency-and-web-workers",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using browser concurrency and Web Workers?",
+      "answer": "Workers provide isolated execution contexts and message passing; transferables and structured cloning affect throughput and ownership.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-browser-concurrency-and-web-workers-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "browser-concurrency-and-web-workers",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around browser concurrency and Web Workers?",
+      "answer": "Workers provide isolated execution contexts and message passing; transferables and structured cloning affect throughput and ownership.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-browser-concurrency-and-web-workers-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "browser-concurrency-and-web-workers",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate browser concurrency and Web Workers safely in an existing system?",
+      "answer": "Workers provide isolated execution contexts and message passing; transferables and structured cloning affect throughput and ownership.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-browser-concurrency-and-web-workers-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "browser-concurrency-and-web-workers",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on browser concurrency and Web Workers?",
+      "answer": "Workers provide isolated execution contexts and message passing; transferables and structured cloning affect throughput and ownership.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-browser-concurrency-and-web-workers-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "browser-concurrency-and-web-workers",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving browser concurrency and Web Workers. Walk through your reasoning.",
+      "answer": "Workers provide isolated execution contexts and message passing; transferables and structured cloning affect throughput and ownership.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-javascript-api-and-library-design-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "javascript-api-and-library-design",
+        "mechanics"
+      ],
+      "question": "Explain how JavaScript API and library design works internally and which details matter in production.",
+      "answer": "Stable APIs require clear contracts, compatibility, error semantics, cancellation, and careful control of side effects.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-javascript-api-and-library-design-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "javascript",
+        "javascript-api-and-library-design",
+        "design"
+      ],
+      "question": "Design a production approach for JavaScript API and library design. What decisions must be explicit?",
+      "answer": "Stable APIs require clear contracts, compatibility, error semantics, cancellation, and careful control of side effects.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-javascript-api-and-library-design-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "javascript-api-and-library-design",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around JavaScript API and library design?",
+      "answer": "Stable APIs require clear contracts, compatibility, error semantics, cancellation, and careful control of side effects.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "javascript-javascript-api-and-library-design-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "javascript",
+        "javascript-api-and-library-design",
+        "debugging"
+      ],
+      "question": "A production issue appears around JavaScript API and library design. How do you investigate it?",
+      "answer": "Stable APIs require clear contracts, compatibility, error semantics, cancellation, and careful control of side effects.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

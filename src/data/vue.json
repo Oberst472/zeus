@@ -1,0 +1,1197 @@
+{
+  "name": "Vue.js",
+  "icon": "vue",
+  "order": 7,
+  "questions": [
+    {
+      "id": "ref-vs-reactive",
+      "question": "ref vs reactive — when to use which?",
+      "answer": "- `ref(value)` — wraps **any** value (primitive or object) in a reactive container; you access it via `.value` in JS. Templates auto-unwrap.\n- `reactive(obj)` — makes an **object** deeply reactive without `.value`. Cannot wrap primitives. Destructuring loses reactivity (use `toRefs`).\n\nDefault to `ref` — it works uniformly for everything and survives destructuring.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "vue"
+      ]
+    },
+    {
+      "id": "computed-vs-watch",
+      "question": "computed vs watch / watchEffect?",
+      "answer": "- `computed` — derives a **value** from reactive state, **cached** until dependencies change. Use when you need a *value* in the template or another computed.\n- `watch(source, cb)` — runs a **side effect** when explicit sources change. Lazy by default.\n- `watchEffect(cb)` — runs immediately, auto-tracks any reactive access inside, re-runs on change. Use when dependencies are dynamic or numerous.\n\nRule: derive → `computed`, react → `watch`.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "vue"
+      ]
+    },
+    {
+      "id": "composition-vs-options",
+      "question": "Why Composition API over Options API?",
+      "answer": "- **Logic reuse** via composables (replaces mixins, no name collisions).\n- **Better TypeScript** inference — refs and computeds have precise types.\n- **Co-location** — all logic for one concern (e.g. pagination) lives together instead of being split across `data/methods/computed/watch`.\n- Smaller production bundles via better tree-shaking.\n\nOptions API still works in Vue 3 — it's a style preference, not a deprecation.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "vue"
+      ]
+    },
+    {
+      "id": "v-if-vs-v-show",
+      "question": "v-if vs v-show?",
+      "answer": "- `v-if` — **conditionally renders**. The DOM (and component lifecycle) is created/destroyed on toggle. Cheap to be `false` initially, expensive to toggle often.\n- `v-show` — always renders, just toggles `display: none`. Expensive at mount, cheap to toggle.\n\nUse `v-if` for rarely-shown or expensive subtrees; `v-show` for frequent toggles (tabs, dropdowns).",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "vue"
+      ]
+    },
+    {
+      "id": "props-mutation",
+      "question": "Why can't you mutate props, and what's the workaround?",
+      "answer": "Props are a one-way data flow from parent to child. Mutating them breaks predictability and triggers a Vue warning.\n\nWorkarounds:\n\n1. **Emit** an event so the parent updates state: `emit('update:modelValue', newValue)` (this is what `v-model` uses).\n2. Use a **local ref** initialized from the prop if you just need a local working copy:\n\n```js\nconst props = defineProps(['initial'])\nconst draft = ref(props.initial)\n```",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "vue"
+      ]
+    },
+    {
+      "id": "vue-vue-reactivity-and-dependency-tracking-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "vue-reactivity-and-dependency-tracking",
+        "mechanics"
+      ],
+      "question": "Explain how Vue reactivity and dependency tracking works internally and which details matter in production.",
+      "answer": "Vue tracks reactive reads and triggers dependent effects on writes; identity, destructuring, and deep reactivity affect behavior.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-reactivity-and-dependency-tracking-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "vue-reactivity-and-dependency-tracking",
+        "design"
+      ],
+      "question": "Design a production approach for Vue reactivity and dependency tracking. What decisions must be explicit?",
+      "answer": "Vue tracks reactive reads and triggers dependent effects on writes; identity, destructuring, and deep reactivity affect behavior.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-reactivity-and-dependency-tracking-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-reactivity-and-dependency-tracking",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Vue reactivity and dependency tracking?",
+      "answer": "Vue tracks reactive reads and triggers dependent effects on writes; identity, destructuring, and deep reactivity affect behavior.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-reactivity-and-dependency-tracking-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-reactivity-and-dependency-tracking",
+        "debugging"
+      ],
+      "question": "A production issue appears around Vue reactivity and dependency tracking. How do you investigate it?",
+      "answer": "Vue tracks reactive reads and triggers dependent effects on writes; identity, destructuring, and deep reactivity affect behavior.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-reactivity-and-dependency-tracking-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-reactivity-and-dependency-tracking",
+        "performance"
+      ],
+      "question": "How can Vue reactivity and dependency tracking become a performance bottleneck, and how would you improve it?",
+      "answer": "Vue tracks reactive reads and triggers dependent effects on writes; identity, destructuring, and deep reactivity affect behavior.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-reactivity-and-dependency-tracking-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-reactivity-and-dependency-tracking",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Vue reactivity and dependency tracking?",
+      "answer": "Vue tracks reactive reads and triggers dependent effects on writes; identity, destructuring, and deep reactivity affect behavior.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-reactivity-and-dependency-tracking-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-reactivity-and-dependency-tracking",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Vue reactivity and dependency tracking?",
+      "answer": "Vue tracks reactive reads and triggers dependent effects on writes; identity, destructuring, and deep reactivity affect behavior.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-reactivity-and-dependency-tracking-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-reactivity-and-dependency-tracking",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Vue reactivity and dependency tracking safely in an existing system?",
+      "answer": "Vue tracks reactive reads and triggers dependent effects on writes; identity, destructuring, and deep reactivity affect behavior.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-reactivity-and-dependency-tracking-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "vue-reactivity-and-dependency-tracking",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Vue reactivity and dependency tracking?",
+      "answer": "Vue tracks reactive reads and triggers dependent effects on writes; identity, destructuring, and deep reactivity affect behavior.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-reactivity-and-dependency-tracking-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-reactivity-and-dependency-tracking",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Vue reactivity and dependency tracking. Walk through your reasoning.",
+      "answer": "Vue tracks reactive reads and triggers dependent effects on writes; identity, destructuring, and deep reactivity affect behavior.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-computed-values-watchers-and-effects-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "computed-values-watchers-and-effects",
+        "mechanics"
+      ],
+      "question": "Explain how computed values, watchers, and effects works internally and which details matter in production.",
+      "answer": "Computed values are cached derivations; watchers coordinate side effects and require cleanup and scheduling awareness.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-computed-values-watchers-and-effects-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "computed-values-watchers-and-effects",
+        "design"
+      ],
+      "question": "Design a production approach for computed values, watchers, and effects. What decisions must be explicit?",
+      "answer": "Computed values are cached derivations; watchers coordinate side effects and require cleanup and scheduling awareness.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-computed-values-watchers-and-effects-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "computed-values-watchers-and-effects",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around computed values, watchers, and effects?",
+      "answer": "Computed values are cached derivations; watchers coordinate side effects and require cleanup and scheduling awareness.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-computed-values-watchers-and-effects-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "computed-values-watchers-and-effects",
+        "debugging"
+      ],
+      "question": "A production issue appears around computed values, watchers, and effects. How do you investigate it?",
+      "answer": "Computed values are cached derivations; watchers coordinate side effects and require cleanup and scheduling awareness.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-computed-values-watchers-and-effects-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "computed-values-watchers-and-effects",
+        "performance"
+      ],
+      "question": "How can computed values, watchers, and effects become a performance bottleneck, and how would you improve it?",
+      "answer": "Computed values are cached derivations; watchers coordinate side effects and require cleanup and scheduling awareness.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-computed-values-watchers-and-effects-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "computed-values-watchers-and-effects",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using computed values, watchers, and effects?",
+      "answer": "Computed values are cached derivations; watchers coordinate side effects and require cleanup and scheduling awareness.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-computed-values-watchers-and-effects-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "computed-values-watchers-and-effects",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around computed values, watchers, and effects?",
+      "answer": "Computed values are cached derivations; watchers coordinate side effects and require cleanup and scheduling awareness.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-computed-values-watchers-and-effects-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "computed-values-watchers-and-effects",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate computed values, watchers, and effects safely in an existing system?",
+      "answer": "Computed values are cached derivations; watchers coordinate side effects and require cleanup and scheduling awareness.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-computed-values-watchers-and-effects-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "computed-values-watchers-and-effects",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on computed values, watchers, and effects?",
+      "answer": "Computed values are cached derivations; watchers coordinate side effects and require cleanup and scheduling awareness.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-computed-values-watchers-and-effects-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "computed-values-watchers-and-effects",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving computed values, watchers, and effects. Walk through your reasoning.",
+      "answer": "Computed values are cached derivations; watchers coordinate side effects and require cleanup and scheduling awareness.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-component-boundaries-and-data-flow-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "component-boundaries-and-data-flow",
+        "mechanics"
+      ],
+      "question": "Explain how component boundaries and data flow works internally and which details matter in production.",
+      "answer": "Props down and events up keep ownership clear; provide/inject and stores should not hide domain boundaries.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-component-boundaries-and-data-flow-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "component-boundaries-and-data-flow",
+        "design"
+      ],
+      "question": "Design a production approach for component boundaries and data flow. What decisions must be explicit?",
+      "answer": "Props down and events up keep ownership clear; provide/inject and stores should not hide domain boundaries.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-component-boundaries-and-data-flow-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "component-boundaries-and-data-flow",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around component boundaries and data flow?",
+      "answer": "Props down and events up keep ownership clear; provide/inject and stores should not hide domain boundaries.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-component-boundaries-and-data-flow-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "component-boundaries-and-data-flow",
+        "debugging"
+      ],
+      "question": "A production issue appears around component boundaries and data flow. How do you investigate it?",
+      "answer": "Props down and events up keep ownership clear; provide/inject and stores should not hide domain boundaries.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-component-boundaries-and-data-flow-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "component-boundaries-and-data-flow",
+        "performance"
+      ],
+      "question": "How can component boundaries and data flow become a performance bottleneck, and how would you improve it?",
+      "answer": "Props down and events up keep ownership clear; provide/inject and stores should not hide domain boundaries.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-component-boundaries-and-data-flow-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "component-boundaries-and-data-flow",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using component boundaries and data flow?",
+      "answer": "Props down and events up keep ownership clear; provide/inject and stores should not hide domain boundaries.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-component-boundaries-and-data-flow-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "component-boundaries-and-data-flow",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around component boundaries and data flow?",
+      "answer": "Props down and events up keep ownership clear; provide/inject and stores should not hide domain boundaries.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-component-boundaries-and-data-flow-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "component-boundaries-and-data-flow",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate component boundaries and data flow safely in an existing system?",
+      "answer": "Props down and events up keep ownership clear; provide/inject and stores should not hide domain boundaries.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-component-boundaries-and-data-flow-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "component-boundaries-and-data-flow",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on component boundaries and data flow?",
+      "answer": "Props down and events up keep ownership clear; provide/inject and stores should not hide domain boundaries.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-component-boundaries-and-data-flow-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "component-boundaries-and-data-flow",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving component boundaries and data flow. Walk through your reasoning.",
+      "answer": "Props down and events up keep ownership clear; provide/inject and stores should not hide domain boundaries.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-composables-and-reusable-stateful-logic-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "composables-and-reusable-stateful-logic",
+        "mechanics"
+      ],
+      "question": "Explain how composables and reusable stateful logic works internally and which details matter in production.",
+      "answer": "Composables package reactive logic; lifecycle, shared state, cleanup, and API shape determine whether they remain safe and reusable.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-composables-and-reusable-stateful-logic-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "composables-and-reusable-stateful-logic",
+        "design"
+      ],
+      "question": "Design a production approach for composables and reusable stateful logic. What decisions must be explicit?",
+      "answer": "Composables package reactive logic; lifecycle, shared state, cleanup, and API shape determine whether they remain safe and reusable.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-composables-and-reusable-stateful-logic-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "composables-and-reusable-stateful-logic",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around composables and reusable stateful logic?",
+      "answer": "Composables package reactive logic; lifecycle, shared state, cleanup, and API shape determine whether they remain safe and reusable.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-composables-and-reusable-stateful-logic-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "composables-and-reusable-stateful-logic",
+        "debugging"
+      ],
+      "question": "A production issue appears around composables and reusable stateful logic. How do you investigate it?",
+      "answer": "Composables package reactive logic; lifecycle, shared state, cleanup, and API shape determine whether they remain safe and reusable.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-composables-and-reusable-stateful-logic-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "composables-and-reusable-stateful-logic",
+        "performance"
+      ],
+      "question": "How can composables and reusable stateful logic become a performance bottleneck, and how would you improve it?",
+      "answer": "Composables package reactive logic; lifecycle, shared state, cleanup, and API shape determine whether they remain safe and reusable.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-composables-and-reusable-stateful-logic-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "composables-and-reusable-stateful-logic",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using composables and reusable stateful logic?",
+      "answer": "Composables package reactive logic; lifecycle, shared state, cleanup, and API shape determine whether they remain safe and reusable.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-composables-and-reusable-stateful-logic-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "composables-and-reusable-stateful-logic",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around composables and reusable stateful logic?",
+      "answer": "Composables package reactive logic; lifecycle, shared state, cleanup, and API shape determine whether they remain safe and reusable.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-composables-and-reusable-stateful-logic-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "composables-and-reusable-stateful-logic",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate composables and reusable stateful logic safely in an existing system?",
+      "answer": "Composables package reactive logic; lifecycle, shared state, cleanup, and API shape determine whether they remain safe and reusable.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-composables-and-reusable-stateful-logic-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "composables-and-reusable-stateful-logic",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on composables and reusable stateful logic?",
+      "answer": "Composables package reactive logic; lifecycle, shared state, cleanup, and API shape determine whether they remain safe and reusable.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-composables-and-reusable-stateful-logic-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "composables-and-reusable-stateful-logic",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving composables and reusable stateful logic. Walk through your reasoning.",
+      "answer": "Composables package reactive logic; lifecycle, shared state, cleanup, and API shape determine whether they remain safe and reusable.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-rendering-and-update-performance-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "vue-rendering-and-update-performance",
+        "mechanics"
+      ],
+      "question": "Explain how Vue rendering and update performance works internally and which details matter in production.",
+      "answer": "Stable props, code splitting, list virtualization, computed stability, and limited reactive depth reduce unnecessary work.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-rendering-and-update-performance-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "vue-rendering-and-update-performance",
+        "design"
+      ],
+      "question": "Design a production approach for Vue rendering and update performance. What decisions must be explicit?",
+      "answer": "Stable props, code splitting, list virtualization, computed stability, and limited reactive depth reduce unnecessary work.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-rendering-and-update-performance-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-rendering-and-update-performance",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Vue rendering and update performance?",
+      "answer": "Stable props, code splitting, list virtualization, computed stability, and limited reactive depth reduce unnecessary work.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-rendering-and-update-performance-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-rendering-and-update-performance",
+        "debugging"
+      ],
+      "question": "A production issue appears around Vue rendering and update performance. How do you investigate it?",
+      "answer": "Stable props, code splitting, list virtualization, computed stability, and limited reactive depth reduce unnecessary work.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-rendering-and-update-performance-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-rendering-and-update-performance",
+        "performance"
+      ],
+      "question": "How can Vue rendering and update performance become a performance bottleneck, and how would you improve it?",
+      "answer": "Stable props, code splitting, list virtualization, computed stability, and limited reactive depth reduce unnecessary work.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-rendering-and-update-performance-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-rendering-and-update-performance",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Vue rendering and update performance?",
+      "answer": "Stable props, code splitting, list virtualization, computed stability, and limited reactive depth reduce unnecessary work.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-rendering-and-update-performance-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-rendering-and-update-performance",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Vue rendering and update performance?",
+      "answer": "Stable props, code splitting, list virtualization, computed stability, and limited reactive depth reduce unnecessary work.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-rendering-and-update-performance-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-rendering-and-update-performance",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Vue rendering and update performance safely in an existing system?",
+      "answer": "Stable props, code splitting, list virtualization, computed stability, and limited reactive depth reduce unnecessary work.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-rendering-and-update-performance-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "vue-rendering-and-update-performance",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Vue rendering and update performance?",
+      "answer": "Stable props, code splitting, list virtualization, computed stability, and limited reactive depth reduce unnecessary work.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-rendering-and-update-performance-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-rendering-and-update-performance",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Vue rendering and update performance. Walk through your reasoning.",
+      "answer": "Stable props, code splitting, list virtualization, computed stability, and limited reactive depth reduce unnecessary work.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-ssr-and-hydration-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "ssr-and-hydration",
+        "mechanics"
+      ],
+      "question": "Explain how SSR and hydration works internally and which details matter in production.",
+      "answer": "SSR improves time-to-content but introduces request isolation, hydration matching, server-only constraints, and deployment complexity.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-ssr-and-hydration-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "ssr-and-hydration",
+        "design"
+      ],
+      "question": "Design a production approach for SSR and hydration. What decisions must be explicit?",
+      "answer": "SSR improves time-to-content but introduces request isolation, hydration matching, server-only constraints, and deployment complexity.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-ssr-and-hydration-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "ssr-and-hydration",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around SSR and hydration?",
+      "answer": "SSR improves time-to-content but introduces request isolation, hydration matching, server-only constraints, and deployment complexity.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-ssr-and-hydration-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "ssr-and-hydration",
+        "debugging"
+      ],
+      "question": "A production issue appears around SSR and hydration. How do you investigate it?",
+      "answer": "SSR improves time-to-content but introduces request isolation, hydration matching, server-only constraints, and deployment complexity.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-ssr-and-hydration-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "ssr-and-hydration",
+        "performance"
+      ],
+      "question": "How can SSR and hydration become a performance bottleneck, and how would you improve it?",
+      "answer": "SSR improves time-to-content but introduces request isolation, hydration matching, server-only constraints, and deployment complexity.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-ssr-and-hydration-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "ssr-and-hydration",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using SSR and hydration?",
+      "answer": "SSR improves time-to-content but introduces request isolation, hydration matching, server-only constraints, and deployment complexity.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-ssr-and-hydration-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "ssr-and-hydration",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around SSR and hydration?",
+      "answer": "SSR improves time-to-content but introduces request isolation, hydration matching, server-only constraints, and deployment complexity.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-ssr-and-hydration-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "ssr-and-hydration",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate SSR and hydration safely in an existing system?",
+      "answer": "SSR improves time-to-content but introduces request isolation, hydration matching, server-only constraints, and deployment complexity.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-ssr-and-hydration-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "ssr-and-hydration",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on SSR and hydration?",
+      "answer": "SSR improves time-to-content but introduces request isolation, hydration matching, server-only constraints, and deployment complexity.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-ssr-and-hydration-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "ssr-and-hydration",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving SSR and hydration. Walk through your reasoning.",
+      "answer": "SSR improves time-to-content but introduces request isolation, hydration matching, server-only constraints, and deployment complexity.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-state-management-and-server-state-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "state-management-and-server-state",
+        "mechanics"
+      ],
+      "question": "Explain how state management and server state works internally and which details matter in production.",
+      "answer": "Local UI state, URL state, server cache, and cross-cutting client state have different ownership and invalidation needs.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-state-management-and-server-state-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "state-management-and-server-state",
+        "design"
+      ],
+      "question": "Design a production approach for state management and server state. What decisions must be explicit?",
+      "answer": "Local UI state, URL state, server cache, and cross-cutting client state have different ownership and invalidation needs.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-state-management-and-server-state-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "state-management-and-server-state",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around state management and server state?",
+      "answer": "Local UI state, URL state, server cache, and cross-cutting client state have different ownership and invalidation needs.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-state-management-and-server-state-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "state-management-and-server-state",
+        "debugging"
+      ],
+      "question": "A production issue appears around state management and server state. How do you investigate it?",
+      "answer": "Local UI state, URL state, server cache, and cross-cutting client state have different ownership and invalidation needs.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-state-management-and-server-state-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "state-management-and-server-state",
+        "performance"
+      ],
+      "question": "How can state management and server state become a performance bottleneck, and how would you improve it?",
+      "answer": "Local UI state, URL state, server cache, and cross-cutting client state have different ownership and invalidation needs.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-state-management-and-server-state-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "state-management-and-server-state",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using state management and server state?",
+      "answer": "Local UI state, URL state, server cache, and cross-cutting client state have different ownership and invalidation needs.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-state-management-and-server-state-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "state-management-and-server-state",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around state management and server state?",
+      "answer": "Local UI state, URL state, server cache, and cross-cutting client state have different ownership and invalidation needs.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-state-management-and-server-state-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "state-management-and-server-state",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate state management and server state safely in an existing system?",
+      "answer": "Local UI state, URL state, server cache, and cross-cutting client state have different ownership and invalidation needs.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-state-management-and-server-state-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "state-management-and-server-state",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on state management and server state?",
+      "answer": "Local UI state, URL state, server cache, and cross-cutting client state have different ownership and invalidation needs.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-state-management-and-server-state-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "state-management-and-server-state",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving state management and server state. Walk through your reasoning.",
+      "answer": "Local UI state, URL state, server cache, and cross-cutting client state have different ownership and invalidation needs.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-forms-and-validation-architecture-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "forms-and-validation-architecture",
+        "mechanics"
+      ],
+      "question": "Explain how forms and validation architecture works internally and which details matter in production.",
+      "answer": "Production forms require accessible errors, async validation, dirty state, submission idempotency, and server-side validation.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-forms-and-validation-architecture-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "forms-and-validation-architecture",
+        "design"
+      ],
+      "question": "Design a production approach for forms and validation architecture. What decisions must be explicit?",
+      "answer": "Production forms require accessible errors, async validation, dirty state, submission idempotency, and server-side validation.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-forms-and-validation-architecture-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "forms-and-validation-architecture",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around forms and validation architecture?",
+      "answer": "Production forms require accessible errors, async validation, dirty state, submission idempotency, and server-side validation.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-forms-and-validation-architecture-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "forms-and-validation-architecture",
+        "debugging"
+      ],
+      "question": "A production issue appears around forms and validation architecture. How do you investigate it?",
+      "answer": "Production forms require accessible errors, async validation, dirty state, submission idempotency, and server-side validation.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-forms-and-validation-architecture-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "forms-and-validation-architecture",
+        "performance"
+      ],
+      "question": "How can forms and validation architecture become a performance bottleneck, and how would you improve it?",
+      "answer": "Production forms require accessible errors, async validation, dirty state, submission idempotency, and server-side validation.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-forms-and-validation-architecture-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "forms-and-validation-architecture",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using forms and validation architecture?",
+      "answer": "Production forms require accessible errors, async validation, dirty state, submission idempotency, and server-side validation.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-forms-and-validation-architecture-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "forms-and-validation-architecture",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around forms and validation architecture?",
+      "answer": "Production forms require accessible errors, async validation, dirty state, submission idempotency, and server-side validation.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-forms-and-validation-architecture-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "forms-and-validation-architecture",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate forms and validation architecture safely in an existing system?",
+      "answer": "Production forms require accessible errors, async validation, dirty state, submission idempotency, and server-side validation.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-forms-and-validation-architecture-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "forms-and-validation-architecture",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on forms and validation architecture?",
+      "answer": "Production forms require accessible errors, async validation, dirty state, submission idempotency, and server-side validation.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-forms-and-validation-architecture-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "forms-and-validation-architecture",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving forms and validation architecture. Walk through your reasoning.",
+      "answer": "Production forms require accessible errors, async validation, dirty state, submission idempotency, and server-side validation.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-application-testing-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "vue-application-testing",
+        "mechanics"
+      ],
+      "question": "Explain how Vue application testing works internally and which details matter in production.",
+      "answer": "Test behavior and contracts across composables, components, routing, and critical end-to-end flows without coupling to implementation details.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-application-testing-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "vue-application-testing",
+        "design"
+      ],
+      "question": "Design a production approach for Vue application testing. What decisions must be explicit?",
+      "answer": "Test behavior and contracts across composables, components, routing, and critical end-to-end flows without coupling to implementation details.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-application-testing-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-application-testing",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Vue application testing?",
+      "answer": "Test behavior and contracts across composables, components, routing, and critical end-to-end flows without coupling to implementation details.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-application-testing-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-application-testing",
+        "debugging"
+      ],
+      "question": "A production issue appears around Vue application testing. How do you investigate it?",
+      "answer": "Test behavior and contracts across composables, components, routing, and critical end-to-end flows without coupling to implementation details.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-application-testing-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-application-testing",
+        "performance"
+      ],
+      "question": "How can Vue application testing become a performance bottleneck, and how would you improve it?",
+      "answer": "Test behavior and contracts across composables, components, routing, and critical end-to-end flows without coupling to implementation details.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-application-testing-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-application-testing",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Vue application testing?",
+      "answer": "Test behavior and contracts across composables, components, routing, and critical end-to-end flows without coupling to implementation details.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-application-testing-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-application-testing",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Vue application testing?",
+      "answer": "Test behavior and contracts across composables, components, routing, and critical end-to-end flows without coupling to implementation details.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-application-testing-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-application-testing",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Vue application testing safely in an existing system?",
+      "answer": "Test behavior and contracts across composables, components, routing, and critical end-to-end flows without coupling to implementation details.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-application-testing-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "vue-application-testing",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Vue application testing?",
+      "answer": "Test behavior and contracts across composables, components, routing, and critical end-to-end flows without coupling to implementation details.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-application-testing-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-application-testing",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Vue application testing. Walk through your reasoning.",
+      "answer": "Test behavior and contracts across composables, components, routing, and critical end-to-end flows without coupling to implementation details.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-security-and-trusted-rendering-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "vue-security-and-trusted-rendering",
+        "mechanics"
+      ],
+      "question": "Explain how Vue security and trusted rendering works internally and which details matter in production.",
+      "answer": "Template escaping is safe by default, but HTML injection, URLs, SSR state, dependencies, and authorization boundaries still require care.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-security-and-trusted-rendering-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "vue",
+        "vue-security-and-trusted-rendering",
+        "design"
+      ],
+      "question": "Design a production approach for Vue security and trusted rendering. What decisions must be explicit?",
+      "answer": "Template escaping is safe by default, but HTML injection, URLs, SSR state, dependencies, and authorization boundaries still require care.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-security-and-trusted-rendering-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-security-and-trusted-rendering",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Vue security and trusted rendering?",
+      "answer": "Template escaping is safe by default, but HTML injection, URLs, SSR state, dependencies, and authorization boundaries still require care.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-security-and-trusted-rendering-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-security-and-trusted-rendering",
+        "debugging"
+      ],
+      "question": "A production issue appears around Vue security and trusted rendering. How do you investigate it?",
+      "answer": "Template escaping is safe by default, but HTML injection, URLs, SSR state, dependencies, and authorization boundaries still require care.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "vue-vue-security-and-trusted-rendering-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "vue",
+        "vue-security-and-trusted-rendering",
+        "performance"
+      ],
+      "question": "How can Vue security and trusted rendering become a performance bottleneck, and how would you improve it?",
+      "answer": "Template escaping is safe by default, but HTML injection, URLs, SSR state, dependencies, and authorization boundaries still require care.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

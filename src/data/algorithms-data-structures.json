@@ -1,0 +1,954 @@
+{
+  "name": "Algorithms & Data Structures",
+  "icon": "algorithms",
+  "order": 12,
+  "targetCount": 80,
+  "questions": [
+    {
+      "id": "complexity-analysis",
+      "type": "knowledge",
+      "level": "middle",
+      "tags": [
+        "algorithms",
+        "complexity"
+      ],
+      "question": "How do you analyze time and space complexity beyond quoting Big O?",
+      "answer": "State the input variables, dominant operations, auxiliary versus total space, and whether the bound is worst-case, average-case, expected, or amortized. Big O hides constants and lower-order terms, so compare realistic input size, memory locality, allocation, and I/O costs when they matter.\n\nA strong answer explains why the chosen model predicts the actual bottleneck and identifies assumptions that could invalidate it."
+    },
+    {
+      "id": "array-vs-linked-list",
+      "type": "trade-off",
+      "level": "middle",
+      "tags": [
+        "arrays",
+        "linked-lists"
+      ],
+      "question": "When would you choose an array over a linked list, and why are linked lists uncommon in application code?",
+      "answer": "Arrays provide constant-time indexed access, compact storage, and strong cache locality. Linked lists provide constant-time insertion or removal only when the node position is already known, but add pointer overhead, allocations, and poor locality.\n\nIn most application workloads, array shifting costs are outweighed by simpler code and better CPU behavior. Choose from actual access patterns rather than asymptotic complexity alone."
+    },
+    {
+      "id": "hash-table-collisions",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "hash-tables"
+      ],
+      "question": "How do hash tables handle collisions, and what can degrade their performance?",
+      "answer": "Common collision strategies are separate chaining and open addressing. Performance depends on hash quality, load factor, resizing policy, deletion handling, and memory layout. Expected lookup is constant time, while adversarial or badly distributed keys can degrade toward linear time.\n\nProduction concerns include deterministic iteration assumptions, memory overhead, denial-of-service resistance, and choosing stable key equality semantics."
+    },
+    {
+      "id": "bfs-vs-dfs",
+      "type": "trade-off",
+      "level": "middle",
+      "tags": [
+        "graphs",
+        "trees"
+      ],
+      "question": "How do you choose between breadth-first search and depth-first search?",
+      "answer": "BFS explores by distance and finds shortest paths in unweighted graphs, but its frontier can consume substantial memory. DFS is natural for reachability, cycle detection, topological reasoning, and backtracking, but recursive implementations risk stack overflow.\n\nState graph representation, visited-state handling, stopping conditions, and whether the graph may be disconnected."
+    },
+    {
+      "id": "heap-use-cases",
+      "type": "knowledge",
+      "level": "middle",
+      "tags": [
+        "heaps",
+        "priority-queues"
+      ],
+      "question": "When is a heap or priority queue the right data structure?",
+      "answer": "A heap is useful when work repeatedly needs the current minimum or maximum while items are inserted dynamically. It supports peek in constant time and insertion/removal in logarithmic time.\n\nTypical uses include schedulers, top-K queries, streaming medians with two heaps, graph algorithms, and merging sorted streams. It is not suitable when arbitrary ordered iteration or fast membership lookup is required."
+    },
+    {
+      "id": "binary-search-invariants",
+      "type": "debugging",
+      "level": "middle",
+      "tags": [
+        "binary-search"
+      ],
+      "question": "Why is binary search easy to get wrong, and how do you implement it reliably?",
+      "answer": "Binary search depends on a precise invariant, interval convention, midpoint calculation, and progress guarantee. Define whether bounds are closed or half-open, state what remains possible after each comparison, and ensure every branch shrinks the interval.\n\nThe same pattern applies to searching an answer space with a monotonic predicate. Test empty inputs, one element, duplicates, boundaries, and values outside the range."
+    },
+    {
+      "id": "sorting-choice",
+      "type": "trade-off",
+      "level": "senior",
+      "tags": [
+        "sorting"
+      ],
+      "question": "How do you choose a sorting strategy for a production workload?",
+      "answer": "Consider data size, existing order, stability, memory budget, comparison cost, key distribution, and whether data fits in memory. Comparison sorts have an O(n log n) lower bound, while counting or radix approaches exploit constrained keys.\n\nProduction runtimes often use hybrid algorithms. For external data, I/O and merge strategy dominate. Validate assumptions instead of implementing a textbook sort by default."
+    },
+    {
+      "id": "dynamic-programming-recognition",
+      "type": "scenario",
+      "level": "middle",
+      "tags": [
+        "dynamic-programming"
+      ],
+      "question": "How do you recognize and structure a dynamic programming solution?",
+      "answer": "Look for overlapping subproblems and optimal substructure. Define the state precisely, the recurrence, base cases, transition order, and final answer. Start with a correct recursive formulation, then memoize or convert to bottom-up iteration.\n\nAnalyze state count multiplied by transition cost. Reduce memory only after confirming which prior states are required."
+    },
+    {
+      "id": "graph-production-modeling",
+      "type": "architecture",
+      "level": "senior",
+      "tags": [
+        "graphs",
+        "modeling"
+      ],
+      "question": "When should a production domain be modeled as a graph?",
+      "answer": "Use graph modeling when relationships and multi-hop traversal are central, such as dependencies, routes, permissions, recommendations, or social connections. Define direction, weights, identity, mutation frequency, and common queries.\n\nA graph model does not automatically require a graph database. Compare adjacency structures, relational representations, specialized stores, traversal limits, consistency, and operational maturity."
+    },
+    {
+      "id": "algorithm-interview-communication",
+      "type": "behavioral",
+      "level": "senior",
+      "tags": [
+        "algorithms",
+        "interview"
+      ],
+      "question": "How should a Senior engineer communicate while solving an algorithmic interview problem?",
+      "answer": "Clarify inputs, constraints, edge cases, and required trade-offs before coding. Explain a simple correct approach first, identify its bottleneck, then improve it deliberately. State invariants and complexity, and test the implementation with representative and adversarial examples.\n\nSenior signal comes from structured reasoning, correctness, and judgment rather than immediately recognizing a memorized pattern."
+    },
+    {
+      "id": "algorithms-data-structures-complexity-analysis-and-amortized-cost-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "complexity-analysis-and-amortized-cost",
+        "mechanics"
+      ],
+      "question": "Explain how complexity analysis and amortized cost works internally and which details matter in production.",
+      "answer": "Algorithm analysis must define inputs, bounds, amortization, memory use, and the machine or workload assumptions that affect real performance.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-complexity-analysis-and-amortized-cost-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "complexity-analysis-and-amortized-cost",
+        "design"
+      ],
+      "question": "Design a production approach for complexity analysis and amortized cost. What decisions must be explicit?",
+      "answer": "Algorithm analysis must define inputs, bounds, amortization, memory use, and the machine or workload assumptions that affect real performance.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-complexity-analysis-and-amortized-cost-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "complexity-analysis-and-amortized-cost",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around complexity analysis and amortized cost?",
+      "answer": "Algorithm analysis must define inputs, bounds, amortization, memory use, and the machine or workload assumptions that affect real performance.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-complexity-analysis-and-amortized-cost-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "complexity-analysis-and-amortized-cost",
+        "debugging"
+      ],
+      "question": "A production issue appears around complexity analysis and amortized cost. How do you investigate it?",
+      "answer": "Algorithm analysis must define inputs, bounds, amortization, memory use, and the machine or workload assumptions that affect real performance.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-complexity-analysis-and-amortized-cost-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "complexity-analysis-and-amortized-cost",
+        "performance"
+      ],
+      "question": "How can complexity analysis and amortized cost become a performance bottleneck, and how would you improve it?",
+      "answer": "Algorithm analysis must define inputs, bounds, amortization, memory use, and the machine or workload assumptions that affect real performance.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-complexity-analysis-and-amortized-cost-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "complexity-analysis-and-amortized-cost",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using complexity analysis and amortized cost?",
+      "answer": "Algorithm analysis must define inputs, bounds, amortization, memory use, and the machine or workload assumptions that affect real performance.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-complexity-analysis-and-amortized-cost-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "complexity-analysis-and-amortized-cost",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around complexity analysis and amortized cost?",
+      "answer": "Algorithm analysis must define inputs, bounds, amortization, memory use, and the machine or workload assumptions that affect real performance.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-complexity-analysis-and-amortized-cost-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "complexity-analysis-and-amortized-cost",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate complexity analysis and amortized cost safely in an existing system?",
+      "answer": "Algorithm analysis must define inputs, bounds, amortization, memory use, and the machine or workload assumptions that affect real performance.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-complexity-analysis-and-amortized-cost-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "complexity-analysis-and-amortized-cost",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on complexity analysis and amortized cost?",
+      "answer": "Algorithm analysis must define inputs, bounds, amortization, memory use, and the machine or workload assumptions that affect real performance.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-complexity-analysis-and-amortized-cost-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "complexity-analysis-and-amortized-cost",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving complexity analysis and amortized cost. Walk through your reasoning.",
+      "answer": "Algorithm analysis must define inputs, bounds, amortization, memory use, and the machine or workload assumptions that affect real performance.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-arrays-linked-structures-stacks-and-queues-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "arrays-linked-structures-stacks-and-queues",
+        "mechanics"
+      ],
+      "question": "Explain how arrays, linked structures, stacks, and queues works internally and which details matter in production.",
+      "answer": "Sequential structures differ in indexing, mutation cost, memory layout, locality, and the operations they make easy or expensive.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-arrays-linked-structures-stacks-and-queues-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "arrays-linked-structures-stacks-and-queues",
+        "design"
+      ],
+      "question": "Design a production approach for arrays, linked structures, stacks, and queues. What decisions must be explicit?",
+      "answer": "Sequential structures differ in indexing, mutation cost, memory layout, locality, and the operations they make easy or expensive.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-arrays-linked-structures-stacks-and-queues-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "arrays-linked-structures-stacks-and-queues",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around arrays, linked structures, stacks, and queues?",
+      "answer": "Sequential structures differ in indexing, mutation cost, memory layout, locality, and the operations they make easy or expensive.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-arrays-linked-structures-stacks-and-queues-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "arrays-linked-structures-stacks-and-queues",
+        "debugging"
+      ],
+      "question": "A production issue appears around arrays, linked structures, stacks, and queues. How do you investigate it?",
+      "answer": "Sequential structures differ in indexing, mutation cost, memory layout, locality, and the operations they make easy or expensive.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-arrays-linked-structures-stacks-and-queues-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "arrays-linked-structures-stacks-and-queues",
+        "performance"
+      ],
+      "question": "How can arrays, linked structures, stacks, and queues become a performance bottleneck, and how would you improve it?",
+      "answer": "Sequential structures differ in indexing, mutation cost, memory layout, locality, and the operations they make easy or expensive.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-arrays-linked-structures-stacks-and-queues-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "arrays-linked-structures-stacks-and-queues",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using arrays, linked structures, stacks, and queues?",
+      "answer": "Sequential structures differ in indexing, mutation cost, memory layout, locality, and the operations they make easy or expensive.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-arrays-linked-structures-stacks-and-queues-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "arrays-linked-structures-stacks-and-queues",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around arrays, linked structures, stacks, and queues?",
+      "answer": "Sequential structures differ in indexing, mutation cost, memory layout, locality, and the operations they make easy or expensive.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-arrays-linked-structures-stacks-and-queues-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "arrays-linked-structures-stacks-and-queues",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate arrays, linked structures, stacks, and queues safely in an existing system?",
+      "answer": "Sequential structures differ in indexing, mutation cost, memory layout, locality, and the operations they make easy or expensive.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-arrays-linked-structures-stacks-and-queues-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "arrays-linked-structures-stacks-and-queues",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on arrays, linked structures, stacks, and queues?",
+      "answer": "Sequential structures differ in indexing, mutation cost, memory layout, locality, and the operations they make easy or expensive.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-arrays-linked-structures-stacks-and-queues-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "arrays-linked-structures-stacks-and-queues",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving arrays, linked structures, stacks, and queues. Walk through your reasoning.",
+      "answer": "Sequential structures differ in indexing, mutation cost, memory layout, locality, and the operations they make easy or expensive.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-hash-tables-sets-and-key-design-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "hash-tables-sets-and-key-design",
+        "mechanics"
+      ],
+      "question": "Explain how hash tables, sets, and key design works internally and which details matter in production.",
+      "answer": "Hash-based structures provide expected constant-time operations when hashing, equality, capacity, and collision behavior are well designed.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-hash-tables-sets-and-key-design-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "hash-tables-sets-and-key-design",
+        "design"
+      ],
+      "question": "Design a production approach for hash tables, sets, and key design. What decisions must be explicit?",
+      "answer": "Hash-based structures provide expected constant-time operations when hashing, equality, capacity, and collision behavior are well designed.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-hash-tables-sets-and-key-design-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "hash-tables-sets-and-key-design",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around hash tables, sets, and key design?",
+      "answer": "Hash-based structures provide expected constant-time operations when hashing, equality, capacity, and collision behavior are well designed.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-hash-tables-sets-and-key-design-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "hash-tables-sets-and-key-design",
+        "debugging"
+      ],
+      "question": "A production issue appears around hash tables, sets, and key design. How do you investigate it?",
+      "answer": "Hash-based structures provide expected constant-time operations when hashing, equality, capacity, and collision behavior are well designed.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-hash-tables-sets-and-key-design-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "hash-tables-sets-and-key-design",
+        "performance"
+      ],
+      "question": "How can hash tables, sets, and key design become a performance bottleneck, and how would you improve it?",
+      "answer": "Hash-based structures provide expected constant-time operations when hashing, equality, capacity, and collision behavior are well designed.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-hash-tables-sets-and-key-design-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "hash-tables-sets-and-key-design",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using hash tables, sets, and key design?",
+      "answer": "Hash-based structures provide expected constant-time operations when hashing, equality, capacity, and collision behavior are well designed.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-hash-tables-sets-and-key-design-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "hash-tables-sets-and-key-design",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around hash tables, sets, and key design?",
+      "answer": "Hash-based structures provide expected constant-time operations when hashing, equality, capacity, and collision behavior are well designed.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-hash-tables-sets-and-key-design-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "hash-tables-sets-and-key-design",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate hash tables, sets, and key design safely in an existing system?",
+      "answer": "Hash-based structures provide expected constant-time operations when hashing, equality, capacity, and collision behavior are well designed.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-hash-tables-sets-and-key-design-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "hash-tables-sets-and-key-design",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on hash tables, sets, and key design?",
+      "answer": "Hash-based structures provide expected constant-time operations when hashing, equality, capacity, and collision behavior are well designed.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-hash-tables-sets-and-key-design-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "hash-tables-sets-and-key-design",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving hash tables, sets, and key design. Walk through your reasoning.",
+      "answer": "Hash-based structures provide expected constant-time operations when hashing, equality, capacity, and collision behavior are well designed.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-trees-balanced-search-trees-heaps-and-tries-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "trees-balanced-search-trees-heaps-and-tries",
+        "mechanics"
+      ],
+      "question": "Explain how trees, balanced search trees, heaps, and tries works internally and which details matter in production.",
+      "answer": "Tree structures encode hierarchy or order; balance, branching, augmentation, and traversal determine their guarantees and use cases.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-trees-balanced-search-trees-heaps-and-tries-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "trees-balanced-search-trees-heaps-and-tries",
+        "design"
+      ],
+      "question": "Design a production approach for trees, balanced search trees, heaps, and tries. What decisions must be explicit?",
+      "answer": "Tree structures encode hierarchy or order; balance, branching, augmentation, and traversal determine their guarantees and use cases.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-trees-balanced-search-trees-heaps-and-tries-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "trees-balanced-search-trees-heaps-and-tries",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around trees, balanced search trees, heaps, and tries?",
+      "answer": "Tree structures encode hierarchy or order; balance, branching, augmentation, and traversal determine their guarantees and use cases.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-trees-balanced-search-trees-heaps-and-tries-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "trees-balanced-search-trees-heaps-and-tries",
+        "debugging"
+      ],
+      "question": "A production issue appears around trees, balanced search trees, heaps, and tries. How do you investigate it?",
+      "answer": "Tree structures encode hierarchy or order; balance, branching, augmentation, and traversal determine their guarantees and use cases.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-trees-balanced-search-trees-heaps-and-tries-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "trees-balanced-search-trees-heaps-and-tries",
+        "performance"
+      ],
+      "question": "How can trees, balanced search trees, heaps, and tries become a performance bottleneck, and how would you improve it?",
+      "answer": "Tree structures encode hierarchy or order; balance, branching, augmentation, and traversal determine their guarantees and use cases.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-trees-balanced-search-trees-heaps-and-tries-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "trees-balanced-search-trees-heaps-and-tries",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using trees, balanced search trees, heaps, and tries?",
+      "answer": "Tree structures encode hierarchy or order; balance, branching, augmentation, and traversal determine their guarantees and use cases.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-trees-balanced-search-trees-heaps-and-tries-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "trees-balanced-search-trees-heaps-and-tries",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around trees, balanced search trees, heaps, and tries?",
+      "answer": "Tree structures encode hierarchy or order; balance, branching, augmentation, and traversal determine their guarantees and use cases.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-trees-balanced-search-trees-heaps-and-tries-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "trees-balanced-search-trees-heaps-and-tries",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate trees, balanced search trees, heaps, and tries safely in an existing system?",
+      "answer": "Tree structures encode hierarchy or order; balance, branching, augmentation, and traversal determine their guarantees and use cases.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-trees-balanced-search-trees-heaps-and-tries-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "trees-balanced-search-trees-heaps-and-tries",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on trees, balanced search trees, heaps, and tries?",
+      "answer": "Tree structures encode hierarchy or order; balance, branching, augmentation, and traversal determine their guarantees and use cases.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-trees-balanced-search-trees-heaps-and-tries-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "trees-balanced-search-trees-heaps-and-tries",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving trees, balanced search trees, heaps, and tries. Walk through your reasoning.",
+      "answer": "Tree structures encode hierarchy or order; balance, branching, augmentation, and traversal determine their guarantees and use cases.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-graphs-traversal-and-shortest-paths-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "graphs-traversal-and-shortest-paths",
+        "mechanics"
+      ],
+      "question": "Explain how graphs, traversal, and shortest paths works internally and which details matter in production.",
+      "answer": "Graph algorithms depend on representation, direction, weights, cycles, connectivity, visited state, and the exact path or reachability guarantee required.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-graphs-traversal-and-shortest-paths-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "graphs-traversal-and-shortest-paths",
+        "design"
+      ],
+      "question": "Design a production approach for graphs, traversal, and shortest paths. What decisions must be explicit?",
+      "answer": "Graph algorithms depend on representation, direction, weights, cycles, connectivity, visited state, and the exact path or reachability guarantee required.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-graphs-traversal-and-shortest-paths-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "graphs-traversal-and-shortest-paths",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around graphs, traversal, and shortest paths?",
+      "answer": "Graph algorithms depend on representation, direction, weights, cycles, connectivity, visited state, and the exact path or reachability guarantee required.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-graphs-traversal-and-shortest-paths-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "graphs-traversal-and-shortest-paths",
+        "debugging"
+      ],
+      "question": "A production issue appears around graphs, traversal, and shortest paths. How do you investigate it?",
+      "answer": "Graph algorithms depend on representation, direction, weights, cycles, connectivity, visited state, and the exact path or reachability guarantee required.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-graphs-traversal-and-shortest-paths-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "graphs-traversal-and-shortest-paths",
+        "performance"
+      ],
+      "question": "How can graphs, traversal, and shortest paths become a performance bottleneck, and how would you improve it?",
+      "answer": "Graph algorithms depend on representation, direction, weights, cycles, connectivity, visited state, and the exact path or reachability guarantee required.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-graphs-traversal-and-shortest-paths-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "graphs-traversal-and-shortest-paths",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using graphs, traversal, and shortest paths?",
+      "answer": "Graph algorithms depend on representation, direction, weights, cycles, connectivity, visited state, and the exact path or reachability guarantee required.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-graphs-traversal-and-shortest-paths-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "graphs-traversal-and-shortest-paths",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around graphs, traversal, and shortest paths?",
+      "answer": "Graph algorithms depend on representation, direction, weights, cycles, connectivity, visited state, and the exact path or reachability guarantee required.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-graphs-traversal-and-shortest-paths-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "graphs-traversal-and-shortest-paths",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate graphs, traversal, and shortest paths safely in an existing system?",
+      "answer": "Graph algorithms depend on representation, direction, weights, cycles, connectivity, visited state, and the exact path or reachability guarantee required.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-graphs-traversal-and-shortest-paths-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "graphs-traversal-and-shortest-paths",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on graphs, traversal, and shortest paths?",
+      "answer": "Graph algorithms depend on representation, direction, weights, cycles, connectivity, visited state, and the exact path or reachability guarantee required.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-graphs-traversal-and-shortest-paths-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "graphs-traversal-and-shortest-paths",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving graphs, traversal, and shortest paths. Walk through your reasoning.",
+      "answer": "Graph algorithms depend on representation, direction, weights, cycles, connectivity, visited state, and the exact path or reachability guarantee required.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-sorting-selection-and-binary-search-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "sorting-selection-and-binary-search",
+        "mechanics"
+      ],
+      "question": "Explain how sorting, selection, and binary search works internally and which details matter in production.",
+      "answer": "Ordering and selection algorithms trade comparisons, memory, stability, adaptiveness, and key assumptions; binary search relies on precise invariants.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-sorting-selection-and-binary-search-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "sorting-selection-and-binary-search",
+        "design"
+      ],
+      "question": "Design a production approach for sorting, selection, and binary search. What decisions must be explicit?",
+      "answer": "Ordering and selection algorithms trade comparisons, memory, stability, adaptiveness, and key assumptions; binary search relies on precise invariants.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-sorting-selection-and-binary-search-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "sorting-selection-and-binary-search",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around sorting, selection, and binary search?",
+      "answer": "Ordering and selection algorithms trade comparisons, memory, stability, adaptiveness, and key assumptions; binary search relies on precise invariants.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-sorting-selection-and-binary-search-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "sorting-selection-and-binary-search",
+        "debugging"
+      ],
+      "question": "A production issue appears around sorting, selection, and binary search. How do you investigate it?",
+      "answer": "Ordering and selection algorithms trade comparisons, memory, stability, adaptiveness, and key assumptions; binary search relies on precise invariants.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-sorting-selection-and-binary-search-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "sorting-selection-and-binary-search",
+        "performance"
+      ],
+      "question": "How can sorting, selection, and binary search become a performance bottleneck, and how would you improve it?",
+      "answer": "Ordering and selection algorithms trade comparisons, memory, stability, adaptiveness, and key assumptions; binary search relies on precise invariants.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-sorting-selection-and-binary-search-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "sorting-selection-and-binary-search",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using sorting, selection, and binary search?",
+      "answer": "Ordering and selection algorithms trade comparisons, memory, stability, adaptiveness, and key assumptions; binary search relies on precise invariants.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-sorting-selection-and-binary-search-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "sorting-selection-and-binary-search",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around sorting, selection, and binary search?",
+      "answer": "Ordering and selection algorithms trade comparisons, memory, stability, adaptiveness, and key assumptions; binary search relies on precise invariants.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-sorting-selection-and-binary-search-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "sorting-selection-and-binary-search",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate sorting, selection, and binary search safely in an existing system?",
+      "answer": "Ordering and selection algorithms trade comparisons, memory, stability, adaptiveness, and key assumptions; binary search relies on precise invariants.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-sorting-selection-and-binary-search-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "sorting-selection-and-binary-search",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on sorting, selection, and binary search?",
+      "answer": "Ordering and selection algorithms trade comparisons, memory, stability, adaptiveness, and key assumptions; binary search relies on precise invariants.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-sorting-selection-and-binary-search-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "sorting-selection-and-binary-search",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving sorting, selection, and binary search. Walk through your reasoning.",
+      "answer": "Ordering and selection algorithms trade comparisons, memory, stability, adaptiveness, and key assumptions; binary search relies on precise invariants.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-recursion-backtracking-greedy-algorithms-and-dynamic-programming-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "recursion-backtracking-greedy-algorithms-and-dynamic-programming",
+        "mechanics"
+      ],
+      "question": "Explain how recursion, backtracking, greedy algorithms, and dynamic programming works internally and which details matter in production.",
+      "answer": "These problem-solving strategies differ in state exploration, repeated work, proof of correctness, pruning, and resource requirements.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-recursion-backtracking-greedy-algorithms-and-dynamic-programming-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "recursion-backtracking-greedy-algorithms-and-dynamic-programming",
+        "design"
+      ],
+      "question": "Design a production approach for recursion, backtracking, greedy algorithms, and dynamic programming. What decisions must be explicit?",
+      "answer": "These problem-solving strategies differ in state exploration, repeated work, proof of correctness, pruning, and resource requirements.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-recursion-backtracking-greedy-algorithms-and-dynamic-programming-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "recursion-backtracking-greedy-algorithms-and-dynamic-programming",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around recursion, backtracking, greedy algorithms, and dynamic programming?",
+      "answer": "These problem-solving strategies differ in state exploration, repeated work, proof of correctness, pruning, and resource requirements.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-recursion-backtracking-greedy-algorithms-and-dynamic-programming-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "recursion-backtracking-greedy-algorithms-and-dynamic-programming",
+        "debugging"
+      ],
+      "question": "A production issue appears around recursion, backtracking, greedy algorithms, and dynamic programming. How do you investigate it?",
+      "answer": "These problem-solving strategies differ in state exploration, repeated work, proof of correctness, pruning, and resource requirements.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-recursion-backtracking-greedy-algorithms-and-dynamic-programming-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "recursion-backtracking-greedy-algorithms-and-dynamic-programming",
+        "performance"
+      ],
+      "question": "How can recursion, backtracking, greedy algorithms, and dynamic programming become a performance bottleneck, and how would you improve it?",
+      "answer": "These problem-solving strategies differ in state exploration, repeated work, proof of correctness, pruning, and resource requirements.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-recursion-backtracking-greedy-algorithms-and-dynamic-programming-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "recursion-backtracking-greedy-algorithms-and-dynamic-programming",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using recursion, backtracking, greedy algorithms, and dynamic programming?",
+      "answer": "These problem-solving strategies differ in state exploration, repeated work, proof of correctness, pruning, and resource requirements.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-recursion-backtracking-greedy-algorithms-and-dynamic-programming-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "recursion-backtracking-greedy-algorithms-and-dynamic-programming",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around recursion, backtracking, greedy algorithms, and dynamic programming?",
+      "answer": "These problem-solving strategies differ in state exploration, repeated work, proof of correctness, pruning, and resource requirements.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-recursion-backtracking-greedy-algorithms-and-dynamic-programming-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "recursion-backtracking-greedy-algorithms-and-dynamic-programming",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate recursion, backtracking, greedy algorithms, and dynamic programming safely in an existing system?",
+      "answer": "These problem-solving strategies differ in state exploration, repeated work, proof of correctness, pruning, and resource requirements.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-recursion-backtracking-greedy-algorithms-and-dynamic-programming-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "algorithms-data-structures",
+        "recursion-backtracking-greedy-algorithms-and-dynamic-programming",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on recursion, backtracking, greedy algorithms, and dynamic programming?",
+      "answer": "These problem-solving strategies differ in state exploration, repeated work, proof of correctness, pruning, and resource requirements.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "algorithms-data-structures-recursion-backtracking-greedy-algorithms-and-dynamic-programming-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "algorithms-data-structures",
+        "recursion-backtracking-greedy-algorithms-and-dynamic-programming",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving recursion, backtracking, greedy algorithms, and dynamic programming. Walk through your reasoning.",
+      "answer": "These problem-solving strategies differ in state exploration, repeated work, proof of correctness, pruning, and resource requirements.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

@@ -1,0 +1,483 @@
+{
+  "name": "Promises",
+  "icon": "promises",
+  "order": 6,
+  "targetCount": 40,
+  "questions": [
+    {
+      "id": "promise-states-fates",
+      "type": "knowledge",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "javascript"
+      ],
+      "question": "What is the difference between a Promise being fulfilled, rejected, resolved, and settled?",
+      "answer": "A Promise is **settled** when it is fulfilled or rejected. It is **resolved** when its outcome is locked to another value or Promise, which may still be pending. Therefore, a resolved Promise is not necessarily settled yet.\n\nThe distinction matters when implementing wrappers and debugging chains that adopt the state of another Promise."
+    },
+    {
+      "id": "promise-handler-return",
+      "type": "knowledge",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "chaining"
+      ],
+      "question": "How does the value returned from then, catch, or finally affect the next Promise?",
+      "answer": "`then` and `catch` create a new Promise. Returning a plain value fulfills it; returning a Promise adopts that Promise's outcome; throwing rejects it. A missing handler passes the previous outcome through.\n\n`finally` normally preserves the original outcome unless its callback throws or returns a rejected Promise. This is why cleanup belongs in `finally`, while recovery belongs in `catch`."
+    },
+    {
+      "id": "promise-combinators",
+      "type": "trade-off",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "concurrency"
+      ],
+      "question": "When should you use Promise.all, allSettled, race, and any?",
+      "answer": "`Promise.all` is fail-fast when every result is required. `allSettled` waits for every operation when partial success must be inspected. `race` settles with the first settled input and is useful for deadlines, but does not cancel losers. `any` fulfills with the first success and rejects with `AggregateError` only when all inputs fail.\n\nChoose based on business semantics, not convenience, and explicitly handle work that continues after the combinator settles."
+    },
+    {
+      "id": "async-await-errors",
+      "type": "scenario",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "async-await",
+        "errors"
+      ],
+      "question": "How do errors propagate through async/await, and where should they be caught?",
+      "answer": "An `async` function always returns a Promise. A thrown error or rejected awaited Promise rejects that Promise. Catch errors where you can recover, add meaningful context, translate them at a boundary, or perform cleanup.\n\nAvoid broad catches that log and silently continue. Preserve the original cause, distinguish expected domain failures from programming errors, and let centralized boundaries handle unrecoverable failures."
+    },
+    {
+      "id": "promise-microtasks",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "event-loop"
+      ],
+      "question": "When do Promise callbacks run relative to synchronous code, timers, and Node.js process.nextTick?",
+      "answer": "Promise reactions run as microtasks after the current synchronous stack completes. In browsers, microtasks drain before the next task such as a timer. In Node.js, the `process.nextTick` queue is processed before the Promise microtask queue at relevant checkpoints.\n\nLong chains can starve timers and I/O. Never describe a resolved Promise callback as synchronous."
+    },
+    {
+      "id": "unhandled-rejections",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "nodejs",
+        "errors"
+      ],
+      "question": "How should a Node.js production service handle unhandled Promise rejections?",
+      "answer": "An unhandled rejection indicates that asynchronous failure escaped its owner. Treat it as a programming or lifecycle defect, capture enough diagnostic context, and terminate the process safely rather than assuming continued state is trustworthy.\n\nUse a process supervisor for restart, graceful shutdown where possible, and fix the missing ownership. A global handler is a final diagnostic boundary, not a substitute for local error handling."
+    },
+    {
+      "id": "promise-cancellation",
+      "type": "architecture",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "abort-controller"
+      ],
+      "question": "Why are Promises not cancellable, and how should cancellation be modeled?",
+      "answer": "A Promise represents an eventual outcome, not ownership of the underlying operation; multiple consumers may observe it. Cancellation belongs to the operation and is commonly modeled with `AbortSignal`.\n\nPropagate the signal through every cancellable boundary, stop scheduling new work, release resources, and define the resulting error semantics. A timeout implemented with `Promise.race` does not cancel the losing operation by itself."
+    },
+    {
+      "id": "bounded-concurrency",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "nodejs",
+        "concurrency"
+      ],
+      "question": "Why is Promise.all over thousands of operations dangerous, and how do you implement bounded concurrency?",
+      "answer": "`Promise.all(items.map(work))` starts all work immediately, which can exhaust sockets, memory, provider quotas, database connections, or file descriptors. Use a worker pool, semaphore, queue, or chunking strategy to cap in-flight operations.\n\nChoose the limit from downstream capacity and latency, apply backpressure, preserve required ordering, and decide whether failures stop or merely record the batch."
+    },
+    {
+      "id": "promisify-node-callbacks",
+      "type": "scenario",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "nodejs",
+        "callbacks"
+      ],
+      "question": "What can go wrong when converting Node.js callback APIs to Promises?",
+      "answer": "Node callbacks usually follow error-first, single-completion semantics, but some APIs emit multiple values, depend on `this`, return handles, or may invoke callbacks more than once. Event emitters and streams generally do not map to a single Promise.\n\nUse native Promise APIs or `util.promisify` where supported, preserve receiver binding, and ensure cleanup and cancellation remain accessible."
+    },
+    {
+      "id": "promise-retry",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "retries",
+        "reliability"
+      ],
+      "question": "How do you build a safe Promise-based retry mechanism?",
+      "answer": "Retry only transient and idempotent operations. Use a bounded attempt count, exponential backoff with jitter, per-attempt timeout, overall deadline, and cancellation signal. Respect provider retry hints and avoid synchronized retry storms.\n\nRecord attempts and final outcomes, preserve the last meaningful error, and never retry validation, authorization, or deterministic business failures."
+    },
+    {
+      "id": "promises-promise-lifecycle-chaining-and-composition-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "promise-lifecycle-chaining-and-composition",
+        "mechanics"
+      ],
+      "question": "Explain how Promise lifecycle, chaining, and composition works internally and which details matter in production.",
+      "answer": "Promises model eventual outcomes; resolution, chaining, combinators, and error propagation determine control flow correctness.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-lifecycle-chaining-and-composition-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "promise-lifecycle-chaining-and-composition",
+        "design"
+      ],
+      "question": "Design a production approach for Promise lifecycle, chaining, and composition. What decisions must be explicit?",
+      "answer": "Promises model eventual outcomes; resolution, chaining, combinators, and error propagation determine control flow correctness.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-lifecycle-chaining-and-composition-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-lifecycle-chaining-and-composition",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Promise lifecycle, chaining, and composition?",
+      "answer": "Promises model eventual outcomes; resolution, chaining, combinators, and error propagation determine control flow correctness.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-lifecycle-chaining-and-composition-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-lifecycle-chaining-and-composition",
+        "debugging"
+      ],
+      "question": "A production issue appears around Promise lifecycle, chaining, and composition. How do you investigate it?",
+      "answer": "Promises model eventual outcomes; resolution, chaining, combinators, and error propagation determine control flow correctness.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-lifecycle-chaining-and-composition-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-lifecycle-chaining-and-composition",
+        "performance"
+      ],
+      "question": "How can Promise lifecycle, chaining, and composition become a performance bottleneck, and how would you improve it?",
+      "answer": "Promises model eventual outcomes; resolution, chaining, combinators, and error propagation determine control flow correctness.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-lifecycle-chaining-and-composition-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-lifecycle-chaining-and-composition",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Promise lifecycle, chaining, and composition?",
+      "answer": "Promises model eventual outcomes; resolution, chaining, combinators, and error propagation determine control flow correctness.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-lifecycle-chaining-and-composition-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-lifecycle-chaining-and-composition",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Promise lifecycle, chaining, and composition?",
+      "answer": "Promises model eventual outcomes; resolution, chaining, combinators, and error propagation determine control flow correctness.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-lifecycle-chaining-and-composition-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-lifecycle-chaining-and-composition",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Promise lifecycle, chaining, and composition safely in an existing system?",
+      "answer": "Promises model eventual outcomes; resolution, chaining, combinators, and error propagation determine control flow correctness.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-lifecycle-chaining-and-composition-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "promise-lifecycle-chaining-and-composition",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Promise lifecycle, chaining, and composition?",
+      "answer": "Promises model eventual outcomes; resolution, chaining, combinators, and error propagation determine control flow correctness.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-lifecycle-chaining-and-composition-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-lifecycle-chaining-and-composition",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Promise lifecycle, chaining, and composition. Walk through your reasoning.",
+      "answer": "Promises model eventual outcomes; resolution, chaining, combinators, and error propagation determine control flow correctness.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-microtasks-and-asynchronous-errors-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "promise-microtasks-and-asynchronous-errors",
+        "mechanics"
+      ],
+      "question": "Explain how Promise microtasks and asynchronous errors works internally and which details matter in production.",
+      "answer": "Promise reactions run through microtasks; scheduling, unhandled rejections, stack context, and ownership shape production behavior.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-microtasks-and-asynchronous-errors-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "promise-microtasks-and-asynchronous-errors",
+        "design"
+      ],
+      "question": "Design a production approach for Promise microtasks and asynchronous errors. What decisions must be explicit?",
+      "answer": "Promise reactions run through microtasks; scheduling, unhandled rejections, stack context, and ownership shape production behavior.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-microtasks-and-asynchronous-errors-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-microtasks-and-asynchronous-errors",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Promise microtasks and asynchronous errors?",
+      "answer": "Promise reactions run through microtasks; scheduling, unhandled rejections, stack context, and ownership shape production behavior.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-microtasks-and-asynchronous-errors-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-microtasks-and-asynchronous-errors",
+        "debugging"
+      ],
+      "question": "A production issue appears around Promise microtasks and asynchronous errors. How do you investigate it?",
+      "answer": "Promise reactions run through microtasks; scheduling, unhandled rejections, stack context, and ownership shape production behavior.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-microtasks-and-asynchronous-errors-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-microtasks-and-asynchronous-errors",
+        "performance"
+      ],
+      "question": "How can Promise microtasks and asynchronous errors become a performance bottleneck, and how would you improve it?",
+      "answer": "Promise reactions run through microtasks; scheduling, unhandled rejections, stack context, and ownership shape production behavior.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-microtasks-and-asynchronous-errors-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-microtasks-and-asynchronous-errors",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Promise microtasks and asynchronous errors?",
+      "answer": "Promise reactions run through microtasks; scheduling, unhandled rejections, stack context, and ownership shape production behavior.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-microtasks-and-asynchronous-errors-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-microtasks-and-asynchronous-errors",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Promise microtasks and asynchronous errors?",
+      "answer": "Promise reactions run through microtasks; scheduling, unhandled rejections, stack context, and ownership shape production behavior.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-microtasks-and-asynchronous-errors-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-microtasks-and-asynchronous-errors",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Promise microtasks and asynchronous errors safely in an existing system?",
+      "answer": "Promise reactions run through microtasks; scheduling, unhandled rejections, stack context, and ownership shape production behavior.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-microtasks-and-asynchronous-errors-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "promise-microtasks-and-asynchronous-errors",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Promise microtasks and asynchronous errors?",
+      "answer": "Promise reactions run through microtasks; scheduling, unhandled rejections, stack context, and ownership shape production behavior.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-promise-microtasks-and-asynchronous-errors-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "promise-microtasks-and-asynchronous-errors",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Promise microtasks and asynchronous errors. Walk through your reasoning.",
+      "answer": "Promise reactions run through microtasks; scheduling, unhandled rejections, stack context, and ownership shape production behavior.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-node-js-promise-concurrency-cancellation-and-integration-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "node-js-promise-concurrency-cancellation-and-integration",
+        "mechanics"
+      ],
+      "question": "Explain how Node.js Promise concurrency, cancellation, and integration works internally and which details matter in production.",
+      "answer": "Node.js Promise code must respect downstream capacity, AbortSignal cancellation, callback boundaries, resources, and graceful shutdown.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-node-js-promise-concurrency-cancellation-and-integration-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "node-js-promise-concurrency-cancellation-and-integration",
+        "design"
+      ],
+      "question": "Design a production approach for Node.js Promise concurrency, cancellation, and integration. What decisions must be explicit?",
+      "answer": "Node.js Promise code must respect downstream capacity, AbortSignal cancellation, callback boundaries, resources, and graceful shutdown.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-node-js-promise-concurrency-cancellation-and-integration-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "node-js-promise-concurrency-cancellation-and-integration",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Node.js Promise concurrency, cancellation, and integration?",
+      "answer": "Node.js Promise code must respect downstream capacity, AbortSignal cancellation, callback boundaries, resources, and graceful shutdown.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-node-js-promise-concurrency-cancellation-and-integration-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "node-js-promise-concurrency-cancellation-and-integration",
+        "debugging"
+      ],
+      "question": "A production issue appears around Node.js Promise concurrency, cancellation, and integration. How do you investigate it?",
+      "answer": "Node.js Promise code must respect downstream capacity, AbortSignal cancellation, callback boundaries, resources, and graceful shutdown.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-node-js-promise-concurrency-cancellation-and-integration-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "node-js-promise-concurrency-cancellation-and-integration",
+        "performance"
+      ],
+      "question": "How can Node.js Promise concurrency, cancellation, and integration become a performance bottleneck, and how would you improve it?",
+      "answer": "Node.js Promise code must respect downstream capacity, AbortSignal cancellation, callback boundaries, resources, and graceful shutdown.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-node-js-promise-concurrency-cancellation-and-integration-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "node-js-promise-concurrency-cancellation-and-integration",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Node.js Promise concurrency, cancellation, and integration?",
+      "answer": "Node.js Promise code must respect downstream capacity, AbortSignal cancellation, callback boundaries, resources, and graceful shutdown.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-node-js-promise-concurrency-cancellation-and-integration-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "node-js-promise-concurrency-cancellation-and-integration",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Node.js Promise concurrency, cancellation, and integration?",
+      "answer": "Node.js Promise code must respect downstream capacity, AbortSignal cancellation, callback boundaries, resources, and graceful shutdown.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-node-js-promise-concurrency-cancellation-and-integration-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "node-js-promise-concurrency-cancellation-and-integration",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Node.js Promise concurrency, cancellation, and integration safely in an existing system?",
+      "answer": "Node.js Promise code must respect downstream capacity, AbortSignal cancellation, callback boundaries, resources, and graceful shutdown.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-node-js-promise-concurrency-cancellation-and-integration-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "promises",
+        "node-js-promise-concurrency-cancellation-and-integration",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Node.js Promise concurrency, cancellation, and integration?",
+      "answer": "Node.js Promise code must respect downstream capacity, AbortSignal cancellation, callback boundaries, resources, and graceful shutdown.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "promises-node-js-promise-concurrency-cancellation-and-integration-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "promises",
+        "node-js-promise-concurrency-cancellation-and-integration",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Node.js Promise concurrency, cancellation, and integration. Walk through your reasoning.",
+      "answer": "Node.js Promise code must respect downstream capacity, AbortSignal cancellation, callback boundaries, resources, and graceful shutdown.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

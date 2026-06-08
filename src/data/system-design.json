@@ -1,0 +1,1205 @@
+{
+  "name": "System Design",
+  "icon": "system",
+  "order": 40,
+  "questions": [
+    {
+      "id": "design-notification-platform",
+      "type": "system-design",
+      "tags": [
+        "queues",
+        "reliability",
+        "scale"
+      ],
+      "question": "Design a multi-channel notification platform for email, push, and SMS.",
+      "answer": "Start by clarifying volume, latency, user preferences, ordering, and delivery guarantees.\n\nA strong design uses: domain events → durable broker → preference/dedup service → per-channel queues → provider adapters. Store notification intent separately from delivery attempts. Use idempotency keys, exponential backoff, DLQs, provider failover, rate limits, and per-tenant quotas.\n\nDiscuss the key trade-off: exactly-once delivery is not realistic across external providers; aim for **at-least-once processing with idempotent effects**. Measure queue age, delivery latency, provider error rate, retry volume, and opt-out violations.",
+      "level": "senior"
+    },
+    {
+      "id": "design-feed",
+      "type": "system-design",
+      "tags": [
+        "fanout",
+        "cache",
+        "ranking"
+      ],
+      "question": "Design a personalized activity feed for millions of users.",
+      "answer": "Clarify freshness, ranking, celebrity accounts, and read/write traffic. Compare **fan-out on write** with **fan-out on read**. A hybrid usually works: precompute feeds for normal users, fetch celebrity content at read time, then rank and merge.\n\nUse an event stream, feed workers, a sharded feed store, content cache, and pagination based on stable cursors. Cover deleted/private content, duplicate events, cache invalidation, backfills, hot partitions, and degraded chronological fallback when ranking is unavailable.",
+      "level": "senior"
+    },
+    {
+      "id": "design-file-processing",
+      "type": "scenario",
+      "tags": [
+        "storage",
+        "queues",
+        "security"
+      ],
+      "question": "Users upload large files that require virus scanning and several transformations. Design the workflow.",
+      "answer": "Upload directly to object storage with a short-lived signed URL; do not proxy large bodies through application servers. Record an upload session and publish an event after storage confirms completion.\n\nA workflow orchestrator runs scanning and transformations with idempotent steps. Keep files quarantined until scanning succeeds. Use checksums, multipart upload, resumability, timeouts, retries, DLQs, and lifecycle policies. Expose workflow status to clients and make partial failure visible rather than pretending the request is synchronous.",
+      "level": "senior"
+    },
+    {
+      "id": "multi-region-tradeoffs",
+      "type": "trade-off",
+      "tags": [
+        "consistency",
+        "availability",
+        "disaster-recovery"
+      ],
+      "question": "When would you choose active-active versus active-passive multi-region architecture?",
+      "answer": "**Active-passive** is simpler: one writer, easier consistency, cheaper operation, but failover increases recovery time and may lose recent data. **Active-active** improves latency and availability but creates conflict resolution, global coordination, deployment, and debugging complexity.\n\nBase the choice on explicit RTO/RPO, write locality, regulatory boundaries, failure modes, and operational maturity. Explain how DNS failover, data replication lag, fencing, split brain, and regional evacuation are tested.",
+      "level": "senior"
+    },
+    {
+      "id": "capacity-estimation",
+      "type": "system-design",
+      "tags": [
+        "capacity",
+        "scale"
+      ],
+      "question": "How do you perform useful capacity estimation during a system design interview?",
+      "answer": "Estimate only numbers that influence architecture: peak requests per second, read/write ratio, payload size, retention, bandwidth, and working-set size. State assumptions and calculate orders of magnitude.\n\nConvert daily traffic to average RPS, then apply a peak multiplier. Estimate storage growth and cache feasibility. Use the result to justify partitioning, batching, CDN usage, and queue capacity. The goal is not arithmetic precision; it is exposing bottlenecks and showing which assumptions must be validated.",
+      "level": "senior"
+    },
+    {
+      "id": "design-rate-limiter",
+      "type": "system-design",
+      "tags": [
+        "redis",
+        "distributed-systems"
+      ],
+      "question": "Design a distributed rate limiter for a public API.",
+      "answer": "Clarify dimensions: user, token, IP, endpoint, tenant, burst allowance, and whether limits must be globally strict. Token bucket supports bursts; sliding window gives smoother enforcement.\n\nUse local fast-path limits where possible and Redis/Lua or another atomic shared store for distributed counters. Define behavior when the limiter store is unavailable: fail-open for low-risk reads, fail-closed for expensive or security-sensitive operations. Return standard headers and instrument rejected requests, limiter latency, and hot keys.",
+      "level": "senior"
+    },
+    {
+      "id": "system-design-requirements-and-capacity-estimation-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "requirements-and-capacity-estimation",
+        "mechanics"
+      ],
+      "question": "Explain how requirements and capacity estimation works internally and which details matter in production.",
+      "answer": "Useful design starts with functional requirements, SLOs, scale, data volume, peak behavior, and explicit assumptions.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-requirements-and-capacity-estimation-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "requirements-and-capacity-estimation",
+        "design"
+      ],
+      "question": "Design a production approach for requirements and capacity estimation. What decisions must be explicit?",
+      "answer": "Useful design starts with functional requirements, SLOs, scale, data volume, peak behavior, and explicit assumptions.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-requirements-and-capacity-estimation-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "requirements-and-capacity-estimation",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around requirements and capacity estimation?",
+      "answer": "Useful design starts with functional requirements, SLOs, scale, data volume, peak behavior, and explicit assumptions.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-requirements-and-capacity-estimation-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "requirements-and-capacity-estimation",
+        "debugging"
+      ],
+      "question": "A production issue appears around requirements and capacity estimation. How do you investigate it?",
+      "answer": "Useful design starts with functional requirements, SLOs, scale, data volume, peak behavior, and explicit assumptions.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-requirements-and-capacity-estimation-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "requirements-and-capacity-estimation",
+        "performance"
+      ],
+      "question": "How can requirements and capacity estimation become a performance bottleneck, and how would you improve it?",
+      "answer": "Useful design starts with functional requirements, SLOs, scale, data volume, peak behavior, and explicit assumptions.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-requirements-and-capacity-estimation-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "requirements-and-capacity-estimation",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using requirements and capacity estimation?",
+      "answer": "Useful design starts with functional requirements, SLOs, scale, data volume, peak behavior, and explicit assumptions.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-requirements-and-capacity-estimation-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "requirements-and-capacity-estimation",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around requirements and capacity estimation?",
+      "answer": "Useful design starts with functional requirements, SLOs, scale, data volume, peak behavior, and explicit assumptions.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-requirements-and-capacity-estimation-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "requirements-and-capacity-estimation",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate requirements and capacity estimation safely in an existing system?",
+      "answer": "Useful design starts with functional requirements, SLOs, scale, data volume, peak behavior, and explicit assumptions.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-requirements-and-capacity-estimation-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "requirements-and-capacity-estimation",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on requirements and capacity estimation?",
+      "answer": "Useful design starts with functional requirements, SLOs, scale, data volume, peak behavior, and explicit assumptions.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-requirements-and-capacity-estimation-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "requirements-and-capacity-estimation",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving requirements and capacity estimation. Walk through your reasoning.",
+      "answer": "Useful design starts with functional requirements, SLOs, scale, data volume, peak behavior, and explicit assumptions.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-load-balancing-and-traffic-management-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "load-balancing-and-traffic-management",
+        "mechanics"
+      ],
+      "question": "Explain how load balancing and traffic management works internally and which details matter in production.",
+      "answer": "Traffic systems distribute load, perform health checks, shift regions, apply limits, and must avoid amplifying failures.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-load-balancing-and-traffic-management-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "load-balancing-and-traffic-management",
+        "design"
+      ],
+      "question": "Design a production approach for load balancing and traffic management. What decisions must be explicit?",
+      "answer": "Traffic systems distribute load, perform health checks, shift regions, apply limits, and must avoid amplifying failures.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-load-balancing-and-traffic-management-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "load-balancing-and-traffic-management",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around load balancing and traffic management?",
+      "answer": "Traffic systems distribute load, perform health checks, shift regions, apply limits, and must avoid amplifying failures.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-load-balancing-and-traffic-management-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "load-balancing-and-traffic-management",
+        "debugging"
+      ],
+      "question": "A production issue appears around load balancing and traffic management. How do you investigate it?",
+      "answer": "Traffic systems distribute load, perform health checks, shift regions, apply limits, and must avoid amplifying failures.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-load-balancing-and-traffic-management-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "load-balancing-and-traffic-management",
+        "performance"
+      ],
+      "question": "How can load balancing and traffic management become a performance bottleneck, and how would you improve it?",
+      "answer": "Traffic systems distribute load, perform health checks, shift regions, apply limits, and must avoid amplifying failures.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-load-balancing-and-traffic-management-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "load-balancing-and-traffic-management",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using load balancing and traffic management?",
+      "answer": "Traffic systems distribute load, perform health checks, shift regions, apply limits, and must avoid amplifying failures.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-load-balancing-and-traffic-management-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "load-balancing-and-traffic-management",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around load balancing and traffic management?",
+      "answer": "Traffic systems distribute load, perform health checks, shift regions, apply limits, and must avoid amplifying failures.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-load-balancing-and-traffic-management-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "load-balancing-and-traffic-management",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate load balancing and traffic management safely in an existing system?",
+      "answer": "Traffic systems distribute load, perform health checks, shift regions, apply limits, and must avoid amplifying failures.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-load-balancing-and-traffic-management-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "load-balancing-and-traffic-management",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on load balancing and traffic management?",
+      "answer": "Traffic systems distribute load, perform health checks, shift regions, apply limits, and must avoid amplifying failures.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-load-balancing-and-traffic-management-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "load-balancing-and-traffic-management",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving load balancing and traffic management. Walk through your reasoning.",
+      "answer": "Traffic systems distribute load, perform health checks, shift regions, apply limits, and must avoid amplifying failures.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-caching-and-invalidation-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "caching-and-invalidation",
+        "mechanics"
+      ],
+      "question": "Explain how caching and invalidation works internally and which details matter in production.",
+      "answer": "Caches trade freshness and complexity for latency and capacity; key design, eviction, stampedes, and fallback define correctness.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-caching-and-invalidation-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "caching-and-invalidation",
+        "design"
+      ],
+      "question": "Design a production approach for caching and invalidation. What decisions must be explicit?",
+      "answer": "Caches trade freshness and complexity for latency and capacity; key design, eviction, stampedes, and fallback define correctness.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-caching-and-invalidation-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "caching-and-invalidation",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around caching and invalidation?",
+      "answer": "Caches trade freshness and complexity for latency and capacity; key design, eviction, stampedes, and fallback define correctness.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-caching-and-invalidation-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "caching-and-invalidation",
+        "debugging"
+      ],
+      "question": "A production issue appears around caching and invalidation. How do you investigate it?",
+      "answer": "Caches trade freshness and complexity for latency and capacity; key design, eviction, stampedes, and fallback define correctness.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-caching-and-invalidation-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "caching-and-invalidation",
+        "performance"
+      ],
+      "question": "How can caching and invalidation become a performance bottleneck, and how would you improve it?",
+      "answer": "Caches trade freshness and complexity for latency and capacity; key design, eviction, stampedes, and fallback define correctness.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-caching-and-invalidation-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "caching-and-invalidation",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using caching and invalidation?",
+      "answer": "Caches trade freshness and complexity for latency and capacity; key design, eviction, stampedes, and fallback define correctness.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-caching-and-invalidation-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "caching-and-invalidation",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around caching and invalidation?",
+      "answer": "Caches trade freshness and complexity for latency and capacity; key design, eviction, stampedes, and fallback define correctness.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-caching-and-invalidation-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "caching-and-invalidation",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate caching and invalidation safely in an existing system?",
+      "answer": "Caches trade freshness and complexity for latency and capacity; key design, eviction, stampedes, and fallback define correctness.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-caching-and-invalidation-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "caching-and-invalidation",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on caching and invalidation?",
+      "answer": "Caches trade freshness and complexity for latency and capacity; key design, eviction, stampedes, and fallback define correctness.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-caching-and-invalidation-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "caching-and-invalidation",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving caching and invalidation. Walk through your reasoning.",
+      "answer": "Caches trade freshness and complexity for latency and capacity; key design, eviction, stampedes, and fallback define correctness.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-queues-and-asynchronous-processing-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "queues-and-asynchronous-processing",
+        "mechanics"
+      ],
+      "question": "Explain how queues and asynchronous processing works internally and which details matter in production.",
+      "answer": "Queues decouple work and absorb bursts; delivery semantics, idempotency, ordering, retries, and DLQs shape reliability.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-queues-and-asynchronous-processing-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "queues-and-asynchronous-processing",
+        "design"
+      ],
+      "question": "Design a production approach for queues and asynchronous processing. What decisions must be explicit?",
+      "answer": "Queues decouple work and absorb bursts; delivery semantics, idempotency, ordering, retries, and DLQs shape reliability.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-queues-and-asynchronous-processing-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "queues-and-asynchronous-processing",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around queues and asynchronous processing?",
+      "answer": "Queues decouple work and absorb bursts; delivery semantics, idempotency, ordering, retries, and DLQs shape reliability.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-queues-and-asynchronous-processing-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "queues-and-asynchronous-processing",
+        "debugging"
+      ],
+      "question": "A production issue appears around queues and asynchronous processing. How do you investigate it?",
+      "answer": "Queues decouple work and absorb bursts; delivery semantics, idempotency, ordering, retries, and DLQs shape reliability.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-queues-and-asynchronous-processing-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "queues-and-asynchronous-processing",
+        "performance"
+      ],
+      "question": "How can queues and asynchronous processing become a performance bottleneck, and how would you improve it?",
+      "answer": "Queues decouple work and absorb bursts; delivery semantics, idempotency, ordering, retries, and DLQs shape reliability.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-queues-and-asynchronous-processing-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "queues-and-asynchronous-processing",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using queues and asynchronous processing?",
+      "answer": "Queues decouple work and absorb bursts; delivery semantics, idempotency, ordering, retries, and DLQs shape reliability.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-queues-and-asynchronous-processing-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "queues-and-asynchronous-processing",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around queues and asynchronous processing?",
+      "answer": "Queues decouple work and absorb bursts; delivery semantics, idempotency, ordering, retries, and DLQs shape reliability.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-queues-and-asynchronous-processing-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "queues-and-asynchronous-processing",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate queues and asynchronous processing safely in an existing system?",
+      "answer": "Queues decouple work and absorb bursts; delivery semantics, idempotency, ordering, retries, and DLQs shape reliability.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-queues-and-asynchronous-processing-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "queues-and-asynchronous-processing",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on queues and asynchronous processing?",
+      "answer": "Queues decouple work and absorb bursts; delivery semantics, idempotency, ordering, retries, and DLQs shape reliability.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-queues-and-asynchronous-processing-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "queues-and-asynchronous-processing",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving queues and asynchronous processing. Walk through your reasoning.",
+      "answer": "Queues decouple work and absorb bursts; delivery semantics, idempotency, ordering, retries, and DLQs shape reliability.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-partitioning-and-replication-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "partitioning-and-replication",
+        "mechanics"
+      ],
+      "question": "Explain how partitioning and replication works internally and which details matter in production.",
+      "answer": "Partitioning distributes data and load while replication improves availability and reads; both add coordination and recovery complexity.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-partitioning-and-replication-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "partitioning-and-replication",
+        "design"
+      ],
+      "question": "Design a production approach for partitioning and replication. What decisions must be explicit?",
+      "answer": "Partitioning distributes data and load while replication improves availability and reads; both add coordination and recovery complexity.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-partitioning-and-replication-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "partitioning-and-replication",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around partitioning and replication?",
+      "answer": "Partitioning distributes data and load while replication improves availability and reads; both add coordination and recovery complexity.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-partitioning-and-replication-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "partitioning-and-replication",
+        "debugging"
+      ],
+      "question": "A production issue appears around partitioning and replication. How do you investigate it?",
+      "answer": "Partitioning distributes data and load while replication improves availability and reads; both add coordination and recovery complexity.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-partitioning-and-replication-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "partitioning-and-replication",
+        "performance"
+      ],
+      "question": "How can partitioning and replication become a performance bottleneck, and how would you improve it?",
+      "answer": "Partitioning distributes data and load while replication improves availability and reads; both add coordination and recovery complexity.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-partitioning-and-replication-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "partitioning-and-replication",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using partitioning and replication?",
+      "answer": "Partitioning distributes data and load while replication improves availability and reads; both add coordination and recovery complexity.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-partitioning-and-replication-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "partitioning-and-replication",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around partitioning and replication?",
+      "answer": "Partitioning distributes data and load while replication improves availability and reads; both add coordination and recovery complexity.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-partitioning-and-replication-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "partitioning-and-replication",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate partitioning and replication safely in an existing system?",
+      "answer": "Partitioning distributes data and load while replication improves availability and reads; both add coordination and recovery complexity.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-partitioning-and-replication-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "partitioning-and-replication",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on partitioning and replication?",
+      "answer": "Partitioning distributes data and load while replication improves availability and reads; both add coordination and recovery complexity.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-partitioning-and-replication-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "partitioning-and-replication",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving partitioning and replication. Walk through your reasoning.",
+      "answer": "Partitioning distributes data and load while replication improves availability and reads; both add coordination and recovery complexity.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-consistency-and-distributed-coordination-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "consistency-and-distributed-coordination",
+        "mechanics"
+      ],
+      "question": "Explain how consistency and distributed coordination works internally and which details matter in production.",
+      "answer": "Consistency choices must protect business invariants while acknowledging latency, availability, clocks, and partial failure.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-consistency-and-distributed-coordination-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "consistency-and-distributed-coordination",
+        "design"
+      ],
+      "question": "Design a production approach for consistency and distributed coordination. What decisions must be explicit?",
+      "answer": "Consistency choices must protect business invariants while acknowledging latency, availability, clocks, and partial failure.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-consistency-and-distributed-coordination-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "consistency-and-distributed-coordination",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around consistency and distributed coordination?",
+      "answer": "Consistency choices must protect business invariants while acknowledging latency, availability, clocks, and partial failure.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-consistency-and-distributed-coordination-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "consistency-and-distributed-coordination",
+        "debugging"
+      ],
+      "question": "A production issue appears around consistency and distributed coordination. How do you investigate it?",
+      "answer": "Consistency choices must protect business invariants while acknowledging latency, availability, clocks, and partial failure.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-consistency-and-distributed-coordination-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "consistency-and-distributed-coordination",
+        "performance"
+      ],
+      "question": "How can consistency and distributed coordination become a performance bottleneck, and how would you improve it?",
+      "answer": "Consistency choices must protect business invariants while acknowledging latency, availability, clocks, and partial failure.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-consistency-and-distributed-coordination-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "consistency-and-distributed-coordination",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using consistency and distributed coordination?",
+      "answer": "Consistency choices must protect business invariants while acknowledging latency, availability, clocks, and partial failure.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-consistency-and-distributed-coordination-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "consistency-and-distributed-coordination",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around consistency and distributed coordination?",
+      "answer": "Consistency choices must protect business invariants while acknowledging latency, availability, clocks, and partial failure.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-consistency-and-distributed-coordination-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "consistency-and-distributed-coordination",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate consistency and distributed coordination safely in an existing system?",
+      "answer": "Consistency choices must protect business invariants while acknowledging latency, availability, clocks, and partial failure.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-consistency-and-distributed-coordination-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "consistency-and-distributed-coordination",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on consistency and distributed coordination?",
+      "answer": "Consistency choices must protect business invariants while acknowledging latency, availability, clocks, and partial failure.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-consistency-and-distributed-coordination-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "consistency-and-distributed-coordination",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving consistency and distributed coordination. Walk through your reasoning.",
+      "answer": "Consistency choices must protect business invariants while acknowledging latency, availability, clocks, and partial failure.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-multi-region-architecture-and-disaster-recovery-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "multi-region-architecture-and-disaster-recovery",
+        "mechanics"
+      ],
+      "question": "Explain how multi-region architecture and disaster recovery works internally and which details matter in production.",
+      "answer": "Regional designs require explicit RTO/RPO, data replication, traffic failover, fencing, and regularly tested evacuation.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-multi-region-architecture-and-disaster-recovery-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "multi-region-architecture-and-disaster-recovery",
+        "design"
+      ],
+      "question": "Design a production approach for multi-region architecture and disaster recovery. What decisions must be explicit?",
+      "answer": "Regional designs require explicit RTO/RPO, data replication, traffic failover, fencing, and regularly tested evacuation.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-multi-region-architecture-and-disaster-recovery-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "multi-region-architecture-and-disaster-recovery",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around multi-region architecture and disaster recovery?",
+      "answer": "Regional designs require explicit RTO/RPO, data replication, traffic failover, fencing, and regularly tested evacuation.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-multi-region-architecture-and-disaster-recovery-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "multi-region-architecture-and-disaster-recovery",
+        "debugging"
+      ],
+      "question": "A production issue appears around multi-region architecture and disaster recovery. How do you investigate it?",
+      "answer": "Regional designs require explicit RTO/RPO, data replication, traffic failover, fencing, and regularly tested evacuation.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-multi-region-architecture-and-disaster-recovery-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "multi-region-architecture-and-disaster-recovery",
+        "performance"
+      ],
+      "question": "How can multi-region architecture and disaster recovery become a performance bottleneck, and how would you improve it?",
+      "answer": "Regional designs require explicit RTO/RPO, data replication, traffic failover, fencing, and regularly tested evacuation.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-multi-region-architecture-and-disaster-recovery-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "multi-region-architecture-and-disaster-recovery",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using multi-region architecture and disaster recovery?",
+      "answer": "Regional designs require explicit RTO/RPO, data replication, traffic failover, fencing, and regularly tested evacuation.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-multi-region-architecture-and-disaster-recovery-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "multi-region-architecture-and-disaster-recovery",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around multi-region architecture and disaster recovery?",
+      "answer": "Regional designs require explicit RTO/RPO, data replication, traffic failover, fencing, and regularly tested evacuation.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-multi-region-architecture-and-disaster-recovery-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "multi-region-architecture-and-disaster-recovery",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate multi-region architecture and disaster recovery safely in an existing system?",
+      "answer": "Regional designs require explicit RTO/RPO, data replication, traffic failover, fencing, and regularly tested evacuation.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-multi-region-architecture-and-disaster-recovery-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "multi-region-architecture-and-disaster-recovery",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on multi-region architecture and disaster recovery?",
+      "answer": "Regional designs require explicit RTO/RPO, data replication, traffic failover, fencing, and regularly tested evacuation.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-multi-region-architecture-and-disaster-recovery-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "multi-region-architecture-and-disaster-recovery",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving multi-region architecture and disaster recovery. Walk through your reasoning.",
+      "answer": "Regional designs require explicit RTO/RPO, data replication, traffic failover, fencing, and regularly tested evacuation.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-api-gateways-and-service-communication-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "api-gateways-and-service-communication",
+        "mechanics"
+      ],
+      "question": "Explain how API gateways and service communication works internally and which details matter in production.",
+      "answer": "Gateways centralize edge concerns; internal communication choices affect coupling, latency, retries, discovery, and observability.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-api-gateways-and-service-communication-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "api-gateways-and-service-communication",
+        "design"
+      ],
+      "question": "Design a production approach for API gateways and service communication. What decisions must be explicit?",
+      "answer": "Gateways centralize edge concerns; internal communication choices affect coupling, latency, retries, discovery, and observability.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-api-gateways-and-service-communication-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "api-gateways-and-service-communication",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around API gateways and service communication?",
+      "answer": "Gateways centralize edge concerns; internal communication choices affect coupling, latency, retries, discovery, and observability.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-api-gateways-and-service-communication-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "api-gateways-and-service-communication",
+        "debugging"
+      ],
+      "question": "A production issue appears around API gateways and service communication. How do you investigate it?",
+      "answer": "Gateways centralize edge concerns; internal communication choices affect coupling, latency, retries, discovery, and observability.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-api-gateways-and-service-communication-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "api-gateways-and-service-communication",
+        "performance"
+      ],
+      "question": "How can API gateways and service communication become a performance bottleneck, and how would you improve it?",
+      "answer": "Gateways centralize edge concerns; internal communication choices affect coupling, latency, retries, discovery, and observability.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-api-gateways-and-service-communication-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "api-gateways-and-service-communication",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using API gateways and service communication?",
+      "answer": "Gateways centralize edge concerns; internal communication choices affect coupling, latency, retries, discovery, and observability.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-api-gateways-and-service-communication-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "api-gateways-and-service-communication",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around API gateways and service communication?",
+      "answer": "Gateways centralize edge concerns; internal communication choices affect coupling, latency, retries, discovery, and observability.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-api-gateways-and-service-communication-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "api-gateways-and-service-communication",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate API gateways and service communication safely in an existing system?",
+      "answer": "Gateways centralize edge concerns; internal communication choices affect coupling, latency, retries, discovery, and observability.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-api-gateways-and-service-communication-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "api-gateways-and-service-communication",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on API gateways and service communication?",
+      "answer": "Gateways centralize edge concerns; internal communication choices affect coupling, latency, retries, discovery, and observability.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-api-gateways-and-service-communication-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "api-gateways-and-service-communication",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving API gateways and service communication. Walk through your reasoning.",
+      "answer": "Gateways centralize edge concerns; internal communication choices affect coupling, latency, retries, discovery, and observability.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-resilience-and-overload-control-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "resilience-and-overload-control",
+        "mechanics"
+      ],
+      "question": "Explain how resilience and overload control works internally and which details matter in production.",
+      "answer": "Timeouts, budgets, backoff, jitter, circuit breakers, bulkheads, admission control, and degradation prevent cascading failure.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-resilience-and-overload-control-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "resilience-and-overload-control",
+        "design"
+      ],
+      "question": "Design a production approach for resilience and overload control. What decisions must be explicit?",
+      "answer": "Timeouts, budgets, backoff, jitter, circuit breakers, bulkheads, admission control, and degradation prevent cascading failure.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-resilience-and-overload-control-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "resilience-and-overload-control",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around resilience and overload control?",
+      "answer": "Timeouts, budgets, backoff, jitter, circuit breakers, bulkheads, admission control, and degradation prevent cascading failure.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-resilience-and-overload-control-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "resilience-and-overload-control",
+        "debugging"
+      ],
+      "question": "A production issue appears around resilience and overload control. How do you investigate it?",
+      "answer": "Timeouts, budgets, backoff, jitter, circuit breakers, bulkheads, admission control, and degradation prevent cascading failure.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-resilience-and-overload-control-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "resilience-and-overload-control",
+        "performance"
+      ],
+      "question": "How can resilience and overload control become a performance bottleneck, and how would you improve it?",
+      "answer": "Timeouts, budgets, backoff, jitter, circuit breakers, bulkheads, admission control, and degradation prevent cascading failure.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-resilience-and-overload-control-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "resilience-and-overload-control",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using resilience and overload control?",
+      "answer": "Timeouts, budgets, backoff, jitter, circuit breakers, bulkheads, admission control, and degradation prevent cascading failure.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-resilience-and-overload-control-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "resilience-and-overload-control",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around resilience and overload control?",
+      "answer": "Timeouts, budgets, backoff, jitter, circuit breakers, bulkheads, admission control, and degradation prevent cascading failure.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-resilience-and-overload-control-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "resilience-and-overload-control",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate resilience and overload control safely in an existing system?",
+      "answer": "Timeouts, budgets, backoff, jitter, circuit breakers, bulkheads, admission control, and degradation prevent cascading failure.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-resilience-and-overload-control-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "resilience-and-overload-control",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on resilience and overload control?",
+      "answer": "Timeouts, budgets, backoff, jitter, circuit breakers, bulkheads, admission control, and degradation prevent cascading failure.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-resilience-and-overload-control-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "resilience-and-overload-control",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving resilience and overload control. Walk through your reasoning.",
+      "answer": "Timeouts, budgets, backoff, jitter, circuit breakers, bulkheads, admission control, and degradation prevent cascading failure.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-system-evolution-and-architectural-decisions-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "system-evolution-and-architectural-decisions",
+        "mechanics"
+      ],
+      "question": "Explain how system evolution and architectural decisions works internally and which details matter in production.",
+      "answer": "Strong architecture supports incremental change, explicit ownership, measurable trade-offs, and reversible decisions.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-system-evolution-and-architectural-decisions-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "system-design",
+        "system-evolution-and-architectural-decisions",
+        "design"
+      ],
+      "question": "Design a production approach for system evolution and architectural decisions. What decisions must be explicit?",
+      "answer": "Strong architecture supports incremental change, explicit ownership, measurable trade-offs, and reversible decisions.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-system-evolution-and-architectural-decisions-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "system-evolution-and-architectural-decisions",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around system evolution and architectural decisions?",
+      "answer": "Strong architecture supports incremental change, explicit ownership, measurable trade-offs, and reversible decisions.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "system-design-system-evolution-and-architectural-decisions-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "system-design",
+        "system-evolution-and-architectural-decisions",
+        "debugging"
+      ],
+      "question": "A production issue appears around system evolution and architectural decisions. How do you investigate it?",
+      "answer": "Strong architecture supports incremental change, explicit ownership, measurable trade-offs, and reversible decisions.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

@@ -1,0 +1,1197 @@
+{
+  "name": "Docker",
+  "icon": "docker",
+  "order": 20,
+  "questions": [
+    {
+      "id": "image-vs-container",
+      "question": "What's the difference between an image and a container?",
+      "answer": "- An **image** is an immutable, read-only template: a stack of filesystem layers + metadata (entrypoint, env, exposed ports).\n- A **container** is a running (or stopped) instance of an image, with a thin writable layer on top.\n\nAnalogy: image = class, container = instance. You can run many containers from the same image.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "docker"
+      ]
+    },
+    {
+      "id": "copy-vs-add",
+      "question": "COPY vs ADD in a Dockerfile?",
+      "answer": "Prefer **COPY** — it does one thing: copies files from build context into the image.\n\n`ADD` does the same **plus** auto-extracts local tar archives and can fetch URLs. That magic is rarely wanted and surprises readers.\n\nUse `ADD` only when you genuinely need tar extraction; use `RUN curl` (or a multi-stage download) for remote files so you can verify checksums.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "docker"
+      ]
+    },
+    {
+      "id": "multi-stage",
+      "question": "What is a multi-stage build and why use it?",
+      "answer": "Multi-stage builds let you use multiple `FROM` instructions in one Dockerfile and copy artifacts between them.\n\n```dockerfile\nFROM node:20 AS build\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\nFROM nginx:alpine\nCOPY --from=build /app/dist /usr/share/nginx/html\n```\n\nFinal image only contains the built `dist/` and nginx — no Node, no `node_modules`, no source. Smaller, fewer CVEs, faster to ship.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "docker"
+      ]
+    },
+    {
+      "id": "volumes-vs-bind",
+      "question": "Volumes vs bind mounts?",
+      "answer": "- **Bind mount** — maps a host directory into the container (`-v /host/path:/in/container`). Tightly coupled to host paths; great for local dev.\n- **Volume** — managed by Docker, lives under `/var/lib/docker/volumes/`. Portable, backupable, faster on Docker Desktop (no VFS translation). Use in production.\n- **tmpfs** — in-memory, never written to disk. Good for secrets or scratch space.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "docker"
+      ]
+    },
+    {
+      "id": "cache-busting",
+      "question": "How do you optimize Dockerfile build cache?",
+      "answer": "Order layers from **least to most frequently changing**:\n\n```dockerfile\nFROM node:20-alpine\nWORKDIR /app\n# 1. deps change rarely → cached across most builds\nCOPY package*.json ./\nRUN npm ci\n# 2. source changes every commit → invalidates only here\nCOPY . .\nRUN npm run build\n```\n\nIf you `COPY . .` first, every source change invalidates the `npm ci` layer too.",
+      "type": "knowledge",
+      "level": "senior",
+      "tags": [
+        "docker"
+      ]
+    },
+    {
+      "id": "docker-image-layers-and-build-cache-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "image-layers-and-build-cache",
+        "mechanics"
+      ],
+      "question": "Explain how image layers and build cache works internally and which details matter in production.",
+      "answer": "Docker builds create content-addressed layers; instruction order, build context, and cache invalidation determine speed and image history.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-layers-and-build-cache-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "image-layers-and-build-cache",
+        "design"
+      ],
+      "question": "Design a production approach for image layers and build cache. What decisions must be explicit?",
+      "answer": "Docker builds create content-addressed layers; instruction order, build context, and cache invalidation determine speed and image history.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-layers-and-build-cache-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-layers-and-build-cache",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around image layers and build cache?",
+      "answer": "Docker builds create content-addressed layers; instruction order, build context, and cache invalidation determine speed and image history.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-layers-and-build-cache-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-layers-and-build-cache",
+        "debugging"
+      ],
+      "question": "A production issue appears around image layers and build cache. How do you investigate it?",
+      "answer": "Docker builds create content-addressed layers; instruction order, build context, and cache invalidation determine speed and image history.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-layers-and-build-cache-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-layers-and-build-cache",
+        "performance"
+      ],
+      "question": "How can image layers and build cache become a performance bottleneck, and how would you improve it?",
+      "answer": "Docker builds create content-addressed layers; instruction order, build context, and cache invalidation determine speed and image history.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-layers-and-build-cache-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-layers-and-build-cache",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using image layers and build cache?",
+      "answer": "Docker builds create content-addressed layers; instruction order, build context, and cache invalidation determine speed and image history.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-layers-and-build-cache-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-layers-and-build-cache",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around image layers and build cache?",
+      "answer": "Docker builds create content-addressed layers; instruction order, build context, and cache invalidation determine speed and image history.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-layers-and-build-cache-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-layers-and-build-cache",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate image layers and build cache safely in an existing system?",
+      "answer": "Docker builds create content-addressed layers; instruction order, build context, and cache invalidation determine speed and image history.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-layers-and-build-cache-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "image-layers-and-build-cache",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on image layers and build cache?",
+      "answer": "Docker builds create content-addressed layers; instruction order, build context, and cache invalidation determine speed and image history.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-layers-and-build-cache-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-layers-and-build-cache",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving image layers and build cache. Walk through your reasoning.",
+      "answer": "Docker builds create content-addressed layers; instruction order, build context, and cache invalidation determine speed and image history.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-multi-stage-and-reproducible-builds-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "multi-stage-and-reproducible-builds",
+        "mechanics"
+      ],
+      "question": "Explain how multi-stage and reproducible builds works internally and which details matter in production.",
+      "answer": "Multi-stage builds separate toolchains from runtime artifacts; pinned inputs and deterministic steps improve reproducibility and supply-chain trust.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-multi-stage-and-reproducible-builds-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "multi-stage-and-reproducible-builds",
+        "design"
+      ],
+      "question": "Design a production approach for multi-stage and reproducible builds. What decisions must be explicit?",
+      "answer": "Multi-stage builds separate toolchains from runtime artifacts; pinned inputs and deterministic steps improve reproducibility and supply-chain trust.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-multi-stage-and-reproducible-builds-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "multi-stage-and-reproducible-builds",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around multi-stage and reproducible builds?",
+      "answer": "Multi-stage builds separate toolchains from runtime artifacts; pinned inputs and deterministic steps improve reproducibility and supply-chain trust.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-multi-stage-and-reproducible-builds-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "multi-stage-and-reproducible-builds",
+        "debugging"
+      ],
+      "question": "A production issue appears around multi-stage and reproducible builds. How do you investigate it?",
+      "answer": "Multi-stage builds separate toolchains from runtime artifacts; pinned inputs and deterministic steps improve reproducibility and supply-chain trust.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-multi-stage-and-reproducible-builds-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "multi-stage-and-reproducible-builds",
+        "performance"
+      ],
+      "question": "How can multi-stage and reproducible builds become a performance bottleneck, and how would you improve it?",
+      "answer": "Multi-stage builds separate toolchains from runtime artifacts; pinned inputs and deterministic steps improve reproducibility and supply-chain trust.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-multi-stage-and-reproducible-builds-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "multi-stage-and-reproducible-builds",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using multi-stage and reproducible builds?",
+      "answer": "Multi-stage builds separate toolchains from runtime artifacts; pinned inputs and deterministic steps improve reproducibility and supply-chain trust.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-multi-stage-and-reproducible-builds-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "multi-stage-and-reproducible-builds",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around multi-stage and reproducible builds?",
+      "answer": "Multi-stage builds separate toolchains from runtime artifacts; pinned inputs and deterministic steps improve reproducibility and supply-chain trust.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-multi-stage-and-reproducible-builds-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "multi-stage-and-reproducible-builds",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate multi-stage and reproducible builds safely in an existing system?",
+      "answer": "Multi-stage builds separate toolchains from runtime artifacts; pinned inputs and deterministic steps improve reproducibility and supply-chain trust.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-multi-stage-and-reproducible-builds-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "multi-stage-and-reproducible-builds",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on multi-stage and reproducible builds?",
+      "answer": "Multi-stage builds separate toolchains from runtime artifacts; pinned inputs and deterministic steps improve reproducibility and supply-chain trust.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-multi-stage-and-reproducible-builds-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "multi-stage-and-reproducible-builds",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving multi-stage and reproducible builds. Walk through your reasoning.",
+      "answer": "Multi-stage builds separate toolchains from runtime artifacts; pinned inputs and deterministic steps improve reproducibility and supply-chain trust.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-isolation-and-linux-primitives-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-isolation-and-linux-primitives",
+        "mechanics"
+      ],
+      "question": "Explain how container isolation and Linux primitives works internally and which details matter in production.",
+      "answer": "Containers combine namespaces, cgroups, capabilities, and filesystem isolation; they are not equivalent to virtual machines.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-isolation-and-linux-primitives-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-isolation-and-linux-primitives",
+        "design"
+      ],
+      "question": "Design a production approach for container isolation and Linux primitives. What decisions must be explicit?",
+      "answer": "Containers combine namespaces, cgroups, capabilities, and filesystem isolation; they are not equivalent to virtual machines.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-isolation-and-linux-primitives-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-isolation-and-linux-primitives",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around container isolation and Linux primitives?",
+      "answer": "Containers combine namespaces, cgroups, capabilities, and filesystem isolation; they are not equivalent to virtual machines.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-isolation-and-linux-primitives-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-isolation-and-linux-primitives",
+        "debugging"
+      ],
+      "question": "A production issue appears around container isolation and Linux primitives. How do you investigate it?",
+      "answer": "Containers combine namespaces, cgroups, capabilities, and filesystem isolation; they are not equivalent to virtual machines.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-isolation-and-linux-primitives-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-isolation-and-linux-primitives",
+        "performance"
+      ],
+      "question": "How can container isolation and Linux primitives become a performance bottleneck, and how would you improve it?",
+      "answer": "Containers combine namespaces, cgroups, capabilities, and filesystem isolation; they are not equivalent to virtual machines.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-isolation-and-linux-primitives-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-isolation-and-linux-primitives",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using container isolation and Linux primitives?",
+      "answer": "Containers combine namespaces, cgroups, capabilities, and filesystem isolation; they are not equivalent to virtual machines.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-isolation-and-linux-primitives-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-isolation-and-linux-primitives",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around container isolation and Linux primitives?",
+      "answer": "Containers combine namespaces, cgroups, capabilities, and filesystem isolation; they are not equivalent to virtual machines.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-isolation-and-linux-primitives-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-isolation-and-linux-primitives",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate container isolation and Linux primitives safely in an existing system?",
+      "answer": "Containers combine namespaces, cgroups, capabilities, and filesystem isolation; they are not equivalent to virtual machines.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-isolation-and-linux-primitives-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-isolation-and-linux-primitives",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on container isolation and Linux primitives?",
+      "answer": "Containers combine namespaces, cgroups, capabilities, and filesystem isolation; they are not equivalent to virtual machines.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-isolation-and-linux-primitives-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-isolation-and-linux-primitives",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving container isolation and Linux primitives. Walk through your reasoning.",
+      "answer": "Containers combine namespaces, cgroups, capabilities, and filesystem isolation; they are not equivalent to virtual machines.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-networking-and-service-discovery-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-networking-and-service-discovery",
+        "mechanics"
+      ],
+      "question": "Explain how container networking and service discovery works internally and which details matter in production.",
+      "answer": "Bridge networks, DNS, port publishing, ingress, and egress rules determine connectivity and exposure.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-networking-and-service-discovery-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-networking-and-service-discovery",
+        "design"
+      ],
+      "question": "Design a production approach for container networking and service discovery. What decisions must be explicit?",
+      "answer": "Bridge networks, DNS, port publishing, ingress, and egress rules determine connectivity and exposure.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-networking-and-service-discovery-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-networking-and-service-discovery",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around container networking and service discovery?",
+      "answer": "Bridge networks, DNS, port publishing, ingress, and egress rules determine connectivity and exposure.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-networking-and-service-discovery-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-networking-and-service-discovery",
+        "debugging"
+      ],
+      "question": "A production issue appears around container networking and service discovery. How do you investigate it?",
+      "answer": "Bridge networks, DNS, port publishing, ingress, and egress rules determine connectivity and exposure.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-networking-and-service-discovery-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-networking-and-service-discovery",
+        "performance"
+      ],
+      "question": "How can container networking and service discovery become a performance bottleneck, and how would you improve it?",
+      "answer": "Bridge networks, DNS, port publishing, ingress, and egress rules determine connectivity and exposure.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-networking-and-service-discovery-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-networking-and-service-discovery",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using container networking and service discovery?",
+      "answer": "Bridge networks, DNS, port publishing, ingress, and egress rules determine connectivity and exposure.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-networking-and-service-discovery-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-networking-and-service-discovery",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around container networking and service discovery?",
+      "answer": "Bridge networks, DNS, port publishing, ingress, and egress rules determine connectivity and exposure.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-networking-and-service-discovery-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-networking-and-service-discovery",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate container networking and service discovery safely in an existing system?",
+      "answer": "Bridge networks, DNS, port publishing, ingress, and egress rules determine connectivity and exposure.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-networking-and-service-discovery-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-networking-and-service-discovery",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on container networking and service discovery?",
+      "answer": "Bridge networks, DNS, port publishing, ingress, and egress rules determine connectivity and exposure.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-networking-and-service-discovery-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-networking-and-service-discovery",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving container networking and service discovery. Walk through your reasoning.",
+      "answer": "Bridge networks, DNS, port publishing, ingress, and egress rules determine connectivity and exposure.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-volumes-and-persistent-data-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "volumes-and-persistent-data",
+        "mechanics"
+      ],
+      "question": "Explain how volumes and persistent data works internally and which details matter in production.",
+      "answer": "Volumes outlive containers; ownership, backup, consistency, migration, and host coupling matter more than the mount syntax.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-volumes-and-persistent-data-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "volumes-and-persistent-data",
+        "design"
+      ],
+      "question": "Design a production approach for volumes and persistent data. What decisions must be explicit?",
+      "answer": "Volumes outlive containers; ownership, backup, consistency, migration, and host coupling matter more than the mount syntax.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-volumes-and-persistent-data-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "volumes-and-persistent-data",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around volumes and persistent data?",
+      "answer": "Volumes outlive containers; ownership, backup, consistency, migration, and host coupling matter more than the mount syntax.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-volumes-and-persistent-data-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "volumes-and-persistent-data",
+        "debugging"
+      ],
+      "question": "A production issue appears around volumes and persistent data. How do you investigate it?",
+      "answer": "Volumes outlive containers; ownership, backup, consistency, migration, and host coupling matter more than the mount syntax.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-volumes-and-persistent-data-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "volumes-and-persistent-data",
+        "performance"
+      ],
+      "question": "How can volumes and persistent data become a performance bottleneck, and how would you improve it?",
+      "answer": "Volumes outlive containers; ownership, backup, consistency, migration, and host coupling matter more than the mount syntax.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-volumes-and-persistent-data-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "volumes-and-persistent-data",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using volumes and persistent data?",
+      "answer": "Volumes outlive containers; ownership, backup, consistency, migration, and host coupling matter more than the mount syntax.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-volumes-and-persistent-data-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "volumes-and-persistent-data",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around volumes and persistent data?",
+      "answer": "Volumes outlive containers; ownership, backup, consistency, migration, and host coupling matter more than the mount syntax.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-volumes-and-persistent-data-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "volumes-and-persistent-data",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate volumes and persistent data safely in an existing system?",
+      "answer": "Volumes outlive containers; ownership, backup, consistency, migration, and host coupling matter more than the mount syntax.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-volumes-and-persistent-data-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "volumes-and-persistent-data",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on volumes and persistent data?",
+      "answer": "Volumes outlive containers; ownership, backup, consistency, migration, and host coupling matter more than the mount syntax.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-volumes-and-persistent-data-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "volumes-and-persistent-data",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving volumes and persistent data. Walk through your reasoning.",
+      "answer": "Volumes outlive containers; ownership, backup, consistency, migration, and host coupling matter more than the mount syntax.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-resource-limits-and-signals-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-resource-limits-and-signals",
+        "mechanics"
+      ],
+      "question": "Explain how container resource limits and signals works internally and which details matter in production.",
+      "answer": "CPU, memory, PID limits, OOM behavior, and signal handling determine reliability under pressure and during shutdown.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-resource-limits-and-signals-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-resource-limits-and-signals",
+        "design"
+      ],
+      "question": "Design a production approach for container resource limits and signals. What decisions must be explicit?",
+      "answer": "CPU, memory, PID limits, OOM behavior, and signal handling determine reliability under pressure and during shutdown.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-resource-limits-and-signals-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-resource-limits-and-signals",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around container resource limits and signals?",
+      "answer": "CPU, memory, PID limits, OOM behavior, and signal handling determine reliability under pressure and during shutdown.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-resource-limits-and-signals-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-resource-limits-and-signals",
+        "debugging"
+      ],
+      "question": "A production issue appears around container resource limits and signals. How do you investigate it?",
+      "answer": "CPU, memory, PID limits, OOM behavior, and signal handling determine reliability under pressure and during shutdown.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-resource-limits-and-signals-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-resource-limits-and-signals",
+        "performance"
+      ],
+      "question": "How can container resource limits and signals become a performance bottleneck, and how would you improve it?",
+      "answer": "CPU, memory, PID limits, OOM behavior, and signal handling determine reliability under pressure and during shutdown.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-resource-limits-and-signals-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-resource-limits-and-signals",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using container resource limits and signals?",
+      "answer": "CPU, memory, PID limits, OOM behavior, and signal handling determine reliability under pressure and during shutdown.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-resource-limits-and-signals-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-resource-limits-and-signals",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around container resource limits and signals?",
+      "answer": "CPU, memory, PID limits, OOM behavior, and signal handling determine reliability under pressure and during shutdown.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-resource-limits-and-signals-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-resource-limits-and-signals",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate container resource limits and signals safely in an existing system?",
+      "answer": "CPU, memory, PID limits, OOM behavior, and signal handling determine reliability under pressure and during shutdown.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-resource-limits-and-signals-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-resource-limits-and-signals",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on container resource limits and signals?",
+      "answer": "CPU, memory, PID limits, OOM behavior, and signal handling determine reliability under pressure and during shutdown.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-resource-limits-and-signals-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-resource-limits-and-signals",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving container resource limits and signals. Walk through your reasoning.",
+      "answer": "CPU, memory, PID limits, OOM behavior, and signal handling determine reliability under pressure and during shutdown.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-and-runtime-security-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "image-and-runtime-security",
+        "mechanics"
+      ],
+      "question": "Explain how image and runtime security works internally and which details matter in production.",
+      "answer": "Minimal trusted images, non-root users, read-only filesystems, capability reduction, scanning, signing, and secrets handling reduce risk.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-and-runtime-security-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "image-and-runtime-security",
+        "design"
+      ],
+      "question": "Design a production approach for image and runtime security. What decisions must be explicit?",
+      "answer": "Minimal trusted images, non-root users, read-only filesystems, capability reduction, scanning, signing, and secrets handling reduce risk.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-and-runtime-security-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-and-runtime-security",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around image and runtime security?",
+      "answer": "Minimal trusted images, non-root users, read-only filesystems, capability reduction, scanning, signing, and secrets handling reduce risk.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-and-runtime-security-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-and-runtime-security",
+        "debugging"
+      ],
+      "question": "A production issue appears around image and runtime security. How do you investigate it?",
+      "answer": "Minimal trusted images, non-root users, read-only filesystems, capability reduction, scanning, signing, and secrets handling reduce risk.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-and-runtime-security-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-and-runtime-security",
+        "performance"
+      ],
+      "question": "How can image and runtime security become a performance bottleneck, and how would you improve it?",
+      "answer": "Minimal trusted images, non-root users, read-only filesystems, capability reduction, scanning, signing, and secrets handling reduce risk.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-and-runtime-security-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-and-runtime-security",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using image and runtime security?",
+      "answer": "Minimal trusted images, non-root users, read-only filesystems, capability reduction, scanning, signing, and secrets handling reduce risk.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-and-runtime-security-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-and-runtime-security",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around image and runtime security?",
+      "answer": "Minimal trusted images, non-root users, read-only filesystems, capability reduction, scanning, signing, and secrets handling reduce risk.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-and-runtime-security-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-and-runtime-security",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate image and runtime security safely in an existing system?",
+      "answer": "Minimal trusted images, non-root users, read-only filesystems, capability reduction, scanning, signing, and secrets handling reduce risk.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-and-runtime-security-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "image-and-runtime-security",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on image and runtime security?",
+      "answer": "Minimal trusted images, non-root users, read-only filesystems, capability reduction, scanning, signing, and secrets handling reduce risk.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-image-and-runtime-security-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "image-and-runtime-security",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving image and runtime security. Walk through your reasoning.",
+      "answer": "Minimal trusted images, non-root users, read-only filesystems, capability reduction, scanning, signing, and secrets handling reduce risk.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-docker-compose-development-environments-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "docker-compose-development-environments",
+        "mechanics"
+      ],
+      "question": "Explain how Docker Compose development environments works internally and which details matter in production.",
+      "answer": "Compose improves local orchestration but health, dependency readiness, data lifecycle, and parity with production require explicit design.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-docker-compose-development-environments-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "docker-compose-development-environments",
+        "design"
+      ],
+      "question": "Design a production approach for Docker Compose development environments. What decisions must be explicit?",
+      "answer": "Compose improves local orchestration but health, dependency readiness, data lifecycle, and parity with production require explicit design.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-docker-compose-development-environments-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "docker-compose-development-environments",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Docker Compose development environments?",
+      "answer": "Compose improves local orchestration but health, dependency readiness, data lifecycle, and parity with production require explicit design.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-docker-compose-development-environments-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "docker-compose-development-environments",
+        "debugging"
+      ],
+      "question": "A production issue appears around Docker Compose development environments. How do you investigate it?",
+      "answer": "Compose improves local orchestration but health, dependency readiness, data lifecycle, and parity with production require explicit design.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-docker-compose-development-environments-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "docker-compose-development-environments",
+        "performance"
+      ],
+      "question": "How can Docker Compose development environments become a performance bottleneck, and how would you improve it?",
+      "answer": "Compose improves local orchestration but health, dependency readiness, data lifecycle, and parity with production require explicit design.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-docker-compose-development-environments-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "docker-compose-development-environments",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Docker Compose development environments?",
+      "answer": "Compose improves local orchestration but health, dependency readiness, data lifecycle, and parity with production require explicit design.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-docker-compose-development-environments-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "docker-compose-development-environments",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Docker Compose development environments?",
+      "answer": "Compose improves local orchestration but health, dependency readiness, data lifecycle, and parity with production require explicit design.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-docker-compose-development-environments-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "docker-compose-development-environments",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Docker Compose development environments safely in an existing system?",
+      "answer": "Compose improves local orchestration but health, dependency readiness, data lifecycle, and parity with production require explicit design.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-docker-compose-development-environments-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "docker-compose-development-environments",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Docker Compose development environments?",
+      "answer": "Compose improves local orchestration but health, dependency readiness, data lifecycle, and parity with production require explicit design.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-docker-compose-development-environments-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "docker-compose-development-environments",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Docker Compose development environments. Walk through your reasoning.",
+      "answer": "Compose improves local orchestration but health, dependency readiness, data lifecycle, and parity with production require explicit design.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-logging-and-observability-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-logging-and-observability",
+        "mechanics"
+      ],
+      "question": "Explain how container logging and observability works internally and which details matter in production.",
+      "answer": "Containers should emit structured stdout/stderr and expose health and metrics; log drivers and rotation prevent node exhaustion.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-logging-and-observability-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-logging-and-observability",
+        "design"
+      ],
+      "question": "Design a production approach for container logging and observability. What decisions must be explicit?",
+      "answer": "Containers should emit structured stdout/stderr and expose health and metrics; log drivers and rotation prevent node exhaustion.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-logging-and-observability-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-logging-and-observability",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around container logging and observability?",
+      "answer": "Containers should emit structured stdout/stderr and expose health and metrics; log drivers and rotation prevent node exhaustion.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-logging-and-observability-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-logging-and-observability",
+        "debugging"
+      ],
+      "question": "A production issue appears around container logging and observability. How do you investigate it?",
+      "answer": "Containers should emit structured stdout/stderr and expose health and metrics; log drivers and rotation prevent node exhaustion.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-logging-and-observability-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-logging-and-observability",
+        "performance"
+      ],
+      "question": "How can container logging and observability become a performance bottleneck, and how would you improve it?",
+      "answer": "Containers should emit structured stdout/stderr and expose health and metrics; log drivers and rotation prevent node exhaustion.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-logging-and-observability-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-logging-and-observability",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using container logging and observability?",
+      "answer": "Containers should emit structured stdout/stderr and expose health and metrics; log drivers and rotation prevent node exhaustion.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-logging-and-observability-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-logging-and-observability",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around container logging and observability?",
+      "answer": "Containers should emit structured stdout/stderr and expose health and metrics; log drivers and rotation prevent node exhaustion.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-logging-and-observability-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-logging-and-observability",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate container logging and observability safely in an existing system?",
+      "answer": "Containers should emit structured stdout/stderr and expose health and metrics; log drivers and rotation prevent node exhaustion.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-logging-and-observability-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-logging-and-observability",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on container logging and observability?",
+      "answer": "Containers should emit structured stdout/stderr and expose health and metrics; log drivers and rotation prevent node exhaustion.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-logging-and-observability-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-logging-and-observability",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving container logging and observability. Walk through your reasoning.",
+      "answer": "Containers should emit structured stdout/stderr and expose health and metrics; log drivers and rotation prevent node exhaustion.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-debugging-and-incident-response-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-debugging-and-incident-response",
+        "mechanics"
+      ],
+      "question": "Explain how container debugging and incident response works internally and which details matter in production.",
+      "answer": "Effective debugging distinguishes image, runtime, network, storage, resource, and application failures while preserving evidence.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-debugging-and-incident-response-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "docker",
+        "container-debugging-and-incident-response",
+        "design"
+      ],
+      "question": "Design a production approach for container debugging and incident response. What decisions must be explicit?",
+      "answer": "Effective debugging distinguishes image, runtime, network, storage, resource, and application failures while preserving evidence.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-debugging-and-incident-response-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-debugging-and-incident-response",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around container debugging and incident response?",
+      "answer": "Effective debugging distinguishes image, runtime, network, storage, resource, and application failures while preserving evidence.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-debugging-and-incident-response-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-debugging-and-incident-response",
+        "debugging"
+      ],
+      "question": "A production issue appears around container debugging and incident response. How do you investigate it?",
+      "answer": "Effective debugging distinguishes image, runtime, network, storage, resource, and application failures while preserving evidence.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "docker-container-debugging-and-incident-response-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "docker",
+        "container-debugging-and-incident-response",
+        "performance"
+      ],
+      "question": "How can container debugging and incident response become a performance bottleneck, and how would you improve it?",
+      "answer": "Effective debugging distinguishes image, runtime, network, storage, resource, and application failures while preserving evidence.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

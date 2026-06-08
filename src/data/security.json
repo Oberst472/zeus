@@ -1,0 +1,1201 @@
+{
+  "name": "Security",
+  "icon": "security",
+  "order": 60,
+  "questions": [
+    {
+      "id": "auth-session-design",
+      "type": "architecture",
+      "tags": [
+        "authentication",
+        "tokens"
+      ],
+      "question": "Design authentication for a browser application. Cookies or JWTs?",
+      "answer": "The choice is not simply cookies versus JWTs. For browsers, a secure `HttpOnly`, `Secure`, `SameSite` session cookie often minimizes token exposure and enables server-side revocation. Stateless access tokens help distributed APIs but complicate revocation, rotation, and leakage response.\n\nCover CSRF, XSS, session fixation, refresh-token rotation, device/session management, MFA, audit logs, and key rotation. Keep authorization server-side and use short-lived credentials with explicit recovery flows.",
+      "level": "senior"
+    },
+    {
+      "id": "tenant-isolation",
+      "type": "scenario",
+      "tags": [
+        "authorization",
+        "saas"
+      ],
+      "question": "How do you prevent cross-tenant data leaks in a multi-tenant SaaS?",
+      "answer": "Make tenant identity an explicit trusted part of every request context, derived from authentication rather than client input. Enforce authorization centrally and at data-access boundaries. Use database row-level security or strongly typed repository APIs where practical.\n\nTest negative cases, background jobs, exports, caches, logs, object storage paths, and support tooling. Add audit trails and automated isolation tests. Tenant isolation is a system property, not one middleware check.",
+      "level": "senior"
+    },
+    {
+      "id": "secrets-incident",
+      "type": "incident",
+      "tags": [
+        "secrets",
+        "response"
+      ],
+      "question": "A production API key was committed to a public repository. What do you do?",
+      "answer": "Treat it as compromised immediately. Revoke or rotate the credential first, assess its permissions and usage logs, contain affected systems, and search for derived exposure. Removing Git history does not make the secret safe.\n\nThen notify stakeholders, preserve evidence, document the timeline, and add preventive controls: least privilege, short-lived credentials, secret scanning, protected branches, and rotation playbooks. Focus the postmortem on system improvements, not blame.",
+      "level": "senior"
+    },
+    {
+      "id": "webhook-security",
+      "type": "scenario",
+      "tags": [
+        "webhooks",
+        "api"
+      ],
+      "question": "How do you securely consume third-party webhooks?",
+      "answer": "Verify a signature over the raw request body using a rotated shared secret or public key. Validate timestamp tolerance to reduce replay risk and persist provider event IDs for idempotency.\n\nAcknowledge quickly, then process asynchronously. Apply body-size limits, schema validation, rate limits, and observability. Do not rely only on source IPs. Define retry behavior, secret rotation, and how malformed or repeated events are investigated.",
+      "level": "senior"
+    },
+    {
+      "id": "threat-model-feature",
+      "type": "leadership",
+      "tags": [
+        "threat-modeling"
+      ],
+      "question": "How do you threat-model a new feature before implementation?",
+      "answer": "Map assets, actors, trust boundaries, data flows, entry points, and failure impact. Ask how identities are established, where authorization occurs, what sensitive data moves, and how abuse differs from normal use.\n\nPrioritize threats by likelihood and impact, then assign mitigations and verification. Include operational misuse, insider access, dependency risks, and recovery. Keep the model lightweight and update it when architecture changes.",
+      "level": "senior"
+    },
+    {
+      "id": "security-authentication-and-credential-lifecycle-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "security",
+        "authentication-and-credential-lifecycle",
+        "mechanics"
+      ],
+      "question": "Explain how authentication and credential lifecycle works internally and which details matter in production.",
+      "answer": "Secure authentication includes enrollment, storage, MFA, recovery, rotation, revocation, and abuse resistance.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authentication-and-credential-lifecycle-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "security",
+        "authentication-and-credential-lifecycle",
+        "design"
+      ],
+      "question": "Design a production approach for authentication and credential lifecycle. What decisions must be explicit?",
+      "answer": "Secure authentication includes enrollment, storage, MFA, recovery, rotation, revocation, and abuse resistance.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authentication-and-credential-lifecycle-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authentication-and-credential-lifecycle",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around authentication and credential lifecycle?",
+      "answer": "Secure authentication includes enrollment, storage, MFA, recovery, rotation, revocation, and abuse resistance.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authentication-and-credential-lifecycle-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authentication-and-credential-lifecycle",
+        "debugging"
+      ],
+      "question": "A production issue appears around authentication and credential lifecycle. How do you investigate it?",
+      "answer": "Secure authentication includes enrollment, storage, MFA, recovery, rotation, revocation, and abuse resistance.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authentication-and-credential-lifecycle-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authentication-and-credential-lifecycle",
+        "performance"
+      ],
+      "question": "How can authentication and credential lifecycle become a performance bottleneck, and how would you improve it?",
+      "answer": "Secure authentication includes enrollment, storage, MFA, recovery, rotation, revocation, and abuse resistance.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authentication-and-credential-lifecycle-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authentication-and-credential-lifecycle",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using authentication and credential lifecycle?",
+      "answer": "Secure authentication includes enrollment, storage, MFA, recovery, rotation, revocation, and abuse resistance.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authentication-and-credential-lifecycle-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authentication-and-credential-lifecycle",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around authentication and credential lifecycle?",
+      "answer": "Secure authentication includes enrollment, storage, MFA, recovery, rotation, revocation, and abuse resistance.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authentication-and-credential-lifecycle-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authentication-and-credential-lifecycle",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate authentication and credential lifecycle safely in an existing system?",
+      "answer": "Secure authentication includes enrollment, storage, MFA, recovery, rotation, revocation, and abuse resistance.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authentication-and-credential-lifecycle-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "security",
+        "authentication-and-credential-lifecycle",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on authentication and credential lifecycle?",
+      "answer": "Secure authentication includes enrollment, storage, MFA, recovery, rotation, revocation, and abuse resistance.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authentication-and-credential-lifecycle-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authentication-and-credential-lifecycle",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving authentication and credential lifecycle. Walk through your reasoning.",
+      "answer": "Secure authentication includes enrollment, storage, MFA, recovery, rotation, revocation, and abuse resistance.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authorization-and-access-control-models-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "security",
+        "authorization-and-access-control-models",
+        "mechanics"
+      ],
+      "question": "Explain how authorization and access-control models works internally and which details matter in production.",
+      "answer": "Authorization must enforce resource and action policy at trusted boundaries and prevent horizontal and vertical escalation.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authorization-and-access-control-models-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "security",
+        "authorization-and-access-control-models",
+        "design"
+      ],
+      "question": "Design a production approach for authorization and access-control models. What decisions must be explicit?",
+      "answer": "Authorization must enforce resource and action policy at trusted boundaries and prevent horizontal and vertical escalation.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authorization-and-access-control-models-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authorization-and-access-control-models",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around authorization and access-control models?",
+      "answer": "Authorization must enforce resource and action policy at trusted boundaries and prevent horizontal and vertical escalation.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authorization-and-access-control-models-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authorization-and-access-control-models",
+        "debugging"
+      ],
+      "question": "A production issue appears around authorization and access-control models. How do you investigate it?",
+      "answer": "Authorization must enforce resource and action policy at trusted boundaries and prevent horizontal and vertical escalation.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authorization-and-access-control-models-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authorization-and-access-control-models",
+        "performance"
+      ],
+      "question": "How can authorization and access-control models become a performance bottleneck, and how would you improve it?",
+      "answer": "Authorization must enforce resource and action policy at trusted boundaries and prevent horizontal and vertical escalation.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authorization-and-access-control-models-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authorization-and-access-control-models",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using authorization and access-control models?",
+      "answer": "Authorization must enforce resource and action policy at trusted boundaries and prevent horizontal and vertical escalation.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authorization-and-access-control-models-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authorization-and-access-control-models",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around authorization and access-control models?",
+      "answer": "Authorization must enforce resource and action policy at trusted boundaries and prevent horizontal and vertical escalation.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authorization-and-access-control-models-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authorization-and-access-control-models",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate authorization and access-control models safely in an existing system?",
+      "answer": "Authorization must enforce resource and action policy at trusted boundaries and prevent horizontal and vertical escalation.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authorization-and-access-control-models-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "security",
+        "authorization-and-access-control-models",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on authorization and access-control models?",
+      "answer": "Authorization must enforce resource and action policy at trusted boundaries and prevent horizontal and vertical escalation.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-authorization-and-access-control-models-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "security",
+        "authorization-and-access-control-models",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving authorization and access-control models. Walk through your reasoning.",
+      "answer": "Authorization must enforce resource and action policy at trusted boundaries and prevent horizontal and vertical escalation.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-session-and-token-security-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "security",
+        "session-and-token-security",
+        "mechanics"
+      ],
+      "question": "Explain how session and token security works internally and which details matter in production.",
+      "answer": "Sessions and tokens require secure transport, storage, expiry, rotation, revocation, CSRF strategy, and leakage response.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-session-and-token-security-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "security",
+        "session-and-token-security",
+        "design"
+      ],
+      "question": "Design a production approach for session and token security. What decisions must be explicit?",
+      "answer": "Sessions and tokens require secure transport, storage, expiry, rotation, revocation, CSRF strategy, and leakage response.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-session-and-token-security-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "security",
+        "session-and-token-security",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around session and token security?",
+      "answer": "Sessions and tokens require secure transport, storage, expiry, rotation, revocation, CSRF strategy, and leakage response.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-session-and-token-security-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "security",
+        "session-and-token-security",
+        "debugging"
+      ],
+      "question": "A production issue appears around session and token security. How do you investigate it?",
+      "answer": "Sessions and tokens require secure transport, storage, expiry, rotation, revocation, CSRF strategy, and leakage response.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-session-and-token-security-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "security",
+        "session-and-token-security",
+        "performance"
+      ],
+      "question": "How can session and token security become a performance bottleneck, and how would you improve it?",
+      "answer": "Sessions and tokens require secure transport, storage, expiry, rotation, revocation, CSRF strategy, and leakage response.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-session-and-token-security-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "security",
+        "session-and-token-security",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using session and token security?",
+      "answer": "Sessions and tokens require secure transport, storage, expiry, rotation, revocation, CSRF strategy, and leakage response.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-session-and-token-security-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "security",
+        "session-and-token-security",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around session and token security?",
+      "answer": "Sessions and tokens require secure transport, storage, expiry, rotation, revocation, CSRF strategy, and leakage response.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-session-and-token-security-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "security",
+        "session-and-token-security",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate session and token security safely in an existing system?",
+      "answer": "Sessions and tokens require secure transport, storage, expiry, rotation, revocation, CSRF strategy, and leakage response.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-session-and-token-security-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "security",
+        "session-and-token-security",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on session and token security?",
+      "answer": "Sessions and tokens require secure transport, storage, expiry, rotation, revocation, CSRF strategy, and leakage response.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-session-and-token-security-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "security",
+        "session-and-token-security",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving session and token security. Walk through your reasoning.",
+      "answer": "Sessions and tokens require secure transport, storage, expiry, rotation, revocation, CSRF strategy, and leakage response.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-input-validation-injection-and-output-encoding-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "security",
+        "input-validation-injection-and-output-encoding",
+        "mechanics"
+      ],
+      "question": "Explain how input validation, injection, and output encoding works internally and which details matter in production.",
+      "answer": "Treat external input as untrusted; validate shape and intent, use safe interpreters, and encode for the output context.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-input-validation-injection-and-output-encoding-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "security",
+        "input-validation-injection-and-output-encoding",
+        "design"
+      ],
+      "question": "Design a production approach for input validation, injection, and output encoding. What decisions must be explicit?",
+      "answer": "Treat external input as untrusted; validate shape and intent, use safe interpreters, and encode for the output context.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-input-validation-injection-and-output-encoding-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "security",
+        "input-validation-injection-and-output-encoding",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around input validation, injection, and output encoding?",
+      "answer": "Treat external input as untrusted; validate shape and intent, use safe interpreters, and encode for the output context.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-input-validation-injection-and-output-encoding-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "security",
+        "input-validation-injection-and-output-encoding",
+        "debugging"
+      ],
+      "question": "A production issue appears around input validation, injection, and output encoding. How do you investigate it?",
+      "answer": "Treat external input as untrusted; validate shape and intent, use safe interpreters, and encode for the output context.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-input-validation-injection-and-output-encoding-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "security",
+        "input-validation-injection-and-output-encoding",
+        "performance"
+      ],
+      "question": "How can input validation, injection, and output encoding become a performance bottleneck, and how would you improve it?",
+      "answer": "Treat external input as untrusted; validate shape and intent, use safe interpreters, and encode for the output context.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-input-validation-injection-and-output-encoding-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "security",
+        "input-validation-injection-and-output-encoding",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using input validation, injection, and output encoding?",
+      "answer": "Treat external input as untrusted; validate shape and intent, use safe interpreters, and encode for the output context.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-input-validation-injection-and-output-encoding-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "security",
+        "input-validation-injection-and-output-encoding",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around input validation, injection, and output encoding?",
+      "answer": "Treat external input as untrusted; validate shape and intent, use safe interpreters, and encode for the output context.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-input-validation-injection-and-output-encoding-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "security",
+        "input-validation-injection-and-output-encoding",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate input validation, injection, and output encoding safely in an existing system?",
+      "answer": "Treat external input as untrusted; validate shape and intent, use safe interpreters, and encode for the output context.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-input-validation-injection-and-output-encoding-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "security",
+        "input-validation-injection-and-output-encoding",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on input validation, injection, and output encoding?",
+      "answer": "Treat external input as untrusted; validate shape and intent, use safe interpreters, and encode for the output context.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-input-validation-injection-and-output-encoding-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "security",
+        "input-validation-injection-and-output-encoding",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving input validation, injection, and output encoding. Walk through your reasoning.",
+      "answer": "Treat external input as untrusted; validate shape and intent, use safe interpreters, and encode for the output context.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-secrets-and-key-management-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "security",
+        "secrets-and-key-management",
+        "mechanics"
+      ],
+      "question": "Explain how secrets and key management works internally and which details matter in production.",
+      "answer": "Secrets need least privilege, controlled distribution, rotation, audit, short lifetimes, and incident-ready revocation.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-secrets-and-key-management-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "security",
+        "secrets-and-key-management",
+        "design"
+      ],
+      "question": "Design a production approach for secrets and key management. What decisions must be explicit?",
+      "answer": "Secrets need least privilege, controlled distribution, rotation, audit, short lifetimes, and incident-ready revocation.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-secrets-and-key-management-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "security",
+        "secrets-and-key-management",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around secrets and key management?",
+      "answer": "Secrets need least privilege, controlled distribution, rotation, audit, short lifetimes, and incident-ready revocation.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-secrets-and-key-management-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "security",
+        "secrets-and-key-management",
+        "debugging"
+      ],
+      "question": "A production issue appears around secrets and key management. How do you investigate it?",
+      "answer": "Secrets need least privilege, controlled distribution, rotation, audit, short lifetimes, and incident-ready revocation.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-secrets-and-key-management-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "security",
+        "secrets-and-key-management",
+        "performance"
+      ],
+      "question": "How can secrets and key management become a performance bottleneck, and how would you improve it?",
+      "answer": "Secrets need least privilege, controlled distribution, rotation, audit, short lifetimes, and incident-ready revocation.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-secrets-and-key-management-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "security",
+        "secrets-and-key-management",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using secrets and key management?",
+      "answer": "Secrets need least privilege, controlled distribution, rotation, audit, short lifetimes, and incident-ready revocation.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-secrets-and-key-management-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "security",
+        "secrets-and-key-management",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around secrets and key management?",
+      "answer": "Secrets need least privilege, controlled distribution, rotation, audit, short lifetimes, and incident-ready revocation.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-secrets-and-key-management-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "security",
+        "secrets-and-key-management",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate secrets and key management safely in an existing system?",
+      "answer": "Secrets need least privilege, controlled distribution, rotation, audit, short lifetimes, and incident-ready revocation.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-secrets-and-key-management-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "security",
+        "secrets-and-key-management",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on secrets and key management?",
+      "answer": "Secrets need least privilege, controlled distribution, rotation, audit, short lifetimes, and incident-ready revocation.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-secrets-and-key-management-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "security",
+        "secrets-and-key-management",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving secrets and key management. Walk through your reasoning.",
+      "answer": "Secrets need least privilege, controlled distribution, rotation, audit, short lifetimes, and incident-ready revocation.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-web-security-headers-and-browser-controls-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "security",
+        "web-security-headers-and-browser-controls",
+        "mechanics"
+      ],
+      "question": "Explain how web security headers and browser controls works internally and which details matter in production.",
+      "answer": "CSP, HSTS, cookie attributes, framing policy, and resource controls reduce browser attack surface when correctly deployed.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-web-security-headers-and-browser-controls-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "security",
+        "web-security-headers-and-browser-controls",
+        "design"
+      ],
+      "question": "Design a production approach for web security headers and browser controls. What decisions must be explicit?",
+      "answer": "CSP, HSTS, cookie attributes, framing policy, and resource controls reduce browser attack surface when correctly deployed.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-web-security-headers-and-browser-controls-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "security",
+        "web-security-headers-and-browser-controls",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around web security headers and browser controls?",
+      "answer": "CSP, HSTS, cookie attributes, framing policy, and resource controls reduce browser attack surface when correctly deployed.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-web-security-headers-and-browser-controls-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "security",
+        "web-security-headers-and-browser-controls",
+        "debugging"
+      ],
+      "question": "A production issue appears around web security headers and browser controls. How do you investigate it?",
+      "answer": "CSP, HSTS, cookie attributes, framing policy, and resource controls reduce browser attack surface when correctly deployed.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-web-security-headers-and-browser-controls-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "security",
+        "web-security-headers-and-browser-controls",
+        "performance"
+      ],
+      "question": "How can web security headers and browser controls become a performance bottleneck, and how would you improve it?",
+      "answer": "CSP, HSTS, cookie attributes, framing policy, and resource controls reduce browser attack surface when correctly deployed.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-web-security-headers-and-browser-controls-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "security",
+        "web-security-headers-and-browser-controls",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using web security headers and browser controls?",
+      "answer": "CSP, HSTS, cookie attributes, framing policy, and resource controls reduce browser attack surface when correctly deployed.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-web-security-headers-and-browser-controls-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "security",
+        "web-security-headers-and-browser-controls",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around web security headers and browser controls?",
+      "answer": "CSP, HSTS, cookie attributes, framing policy, and resource controls reduce browser attack surface when correctly deployed.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-web-security-headers-and-browser-controls-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "security",
+        "web-security-headers-and-browser-controls",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate web security headers and browser controls safely in an existing system?",
+      "answer": "CSP, HSTS, cookie attributes, framing policy, and resource controls reduce browser attack surface when correctly deployed.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-web-security-headers-and-browser-controls-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "security",
+        "web-security-headers-and-browser-controls",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on web security headers and browser controls?",
+      "answer": "CSP, HSTS, cookie attributes, framing policy, and resource controls reduce browser attack surface when correctly deployed.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-web-security-headers-and-browser-controls-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "security",
+        "web-security-headers-and-browser-controls",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving web security headers and browser controls. Walk through your reasoning.",
+      "answer": "CSP, HSTS, cookie attributes, framing policy, and resource controls reduce browser attack surface when correctly deployed.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-ssrf-and-server-side-trust-boundaries-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "security",
+        "ssrf-and-server-side-trust-boundaries",
+        "mechanics"
+      ],
+      "question": "Explain how SSRF and server-side trust boundaries works internally and which details matter in production.",
+      "answer": "Server-side fetches can reach privileged networks and metadata; allowlists, parsing, DNS behavior, and egress controls matter.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-ssrf-and-server-side-trust-boundaries-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "security",
+        "ssrf-and-server-side-trust-boundaries",
+        "design"
+      ],
+      "question": "Design a production approach for SSRF and server-side trust boundaries. What decisions must be explicit?",
+      "answer": "Server-side fetches can reach privileged networks and metadata; allowlists, parsing, DNS behavior, and egress controls matter.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-ssrf-and-server-side-trust-boundaries-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "security",
+        "ssrf-and-server-side-trust-boundaries",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around SSRF and server-side trust boundaries?",
+      "answer": "Server-side fetches can reach privileged networks and metadata; allowlists, parsing, DNS behavior, and egress controls matter.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-ssrf-and-server-side-trust-boundaries-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "security",
+        "ssrf-and-server-side-trust-boundaries",
+        "debugging"
+      ],
+      "question": "A production issue appears around SSRF and server-side trust boundaries. How do you investigate it?",
+      "answer": "Server-side fetches can reach privileged networks and metadata; allowlists, parsing, DNS behavior, and egress controls matter.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-ssrf-and-server-side-trust-boundaries-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "security",
+        "ssrf-and-server-side-trust-boundaries",
+        "performance"
+      ],
+      "question": "How can SSRF and server-side trust boundaries become a performance bottleneck, and how would you improve it?",
+      "answer": "Server-side fetches can reach privileged networks and metadata; allowlists, parsing, DNS behavior, and egress controls matter.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-ssrf-and-server-side-trust-boundaries-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "security",
+        "ssrf-and-server-side-trust-boundaries",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using SSRF and server-side trust boundaries?",
+      "answer": "Server-side fetches can reach privileged networks and metadata; allowlists, parsing, DNS behavior, and egress controls matter.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-ssrf-and-server-side-trust-boundaries-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "security",
+        "ssrf-and-server-side-trust-boundaries",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around SSRF and server-side trust boundaries?",
+      "answer": "Server-side fetches can reach privileged networks and metadata; allowlists, parsing, DNS behavior, and egress controls matter.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-ssrf-and-server-side-trust-boundaries-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "security",
+        "ssrf-and-server-side-trust-boundaries",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate SSRF and server-side trust boundaries safely in an existing system?",
+      "answer": "Server-side fetches can reach privileged networks and metadata; allowlists, parsing, DNS behavior, and egress controls matter.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-ssrf-and-server-side-trust-boundaries-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "security",
+        "ssrf-and-server-side-trust-boundaries",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on SSRF and server-side trust boundaries?",
+      "answer": "Server-side fetches can reach privileged networks and metadata; allowlists, parsing, DNS behavior, and egress controls matter.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-ssrf-and-server-side-trust-boundaries-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "security",
+        "ssrf-and-server-side-trust-boundaries",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving SSRF and server-side trust boundaries. Walk through your reasoning.",
+      "answer": "Server-side fetches can reach privileged networks and metadata; allowlists, parsing, DNS behavior, and egress controls matter.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-software-supply-chain-security-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "security",
+        "software-supply-chain-security",
+        "mechanics"
+      ],
+      "question": "Explain how software supply-chain security works internally and which details matter in production.",
+      "answer": "Dependencies, build systems, artifacts, provenance, signing, scanning, and update policy form the software supply chain.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-software-supply-chain-security-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "security",
+        "software-supply-chain-security",
+        "design"
+      ],
+      "question": "Design a production approach for software supply-chain security. What decisions must be explicit?",
+      "answer": "Dependencies, build systems, artifacts, provenance, signing, scanning, and update policy form the software supply chain.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-software-supply-chain-security-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "security",
+        "software-supply-chain-security",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around software supply-chain security?",
+      "answer": "Dependencies, build systems, artifacts, provenance, signing, scanning, and update policy form the software supply chain.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-software-supply-chain-security-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "security",
+        "software-supply-chain-security",
+        "debugging"
+      ],
+      "question": "A production issue appears around software supply-chain security. How do you investigate it?",
+      "answer": "Dependencies, build systems, artifacts, provenance, signing, scanning, and update policy form the software supply chain.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-software-supply-chain-security-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "security",
+        "software-supply-chain-security",
+        "performance"
+      ],
+      "question": "How can software supply-chain security become a performance bottleneck, and how would you improve it?",
+      "answer": "Dependencies, build systems, artifacts, provenance, signing, scanning, and update policy form the software supply chain.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-software-supply-chain-security-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "security",
+        "software-supply-chain-security",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using software supply-chain security?",
+      "answer": "Dependencies, build systems, artifacts, provenance, signing, scanning, and update policy form the software supply chain.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-software-supply-chain-security-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "security",
+        "software-supply-chain-security",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around software supply-chain security?",
+      "answer": "Dependencies, build systems, artifacts, provenance, signing, scanning, and update policy form the software supply chain.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-software-supply-chain-security-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "security",
+        "software-supply-chain-security",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate software supply-chain security safely in an existing system?",
+      "answer": "Dependencies, build systems, artifacts, provenance, signing, scanning, and update policy form the software supply chain.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-software-supply-chain-security-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "security",
+        "software-supply-chain-security",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on software supply-chain security?",
+      "answer": "Dependencies, build systems, artifacts, provenance, signing, scanning, and update policy form the software supply chain.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-software-supply-chain-security-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "security",
+        "software-supply-chain-security",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving software supply-chain security. Walk through your reasoning.",
+      "answer": "Dependencies, build systems, artifacts, provenance, signing, scanning, and update policy form the software supply chain.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-security-logging-and-incident-response-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "security",
+        "security-logging-and-incident-response",
+        "mechanics"
+      ],
+      "question": "Explain how security logging and incident response works internally and which details matter in production.",
+      "answer": "Audit events must be useful, protected, privacy-aware, correlated, and connected to detection and response playbooks.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-security-logging-and-incident-response-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "security",
+        "security-logging-and-incident-response",
+        "design"
+      ],
+      "question": "Design a production approach for security logging and incident response. What decisions must be explicit?",
+      "answer": "Audit events must be useful, protected, privacy-aware, correlated, and connected to detection and response playbooks.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-security-logging-and-incident-response-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "security",
+        "security-logging-and-incident-response",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around security logging and incident response?",
+      "answer": "Audit events must be useful, protected, privacy-aware, correlated, and connected to detection and response playbooks.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-security-logging-and-incident-response-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "security",
+        "security-logging-and-incident-response",
+        "debugging"
+      ],
+      "question": "A production issue appears around security logging and incident response. How do you investigate it?",
+      "answer": "Audit events must be useful, protected, privacy-aware, correlated, and connected to detection and response playbooks.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-security-logging-and-incident-response-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "security",
+        "security-logging-and-incident-response",
+        "performance"
+      ],
+      "question": "How can security logging and incident response become a performance bottleneck, and how would you improve it?",
+      "answer": "Audit events must be useful, protected, privacy-aware, correlated, and connected to detection and response playbooks.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-security-logging-and-incident-response-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "security",
+        "security-logging-and-incident-response",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using security logging and incident response?",
+      "answer": "Audit events must be useful, protected, privacy-aware, correlated, and connected to detection and response playbooks.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-security-logging-and-incident-response-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "security",
+        "security-logging-and-incident-response",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around security logging and incident response?",
+      "answer": "Audit events must be useful, protected, privacy-aware, correlated, and connected to detection and response playbooks.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-security-logging-and-incident-response-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "security",
+        "security-logging-and-incident-response",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate security logging and incident response safely in an existing system?",
+      "answer": "Audit events must be useful, protected, privacy-aware, correlated, and connected to detection and response playbooks.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-security-logging-and-incident-response-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "security",
+        "security-logging-and-incident-response",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on security logging and incident response?",
+      "answer": "Audit events must be useful, protected, privacy-aware, correlated, and connected to detection and response playbooks.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-security-logging-and-incident-response-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "security",
+        "security-logging-and-incident-response",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving security logging and incident response. Walk through your reasoning.",
+      "answer": "Audit events must be useful, protected, privacy-aware, correlated, and connected to detection and response playbooks.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-threat-modeling-and-secure-design-review-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "security",
+        "threat-modeling-and-secure-design-review",
+        "mechanics"
+      ],
+      "question": "Explain how threat modeling and secure design review works internally and which details matter in production.",
+      "answer": "Threat models identify assets, actors, trust boundaries, abuse paths, mitigations, and verification before incidents occur.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-threat-modeling-and-secure-design-review-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "security",
+        "threat-modeling-and-secure-design-review",
+        "design"
+      ],
+      "question": "Design a production approach for threat modeling and secure design review. What decisions must be explicit?",
+      "answer": "Threat models identify assets, actors, trust boundaries, abuse paths, mitigations, and verification before incidents occur.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-threat-modeling-and-secure-design-review-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "security",
+        "threat-modeling-and-secure-design-review",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around threat modeling and secure design review?",
+      "answer": "Threat models identify assets, actors, trust boundaries, abuse paths, mitigations, and verification before incidents occur.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-threat-modeling-and-secure-design-review-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "security",
+        "threat-modeling-and-secure-design-review",
+        "debugging"
+      ],
+      "question": "A production issue appears around threat modeling and secure design review. How do you investigate it?",
+      "answer": "Threat models identify assets, actors, trust boundaries, abuse paths, mitigations, and verification before incidents occur.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "security-threat-modeling-and-secure-design-review-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "security",
+        "threat-modeling-and-secure-design-review",
+        "performance"
+      ],
+      "question": "How can threat modeling and secure design review become a performance bottleneck, and how would you improve it?",
+      "answer": "Threat models identify assets, actors, trust boundaries, abuse paths, mitigations, and verification before incidents occur.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

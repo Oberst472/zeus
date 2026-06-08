@@ -1,0 +1,1200 @@
+{
+  "name": "TypeScript",
+  "icon": "typescript",
+  "order": 8,
+  "questions": [
+    {
+      "id": "ts-boundary-validation",
+      "type": "architecture",
+      "tags": [
+        "types",
+        "validation"
+      ],
+      "question": "Why are TypeScript types insufficient at system boundaries?",
+      "answer": "TypeScript checks code at compile time; network payloads, environment variables, storage, and user input arrive at runtime and can violate declared types. Type assertions only silence the compiler.\n\nParse unknown input at boundaries with a runtime schema, return typed domain values, and reject invalid data explicitly. Keep transport schemas separate from domain models where their evolution differs. Test both accepted and rejected shapes.",
+      "level": "senior"
+    },
+    {
+      "id": "ts-generics-design",
+      "type": "code-design",
+      "tags": [
+        "generics",
+        "api-design"
+      ],
+      "question": "How do you design useful generic APIs without making TypeScript unreadable?",
+      "answer": "A generic should preserve a relationship between inputs and outputs that callers benefit from. Constrain it to the smallest capability required and prefer inference over explicit type arguments.\n\nAvoid type-level cleverness that produces obscure errors or leaks implementation details. Use overloads or separate functions when behavior genuinely differs. The best generic API makes invalid states hard to express while remaining easy to understand.",
+      "level": "senior"
+    },
+    {
+      "id": "ts-discriminated-unions",
+      "type": "code-design",
+      "tags": [
+        "domain-modeling"
+      ],
+      "question": "How do discriminated unions improve domain modeling?",
+      "answer": "They represent a closed set of states with state-specific data, such as `loading | success | failure`. Narrowing on a stable discriminator prevents reading fields that do not exist in the current state.\n\nUse exhaustive checks so adding a new state causes compile errors at unhandled call sites. They are especially useful for workflows, API results, and events, but runtime inputs still need validation.",
+      "level": "senior"
+    },
+    {
+      "id": "ts-any-unknown-never",
+      "type": "knowledge",
+      "tags": [
+        "types"
+      ],
+      "question": "Explain the practical difference between any, unknown, and never.",
+      "answer": "`any` opts out of checking and spreads unsafety. `unknown` accepts any value but requires narrowing before use, making it appropriate for boundaries and caught errors. `never` represents an impossible value or a function that cannot return.\n\nSenior codebases restrict `any`, use `unknown` intentionally, and use `never` for exhaustive checks and impossible-state modeling.",
+      "level": "senior"
+    },
+    {
+      "id": "ts-public-contracts",
+      "type": "architecture",
+      "tags": [
+        "packages",
+        "contracts"
+      ],
+      "question": "How do you evolve shared TypeScript contracts across multiple services or frontends?",
+      "answer": "Prefer stable wire contracts with explicit versioning and backward compatibility. Generated or shared types reduce duplication but can tightly couple deployment and create false confidence without runtime validation.\n\nUse additive changes, consumer contract tests, deprecation windows, and ownership. Separate internal domain types from public transport schemas. A shared package should not become a shortcut around service boundaries.",
+      "level": "senior"
+    },
+    {
+      "id": "typescript-control-flow-narrowing-and-type-guards-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "control-flow-narrowing-and-type-guards",
+        "mechanics"
+      ],
+      "question": "Explain how control-flow narrowing and type guards works internally and which details matter in production.",
+      "answer": "TypeScript narrows through runtime checks and reachability; custom predicates and assertions must remain truthful.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-control-flow-narrowing-and-type-guards-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "control-flow-narrowing-and-type-guards",
+        "design"
+      ],
+      "question": "Design a production approach for control-flow narrowing and type guards. What decisions must be explicit?",
+      "answer": "TypeScript narrows through runtime checks and reachability; custom predicates and assertions must remain truthful.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-control-flow-narrowing-and-type-guards-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "control-flow-narrowing-and-type-guards",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around control-flow narrowing and type guards?",
+      "answer": "TypeScript narrows through runtime checks and reachability; custom predicates and assertions must remain truthful.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-control-flow-narrowing-and-type-guards-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "control-flow-narrowing-and-type-guards",
+        "debugging"
+      ],
+      "question": "A production issue appears around control-flow narrowing and type guards. How do you investigate it?",
+      "answer": "TypeScript narrows through runtime checks and reachability; custom predicates and assertions must remain truthful.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-control-flow-narrowing-and-type-guards-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "control-flow-narrowing-and-type-guards",
+        "performance"
+      ],
+      "question": "How can control-flow narrowing and type guards become a performance bottleneck, and how would you improve it?",
+      "answer": "TypeScript narrows through runtime checks and reachability; custom predicates and assertions must remain truthful.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-control-flow-narrowing-and-type-guards-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "control-flow-narrowing-and-type-guards",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using control-flow narrowing and type guards?",
+      "answer": "TypeScript narrows through runtime checks and reachability; custom predicates and assertions must remain truthful.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-control-flow-narrowing-and-type-guards-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "control-flow-narrowing-and-type-guards",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around control-flow narrowing and type guards?",
+      "answer": "TypeScript narrows through runtime checks and reachability; custom predicates and assertions must remain truthful.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-control-flow-narrowing-and-type-guards-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "control-flow-narrowing-and-type-guards",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate control-flow narrowing and type guards safely in an existing system?",
+      "answer": "TypeScript narrows through runtime checks and reachability; custom predicates and assertions must remain truthful.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-control-flow-narrowing-and-type-guards-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "control-flow-narrowing-and-type-guards",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on control-flow narrowing and type guards?",
+      "answer": "TypeScript narrows through runtime checks and reachability; custom predicates and assertions must remain truthful.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-control-flow-narrowing-and-type-guards-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "control-flow-narrowing-and-type-guards",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving control-flow narrowing and type guards. Walk through your reasoning.",
+      "answer": "TypeScript narrows through runtime checks and reachability; custom predicates and assertions must remain truthful.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-generics-constraints-and-inference-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "generics-constraints-and-inference",
+        "mechanics"
+      ],
+      "question": "Explain how generics, constraints, and inference works internally and which details matter in production.",
+      "answer": "Generics should preserve useful relationships between inputs and outputs while constraints expose only required capabilities.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-generics-constraints-and-inference-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "generics-constraints-and-inference",
+        "design"
+      ],
+      "question": "Design a production approach for generics, constraints, and inference. What decisions must be explicit?",
+      "answer": "Generics should preserve useful relationships between inputs and outputs while constraints expose only required capabilities.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-generics-constraints-and-inference-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "generics-constraints-and-inference",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around generics, constraints, and inference?",
+      "answer": "Generics should preserve useful relationships between inputs and outputs while constraints expose only required capabilities.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-generics-constraints-and-inference-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "generics-constraints-and-inference",
+        "debugging"
+      ],
+      "question": "A production issue appears around generics, constraints, and inference. How do you investigate it?",
+      "answer": "Generics should preserve useful relationships between inputs and outputs while constraints expose only required capabilities.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-generics-constraints-and-inference-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "generics-constraints-and-inference",
+        "performance"
+      ],
+      "question": "How can generics, constraints, and inference become a performance bottleneck, and how would you improve it?",
+      "answer": "Generics should preserve useful relationships between inputs and outputs while constraints expose only required capabilities.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-generics-constraints-and-inference-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "generics-constraints-and-inference",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using generics, constraints, and inference?",
+      "answer": "Generics should preserve useful relationships between inputs and outputs while constraints expose only required capabilities.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-generics-constraints-and-inference-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "generics-constraints-and-inference",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around generics, constraints, and inference?",
+      "answer": "Generics should preserve useful relationships between inputs and outputs while constraints expose only required capabilities.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-generics-constraints-and-inference-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "generics-constraints-and-inference",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate generics, constraints, and inference safely in an existing system?",
+      "answer": "Generics should preserve useful relationships between inputs and outputs while constraints expose only required capabilities.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-generics-constraints-and-inference-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "generics-constraints-and-inference",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on generics, constraints, and inference?",
+      "answer": "Generics should preserve useful relationships between inputs and outputs while constraints expose only required capabilities.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-generics-constraints-and-inference-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "generics-constraints-and-inference",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving generics, constraints, and inference. Walk through your reasoning.",
+      "answer": "Generics should preserve useful relationships between inputs and outputs while constraints expose only required capabilities.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-conditional-and-mapped-types-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "conditional-and-mapped-types",
+        "mechanics"
+      ],
+      "question": "Explain how conditional and mapped types works internally and which details matter in production.",
+      "answer": "Conditional and mapped types transform type relationships; distributivity and complexity can surprise callers and slow tooling.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-conditional-and-mapped-types-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "conditional-and-mapped-types",
+        "design"
+      ],
+      "question": "Design a production approach for conditional and mapped types. What decisions must be explicit?",
+      "answer": "Conditional and mapped types transform type relationships; distributivity and complexity can surprise callers and slow tooling.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-conditional-and-mapped-types-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "conditional-and-mapped-types",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around conditional and mapped types?",
+      "answer": "Conditional and mapped types transform type relationships; distributivity and complexity can surprise callers and slow tooling.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-conditional-and-mapped-types-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "conditional-and-mapped-types",
+        "debugging"
+      ],
+      "question": "A production issue appears around conditional and mapped types. How do you investigate it?",
+      "answer": "Conditional and mapped types transform type relationships; distributivity and complexity can surprise callers and slow tooling.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-conditional-and-mapped-types-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "conditional-and-mapped-types",
+        "performance"
+      ],
+      "question": "How can conditional and mapped types become a performance bottleneck, and how would you improve it?",
+      "answer": "Conditional and mapped types transform type relationships; distributivity and complexity can surprise callers and slow tooling.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-conditional-and-mapped-types-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "conditional-and-mapped-types",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using conditional and mapped types?",
+      "answer": "Conditional and mapped types transform type relationships; distributivity and complexity can surprise callers and slow tooling.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-conditional-and-mapped-types-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "conditional-and-mapped-types",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around conditional and mapped types?",
+      "answer": "Conditional and mapped types transform type relationships; distributivity and complexity can surprise callers and slow tooling.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-conditional-and-mapped-types-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "conditional-and-mapped-types",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate conditional and mapped types safely in an existing system?",
+      "answer": "Conditional and mapped types transform type relationships; distributivity and complexity can surprise callers and slow tooling.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-conditional-and-mapped-types-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "conditional-and-mapped-types",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on conditional and mapped types?",
+      "answer": "Conditional and mapped types transform type relationships; distributivity and complexity can surprise callers and slow tooling.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-conditional-and-mapped-types-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "conditional-and-mapped-types",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving conditional and mapped types. Walk through your reasoning.",
+      "answer": "Conditional and mapped types transform type relationships; distributivity and complexity can surprise callers and slow tooling.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-structural-typing-and-variance-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "structural-typing-and-variance",
+        "mechanics"
+      ],
+      "question": "Explain how structural typing and variance works internally and which details matter in production.",
+      "answer": "Structural compatibility enables flexibility but can admit unintended assignments; variance matters most for producers, consumers, and callbacks.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-structural-typing-and-variance-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "structural-typing-and-variance",
+        "design"
+      ],
+      "question": "Design a production approach for structural typing and variance. What decisions must be explicit?",
+      "answer": "Structural compatibility enables flexibility but can admit unintended assignments; variance matters most for producers, consumers, and callbacks.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-structural-typing-and-variance-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "structural-typing-and-variance",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around structural typing and variance?",
+      "answer": "Structural compatibility enables flexibility but can admit unintended assignments; variance matters most for producers, consumers, and callbacks.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-structural-typing-and-variance-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "structural-typing-and-variance",
+        "debugging"
+      ],
+      "question": "A production issue appears around structural typing and variance. How do you investigate it?",
+      "answer": "Structural compatibility enables flexibility but can admit unintended assignments; variance matters most for producers, consumers, and callbacks.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-structural-typing-and-variance-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "structural-typing-and-variance",
+        "performance"
+      ],
+      "question": "How can structural typing and variance become a performance bottleneck, and how would you improve it?",
+      "answer": "Structural compatibility enables flexibility but can admit unintended assignments; variance matters most for producers, consumers, and callbacks.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-structural-typing-and-variance-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "structural-typing-and-variance",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using structural typing and variance?",
+      "answer": "Structural compatibility enables flexibility but can admit unintended assignments; variance matters most for producers, consumers, and callbacks.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-structural-typing-and-variance-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "structural-typing-and-variance",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around structural typing and variance?",
+      "answer": "Structural compatibility enables flexibility but can admit unintended assignments; variance matters most for producers, consumers, and callbacks.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-structural-typing-and-variance-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "structural-typing-and-variance",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate structural typing and variance safely in an existing system?",
+      "answer": "Structural compatibility enables flexibility but can admit unintended assignments; variance matters most for producers, consumers, and callbacks.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-structural-typing-and-variance-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "structural-typing-and-variance",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on structural typing and variance?",
+      "answer": "Structural compatibility enables flexibility but can admit unintended assignments; variance matters most for producers, consumers, and callbacks.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-structural-typing-and-variance-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "structural-typing-and-variance",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving structural typing and variance. Walk through your reasoning.",
+      "answer": "Structural compatibility enables flexibility but can admit unintended assignments; variance matters most for producers, consumers, and callbacks.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-discriminated-unions-and-exhaustive-checks-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "discriminated-unions-and-exhaustive-checks",
+        "mechanics"
+      ],
+      "question": "Explain how discriminated unions and exhaustive checks works internally and which details matter in production.",
+      "answer": "Discriminated unions model closed state machines and pair well with never-based exhaustiveness checks.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-discriminated-unions-and-exhaustive-checks-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "discriminated-unions-and-exhaustive-checks",
+        "design"
+      ],
+      "question": "Design a production approach for discriminated unions and exhaustive checks. What decisions must be explicit?",
+      "answer": "Discriminated unions model closed state machines and pair well with never-based exhaustiveness checks.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-discriminated-unions-and-exhaustive-checks-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "discriminated-unions-and-exhaustive-checks",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around discriminated unions and exhaustive checks?",
+      "answer": "Discriminated unions model closed state machines and pair well with never-based exhaustiveness checks.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-discriminated-unions-and-exhaustive-checks-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "discriminated-unions-and-exhaustive-checks",
+        "debugging"
+      ],
+      "question": "A production issue appears around discriminated unions and exhaustive checks. How do you investigate it?",
+      "answer": "Discriminated unions model closed state machines and pair well with never-based exhaustiveness checks.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-discriminated-unions-and-exhaustive-checks-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "discriminated-unions-and-exhaustive-checks",
+        "performance"
+      ],
+      "question": "How can discriminated unions and exhaustive checks become a performance bottleneck, and how would you improve it?",
+      "answer": "Discriminated unions model closed state machines and pair well with never-based exhaustiveness checks.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-discriminated-unions-and-exhaustive-checks-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "discriminated-unions-and-exhaustive-checks",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using discriminated unions and exhaustive checks?",
+      "answer": "Discriminated unions model closed state machines and pair well with never-based exhaustiveness checks.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-discriminated-unions-and-exhaustive-checks-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "discriminated-unions-and-exhaustive-checks",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around discriminated unions and exhaustive checks?",
+      "answer": "Discriminated unions model closed state machines and pair well with never-based exhaustiveness checks.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-discriminated-unions-and-exhaustive-checks-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "discriminated-unions-and-exhaustive-checks",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate discriminated unions and exhaustive checks safely in an existing system?",
+      "answer": "Discriminated unions model closed state machines and pair well with never-based exhaustiveness checks.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-discriminated-unions-and-exhaustive-checks-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "discriminated-unions-and-exhaustive-checks",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on discriminated unions and exhaustive checks?",
+      "answer": "Discriminated unions model closed state machines and pair well with never-based exhaustiveness checks.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-discriminated-unions-and-exhaustive-checks-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "discriminated-unions-and-exhaustive-checks",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving discriminated unions and exhaustive checks. Walk through your reasoning.",
+      "answer": "Discriminated unions model closed state machines and pair well with never-based exhaustiveness checks.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-runtime-validation-at-boundaries-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "runtime-validation-at-boundaries",
+        "mechanics"
+      ],
+      "question": "Explain how runtime validation at boundaries works internally and which details matter in production.",
+      "answer": "Static types disappear at runtime; external input must be parsed and validated before becoming trusted domain data.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-runtime-validation-at-boundaries-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "runtime-validation-at-boundaries",
+        "design"
+      ],
+      "question": "Design a production approach for runtime validation at boundaries. What decisions must be explicit?",
+      "answer": "Static types disappear at runtime; external input must be parsed and validated before becoming trusted domain data.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-runtime-validation-at-boundaries-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "runtime-validation-at-boundaries",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around runtime validation at boundaries?",
+      "answer": "Static types disappear at runtime; external input must be parsed and validated before becoming trusted domain data.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-runtime-validation-at-boundaries-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "runtime-validation-at-boundaries",
+        "debugging"
+      ],
+      "question": "A production issue appears around runtime validation at boundaries. How do you investigate it?",
+      "answer": "Static types disappear at runtime; external input must be parsed and validated before becoming trusted domain data.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-runtime-validation-at-boundaries-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "runtime-validation-at-boundaries",
+        "performance"
+      ],
+      "question": "How can runtime validation at boundaries become a performance bottleneck, and how would you improve it?",
+      "answer": "Static types disappear at runtime; external input must be parsed and validated before becoming trusted domain data.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-runtime-validation-at-boundaries-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "runtime-validation-at-boundaries",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using runtime validation at boundaries?",
+      "answer": "Static types disappear at runtime; external input must be parsed and validated before becoming trusted domain data.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-runtime-validation-at-boundaries-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "runtime-validation-at-boundaries",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around runtime validation at boundaries?",
+      "answer": "Static types disappear at runtime; external input must be parsed and validated before becoming trusted domain data.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-runtime-validation-at-boundaries-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "runtime-validation-at-boundaries",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate runtime validation at boundaries safely in an existing system?",
+      "answer": "Static types disappear at runtime; external input must be parsed and validated before becoming trusted domain data.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-runtime-validation-at-boundaries-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "runtime-validation-at-boundaries",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on runtime validation at boundaries?",
+      "answer": "Static types disappear at runtime; external input must be parsed and validated before becoming trusted domain data.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-runtime-validation-at-boundaries-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "runtime-validation-at-boundaries",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving runtime validation at boundaries. Walk through your reasoning.",
+      "answer": "Static types disappear at runtime; external input must be parsed and validated before becoming trusted domain data.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-declaration-files-and-module-augmentation-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "declaration-files-and-module-augmentation",
+        "mechanics"
+      ],
+      "question": "Explain how declaration files and module augmentation works internally and which details matter in production.",
+      "answer": "Declarations describe runtime APIs; inaccurate declarations and broad augmentation create false confidence and global coupling.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-declaration-files-and-module-augmentation-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "declaration-files-and-module-augmentation",
+        "design"
+      ],
+      "question": "Design a production approach for declaration files and module augmentation. What decisions must be explicit?",
+      "answer": "Declarations describe runtime APIs; inaccurate declarations and broad augmentation create false confidence and global coupling.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-declaration-files-and-module-augmentation-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "declaration-files-and-module-augmentation",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around declaration files and module augmentation?",
+      "answer": "Declarations describe runtime APIs; inaccurate declarations and broad augmentation create false confidence and global coupling.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-declaration-files-and-module-augmentation-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "declaration-files-and-module-augmentation",
+        "debugging"
+      ],
+      "question": "A production issue appears around declaration files and module augmentation. How do you investigate it?",
+      "answer": "Declarations describe runtime APIs; inaccurate declarations and broad augmentation create false confidence and global coupling.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-declaration-files-and-module-augmentation-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "declaration-files-and-module-augmentation",
+        "performance"
+      ],
+      "question": "How can declaration files and module augmentation become a performance bottleneck, and how would you improve it?",
+      "answer": "Declarations describe runtime APIs; inaccurate declarations and broad augmentation create false confidence and global coupling.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-declaration-files-and-module-augmentation-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "declaration-files-and-module-augmentation",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using declaration files and module augmentation?",
+      "answer": "Declarations describe runtime APIs; inaccurate declarations and broad augmentation create false confidence and global coupling.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-declaration-files-and-module-augmentation-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "declaration-files-and-module-augmentation",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around declaration files and module augmentation?",
+      "answer": "Declarations describe runtime APIs; inaccurate declarations and broad augmentation create false confidence and global coupling.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-declaration-files-and-module-augmentation-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "declaration-files-and-module-augmentation",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate declaration files and module augmentation safely in an existing system?",
+      "answer": "Declarations describe runtime APIs; inaccurate declarations and broad augmentation create false confidence and global coupling.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-declaration-files-and-module-augmentation-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "declaration-files-and-module-augmentation",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on declaration files and module augmentation?",
+      "answer": "Declarations describe runtime APIs; inaccurate declarations and broad augmentation create false confidence and global coupling.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-declaration-files-and-module-augmentation-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "declaration-files-and-module-augmentation",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving declaration files and module augmentation. Walk through your reasoning.",
+      "answer": "Declarations describe runtime APIs; inaccurate declarations and broad augmentation create false confidence and global coupling.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-compiler-configuration-and-project-references-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "compiler-configuration-and-project-references",
+        "mechanics"
+      ],
+      "question": "Explain how compiler configuration and project references works internally and which details matter in production.",
+      "answer": "Strictness, module resolution, emit settings, and project references shape correctness, build speed, and package boundaries.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-compiler-configuration-and-project-references-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "compiler-configuration-and-project-references",
+        "design"
+      ],
+      "question": "Design a production approach for compiler configuration and project references. What decisions must be explicit?",
+      "answer": "Strictness, module resolution, emit settings, and project references shape correctness, build speed, and package boundaries.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-compiler-configuration-and-project-references-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "compiler-configuration-and-project-references",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around compiler configuration and project references?",
+      "answer": "Strictness, module resolution, emit settings, and project references shape correctness, build speed, and package boundaries.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-compiler-configuration-and-project-references-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "compiler-configuration-and-project-references",
+        "debugging"
+      ],
+      "question": "A production issue appears around compiler configuration and project references. How do you investigate it?",
+      "answer": "Strictness, module resolution, emit settings, and project references shape correctness, build speed, and package boundaries.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-compiler-configuration-and-project-references-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "compiler-configuration-and-project-references",
+        "performance"
+      ],
+      "question": "How can compiler configuration and project references become a performance bottleneck, and how would you improve it?",
+      "answer": "Strictness, module resolution, emit settings, and project references shape correctness, build speed, and package boundaries.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-compiler-configuration-and-project-references-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "compiler-configuration-and-project-references",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using compiler configuration and project references?",
+      "answer": "Strictness, module resolution, emit settings, and project references shape correctness, build speed, and package boundaries.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-compiler-configuration-and-project-references-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "compiler-configuration-and-project-references",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around compiler configuration and project references?",
+      "answer": "Strictness, module resolution, emit settings, and project references shape correctness, build speed, and package boundaries.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-compiler-configuration-and-project-references-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "compiler-configuration-and-project-references",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate compiler configuration and project references safely in an existing system?",
+      "answer": "Strictness, module resolution, emit settings, and project references shape correctness, build speed, and package boundaries.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-compiler-configuration-and-project-references-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "compiler-configuration-and-project-references",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on compiler configuration and project references?",
+      "answer": "Strictness, module resolution, emit settings, and project references shape correctness, build speed, and package boundaries.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-compiler-configuration-and-project-references-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "compiler-configuration-and-project-references",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving compiler configuration and project references. Walk through your reasoning.",
+      "answer": "Strictness, module resolution, emit settings, and project references shape correctness, build speed, and package boundaries.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-public-contracts-and-package-versioning-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "public-contracts-and-package-versioning",
+        "mechanics"
+      ],
+      "question": "Explain how public contracts and package versioning works internally and which details matter in production.",
+      "answer": "Shared types reduce duplication but can couple releases; wire compatibility and runtime behavior remain the real contract.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-public-contracts-and-package-versioning-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "public-contracts-and-package-versioning",
+        "design"
+      ],
+      "question": "Design a production approach for public contracts and package versioning. What decisions must be explicit?",
+      "answer": "Shared types reduce duplication but can couple releases; wire compatibility and runtime behavior remain the real contract.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-public-contracts-and-package-versioning-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "public-contracts-and-package-versioning",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around public contracts and package versioning?",
+      "answer": "Shared types reduce duplication but can couple releases; wire compatibility and runtime behavior remain the real contract.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-public-contracts-and-package-versioning-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "public-contracts-and-package-versioning",
+        "debugging"
+      ],
+      "question": "A production issue appears around public contracts and package versioning. How do you investigate it?",
+      "answer": "Shared types reduce duplication but can couple releases; wire compatibility and runtime behavior remain the real contract.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-public-contracts-and-package-versioning-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "public-contracts-and-package-versioning",
+        "performance"
+      ],
+      "question": "How can public contracts and package versioning become a performance bottleneck, and how would you improve it?",
+      "answer": "Shared types reduce duplication but can couple releases; wire compatibility and runtime behavior remain the real contract.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-public-contracts-and-package-versioning-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "public-contracts-and-package-versioning",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using public contracts and package versioning?",
+      "answer": "Shared types reduce duplication but can couple releases; wire compatibility and runtime behavior remain the real contract.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-public-contracts-and-package-versioning-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "public-contracts-and-package-versioning",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around public contracts and package versioning?",
+      "answer": "Shared types reduce duplication but can couple releases; wire compatibility and runtime behavior remain the real contract.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-public-contracts-and-package-versioning-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "public-contracts-and-package-versioning",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate public contracts and package versioning safely in an existing system?",
+      "answer": "Shared types reduce duplication but can couple releases; wire compatibility and runtime behavior remain the real contract.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-public-contracts-and-package-versioning-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "public-contracts-and-package-versioning",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on public contracts and package versioning?",
+      "answer": "Shared types reduce duplication but can couple releases; wire compatibility and runtime behavior remain the real contract.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-public-contracts-and-package-versioning-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "public-contracts-and-package-versioning",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving public contracts and package versioning. Walk through your reasoning.",
+      "answer": "Shared types reduce duplication but can couple releases; wire compatibility and runtime behavior remain the real contract.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-type-system-complexity-and-developer-experience-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "type-system-complexity-and-developer-experience",
+        "mechanics"
+      ],
+      "question": "Explain how type-system complexity and developer experience works internally and which details matter in production.",
+      "answer": "Advanced typing has a maintenance cost; useful safety must be balanced against readable errors, inference, and build performance.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-type-system-complexity-and-developer-experience-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "typescript",
+        "type-system-complexity-and-developer-experience",
+        "design"
+      ],
+      "question": "Design a production approach for type-system complexity and developer experience. What decisions must be explicit?",
+      "answer": "Advanced typing has a maintenance cost; useful safety must be balanced against readable errors, inference, and build performance.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-type-system-complexity-and-developer-experience-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "type-system-complexity-and-developer-experience",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around type-system complexity and developer experience?",
+      "answer": "Advanced typing has a maintenance cost; useful safety must be balanced against readable errors, inference, and build performance.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-type-system-complexity-and-developer-experience-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "type-system-complexity-and-developer-experience",
+        "debugging"
+      ],
+      "question": "A production issue appears around type-system complexity and developer experience. How do you investigate it?",
+      "answer": "Advanced typing has a maintenance cost; useful safety must be balanced against readable errors, inference, and build performance.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "typescript-type-system-complexity-and-developer-experience-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "typescript",
+        "type-system-complexity-and-developer-experience",
+        "performance"
+      ],
+      "question": "How can type-system complexity and developer experience become a performance bottleneck, and how would you improve it?",
+      "answer": "Advanced typing has a maintenance cost; useful safety must be balanced against readable errors, inference, and build performance.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}

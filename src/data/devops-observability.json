@@ -1,0 +1,1203 @@
+{
+  "name": "DevOps & Observability",
+  "icon": "devops",
+  "order": 65,
+  "questions": [
+    {
+      "id": "production-incident",
+      "type": "incident",
+      "tags": [
+        "incident-response",
+        "leadership"
+      ],
+      "question": "Production error rate spikes immediately after a deployment. Walk through your response.",
+      "answer": "Establish incident command, impact, and communication. Stop further rollout and choose the fastest safe mitigation: rollback, feature flag, traffic shift, or capacity increase. Preserve evidence while restoring service.\n\nUse metrics, logs, traces, and deployment markers to test hypotheses. Communicate uncertainty and updates regularly. After recovery, write a blameless postmortem with contributing conditions, detection gaps, and owned actions. Measure whether actions actually reduce recurrence.",
+      "level": "senior"
+    },
+    {
+      "id": "sli-slo-alerts",
+      "type": "architecture",
+      "tags": [
+        "sre",
+        "alerts"
+      ],
+      "question": "How do you define useful SLIs, SLOs, and alerts for a service?",
+      "answer": "Choose SLIs that reflect user outcomes: successful request ratio, latency, freshness, or correctness. Set an achievable SLO based on product need and cost, then use the error budget to balance reliability and change velocity.\n\nAlert on symptoms and meaningful burn rate, not every internal fluctuation. Fast-burn alerts catch acute incidents; slow-burn alerts catch sustained degradation. Every page should be actionable and linked to context or a runbook.",
+      "level": "senior"
+    },
+    {
+      "id": "safe-deployment",
+      "type": "scenario",
+      "tags": [
+        "ci-cd",
+        "release"
+      ],
+      "question": "Design a safe deployment strategy for a high-traffic service.",
+      "answer": "Produce immutable artifacts and promote the same artifact across environments. Use automated checks, backward-compatible changes, small canary cohorts, health metrics, and automatic rollback thresholds.\n\nFeature flags separate deployment from release. Blue-green simplifies rollback but costs capacity; rolling deployments are efficient but require version compatibility. Include schema migrations, queue consumers, observability, and a tested manual recovery path.",
+      "level": "senior"
+    },
+    {
+      "id": "kubernetes-debugging",
+      "type": "scenario",
+      "tags": [
+        "kubernetes",
+        "debugging"
+      ],
+      "question": "A Kubernetes service has intermittent latency and pod restarts. How do you debug it?",
+      "answer": "Correlate restarts and latency with events, resource usage, deployment changes, node conditions, and downstream dependencies. Distinguish OOM kills, failed probes, CPU throttling, eviction, and application crashes.\n\nInspect requests/limits, probe semantics, GC/runtime metrics, connection pools, and topology. Avoid treating restarts as a cure. Fix the cause and validate under representative load with alerts for recurrence.",
+      "level": "senior"
+    },
+    {
+      "id": "observability-design",
+      "type": "architecture",
+      "tags": [
+        "metrics",
+        "tracing",
+        "logging"
+      ],
+      "question": "What does good observability look like for a distributed request?",
+      "answer": "Propagate a correlation/trace context across synchronous calls, queues, and jobs. Metrics reveal trends and user impact, traces show request paths and latency attribution, and structured logs explain specific events.\n\nUse consistent service names and domain-relevant fields while controlling cardinality and sensitive data. Instrument boundaries and business outcomes, not every line. Retention, sampling, cost, and access controls are part of the design.",
+      "level": "senior"
+    },
+    {
+      "id": "devops-observability-slis-slos-and-error-budgets-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "slis-slos-and-error-budgets",
+        "mechanics"
+      ],
+      "question": "Explain how SLIs, SLOs, and error budgets works internally and which details matter in production.",
+      "answer": "User-centered indicators and objectives guide alerting, reliability investment, and the acceptable pace of change.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-slis-slos-and-error-budgets-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "slis-slos-and-error-budgets",
+        "design"
+      ],
+      "question": "Design a production approach for SLIs, SLOs, and error budgets. What decisions must be explicit?",
+      "answer": "User-centered indicators and objectives guide alerting, reliability investment, and the acceptable pace of change.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-slis-slos-and-error-budgets-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "slis-slos-and-error-budgets",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around SLIs, SLOs, and error budgets?",
+      "answer": "User-centered indicators and objectives guide alerting, reliability investment, and the acceptable pace of change.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-slis-slos-and-error-budgets-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "slis-slos-and-error-budgets",
+        "debugging"
+      ],
+      "question": "A production issue appears around SLIs, SLOs, and error budgets. How do you investigate it?",
+      "answer": "User-centered indicators and objectives guide alerting, reliability investment, and the acceptable pace of change.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-slis-slos-and-error-budgets-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "slis-slos-and-error-budgets",
+        "performance"
+      ],
+      "question": "How can SLIs, SLOs, and error budgets become a performance bottleneck, and how would you improve it?",
+      "answer": "User-centered indicators and objectives guide alerting, reliability investment, and the acceptable pace of change.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-slis-slos-and-error-budgets-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "slis-slos-and-error-budgets",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using SLIs, SLOs, and error budgets?",
+      "answer": "User-centered indicators and objectives guide alerting, reliability investment, and the acceptable pace of change.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-slis-slos-and-error-budgets-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "slis-slos-and-error-budgets",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around SLIs, SLOs, and error budgets?",
+      "answer": "User-centered indicators and objectives guide alerting, reliability investment, and the acceptable pace of change.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-slis-slos-and-error-budgets-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "slis-slos-and-error-budgets",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate SLIs, SLOs, and error budgets safely in an existing system?",
+      "answer": "User-centered indicators and objectives guide alerting, reliability investment, and the acceptable pace of change.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-slis-slos-and-error-budgets-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "slis-slos-and-error-budgets",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on SLIs, SLOs, and error budgets?",
+      "answer": "User-centered indicators and objectives guide alerting, reliability investment, and the acceptable pace of change.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-slis-slos-and-error-budgets-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "slis-slos-and-error-budgets",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving SLIs, SLOs, and error budgets. Walk through your reasoning.",
+      "answer": "User-centered indicators and objectives guide alerting, reliability investment, and the acceptable pace of change.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-metrics-logs-traces-and-profiles-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "metrics-logs-traces-and-profiles",
+        "mechanics"
+      ],
+      "question": "Explain how metrics, logs, traces, and profiles works internally and which details matter in production.",
+      "answer": "Telemetry signals answer different questions; correlation, schemas, cardinality, sampling, retention, and cost require design.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-metrics-logs-traces-and-profiles-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "metrics-logs-traces-and-profiles",
+        "design"
+      ],
+      "question": "Design a production approach for metrics, logs, traces, and profiles. What decisions must be explicit?",
+      "answer": "Telemetry signals answer different questions; correlation, schemas, cardinality, sampling, retention, and cost require design.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-metrics-logs-traces-and-profiles-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "metrics-logs-traces-and-profiles",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around metrics, logs, traces, and profiles?",
+      "answer": "Telemetry signals answer different questions; correlation, schemas, cardinality, sampling, retention, and cost require design.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-metrics-logs-traces-and-profiles-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "metrics-logs-traces-and-profiles",
+        "debugging"
+      ],
+      "question": "A production issue appears around metrics, logs, traces, and profiles. How do you investigate it?",
+      "answer": "Telemetry signals answer different questions; correlation, schemas, cardinality, sampling, retention, and cost require design.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-metrics-logs-traces-and-profiles-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "metrics-logs-traces-and-profiles",
+        "performance"
+      ],
+      "question": "How can metrics, logs, traces, and profiles become a performance bottleneck, and how would you improve it?",
+      "answer": "Telemetry signals answer different questions; correlation, schemas, cardinality, sampling, retention, and cost require design.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-metrics-logs-traces-and-profiles-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "metrics-logs-traces-and-profiles",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using metrics, logs, traces, and profiles?",
+      "answer": "Telemetry signals answer different questions; correlation, schemas, cardinality, sampling, retention, and cost require design.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-metrics-logs-traces-and-profiles-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "metrics-logs-traces-and-profiles",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around metrics, logs, traces, and profiles?",
+      "answer": "Telemetry signals answer different questions; correlation, schemas, cardinality, sampling, retention, and cost require design.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-metrics-logs-traces-and-profiles-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "metrics-logs-traces-and-profiles",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate metrics, logs, traces, and profiles safely in an existing system?",
+      "answer": "Telemetry signals answer different questions; correlation, schemas, cardinality, sampling, retention, and cost require design.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-metrics-logs-traces-and-profiles-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "metrics-logs-traces-and-profiles",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on metrics, logs, traces, and profiles?",
+      "answer": "Telemetry signals answer different questions; correlation, schemas, cardinality, sampling, retention, and cost require design.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-metrics-logs-traces-and-profiles-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "metrics-logs-traces-and-profiles",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving metrics, logs, traces, and profiles. Walk through your reasoning.",
+      "answer": "Telemetry signals answer different questions; correlation, schemas, cardinality, sampling, retention, and cost require design.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-distributed-tracing-and-context-propagation-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "distributed-tracing-and-context-propagation",
+        "mechanics"
+      ],
+      "question": "Explain how distributed tracing and context propagation works internally and which details matter in production.",
+      "answer": "Trace context connects work across process and queue boundaries; sampling and sensitive baggage need deliberate policy.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-distributed-tracing-and-context-propagation-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "distributed-tracing-and-context-propagation",
+        "design"
+      ],
+      "question": "Design a production approach for distributed tracing and context propagation. What decisions must be explicit?",
+      "answer": "Trace context connects work across process and queue boundaries; sampling and sensitive baggage need deliberate policy.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-distributed-tracing-and-context-propagation-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "distributed-tracing-and-context-propagation",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around distributed tracing and context propagation?",
+      "answer": "Trace context connects work across process and queue boundaries; sampling and sensitive baggage need deliberate policy.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-distributed-tracing-and-context-propagation-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "distributed-tracing-and-context-propagation",
+        "debugging"
+      ],
+      "question": "A production issue appears around distributed tracing and context propagation. How do you investigate it?",
+      "answer": "Trace context connects work across process and queue boundaries; sampling and sensitive baggage need deliberate policy.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-distributed-tracing-and-context-propagation-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "distributed-tracing-and-context-propagation",
+        "performance"
+      ],
+      "question": "How can distributed tracing and context propagation become a performance bottleneck, and how would you improve it?",
+      "answer": "Trace context connects work across process and queue boundaries; sampling and sensitive baggage need deliberate policy.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-distributed-tracing-and-context-propagation-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "distributed-tracing-and-context-propagation",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using distributed tracing and context propagation?",
+      "answer": "Trace context connects work across process and queue boundaries; sampling and sensitive baggage need deliberate policy.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-distributed-tracing-and-context-propagation-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "distributed-tracing-and-context-propagation",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around distributed tracing and context propagation?",
+      "answer": "Trace context connects work across process and queue boundaries; sampling and sensitive baggage need deliberate policy.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-distributed-tracing-and-context-propagation-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "distributed-tracing-and-context-propagation",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate distributed tracing and context propagation safely in an existing system?",
+      "answer": "Trace context connects work across process and queue boundaries; sampling and sensitive baggage need deliberate policy.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-distributed-tracing-and-context-propagation-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "distributed-tracing-and-context-propagation",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on distributed tracing and context propagation?",
+      "answer": "Trace context connects work across process and queue boundaries; sampling and sensitive baggage need deliberate policy.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-distributed-tracing-and-context-propagation-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "distributed-tracing-and-context-propagation",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving distributed tracing and context propagation. Walk through your reasoning.",
+      "answer": "Trace context connects work across process and queue boundaries; sampling and sensitive baggage need deliberate policy.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-alerting-and-incident-response-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "alerting-and-incident-response",
+        "mechanics"
+      ],
+      "question": "Explain how alerting and incident response works internally and which details matter in production.",
+      "answer": "Actionable symptom-based alerts, burn rates, ownership, communication, mitigation, and learning reduce incident impact.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-alerting-and-incident-response-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "alerting-and-incident-response",
+        "design"
+      ],
+      "question": "Design a production approach for alerting and incident response. What decisions must be explicit?",
+      "answer": "Actionable symptom-based alerts, burn rates, ownership, communication, mitigation, and learning reduce incident impact.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-alerting-and-incident-response-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "alerting-and-incident-response",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around alerting and incident response?",
+      "answer": "Actionable symptom-based alerts, burn rates, ownership, communication, mitigation, and learning reduce incident impact.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-alerting-and-incident-response-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "alerting-and-incident-response",
+        "debugging"
+      ],
+      "question": "A production issue appears around alerting and incident response. How do you investigate it?",
+      "answer": "Actionable symptom-based alerts, burn rates, ownership, communication, mitigation, and learning reduce incident impact.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-alerting-and-incident-response-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "alerting-and-incident-response",
+        "performance"
+      ],
+      "question": "How can alerting and incident response become a performance bottleneck, and how would you improve it?",
+      "answer": "Actionable symptom-based alerts, burn rates, ownership, communication, mitigation, and learning reduce incident impact.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-alerting-and-incident-response-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "alerting-and-incident-response",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using alerting and incident response?",
+      "answer": "Actionable symptom-based alerts, burn rates, ownership, communication, mitigation, and learning reduce incident impact.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-alerting-and-incident-response-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "alerting-and-incident-response",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around alerting and incident response?",
+      "answer": "Actionable symptom-based alerts, burn rates, ownership, communication, mitigation, and learning reduce incident impact.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-alerting-and-incident-response-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "alerting-and-incident-response",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate alerting and incident response safely in an existing system?",
+      "answer": "Actionable symptom-based alerts, burn rates, ownership, communication, mitigation, and learning reduce incident impact.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-alerting-and-incident-response-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "alerting-and-incident-response",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on alerting and incident response?",
+      "answer": "Actionable symptom-based alerts, burn rates, ownership, communication, mitigation, and learning reduce incident impact.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-alerting-and-incident-response-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "alerting-and-incident-response",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving alerting and incident response. Walk through your reasoning.",
+      "answer": "Actionable symptom-based alerts, burn rates, ownership, communication, mitigation, and learning reduce incident impact.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-safe-deployment-and-release-strategies-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "safe-deployment-and-release-strategies",
+        "mechanics"
+      ],
+      "question": "Explain how safe deployment and release strategies works internally and which details matter in production.",
+      "answer": "Immutable artifacts, compatibility, canaries, feature flags, health criteria, and rollback make releases safer.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-safe-deployment-and-release-strategies-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "safe-deployment-and-release-strategies",
+        "design"
+      ],
+      "question": "Design a production approach for safe deployment and release strategies. What decisions must be explicit?",
+      "answer": "Immutable artifacts, compatibility, canaries, feature flags, health criteria, and rollback make releases safer.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-safe-deployment-and-release-strategies-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "safe-deployment-and-release-strategies",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around safe deployment and release strategies?",
+      "answer": "Immutable artifacts, compatibility, canaries, feature flags, health criteria, and rollback make releases safer.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-safe-deployment-and-release-strategies-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "safe-deployment-and-release-strategies",
+        "debugging"
+      ],
+      "question": "A production issue appears around safe deployment and release strategies. How do you investigate it?",
+      "answer": "Immutable artifacts, compatibility, canaries, feature flags, health criteria, and rollback make releases safer.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-safe-deployment-and-release-strategies-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "safe-deployment-and-release-strategies",
+        "performance"
+      ],
+      "question": "How can safe deployment and release strategies become a performance bottleneck, and how would you improve it?",
+      "answer": "Immutable artifacts, compatibility, canaries, feature flags, health criteria, and rollback make releases safer.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-safe-deployment-and-release-strategies-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "safe-deployment-and-release-strategies",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using safe deployment and release strategies?",
+      "answer": "Immutable artifacts, compatibility, canaries, feature flags, health criteria, and rollback make releases safer.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-safe-deployment-and-release-strategies-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "safe-deployment-and-release-strategies",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around safe deployment and release strategies?",
+      "answer": "Immutable artifacts, compatibility, canaries, feature flags, health criteria, and rollback make releases safer.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-safe-deployment-and-release-strategies-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "safe-deployment-and-release-strategies",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate safe deployment and release strategies safely in an existing system?",
+      "answer": "Immutable artifacts, compatibility, canaries, feature flags, health criteria, and rollback make releases safer.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-safe-deployment-and-release-strategies-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "safe-deployment-and-release-strategies",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on safe deployment and release strategies?",
+      "answer": "Immutable artifacts, compatibility, canaries, feature flags, health criteria, and rollback make releases safer.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-safe-deployment-and-release-strategies-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "safe-deployment-and-release-strategies",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving safe deployment and release strategies. Walk through your reasoning.",
+      "answer": "Immutable artifacts, compatibility, canaries, feature flags, health criteria, and rollback make releases safer.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-workloads-and-controllers-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "kubernetes-workloads-and-controllers",
+        "mechanics"
+      ],
+      "question": "Explain how Kubernetes workloads and controllers works internally and which details matter in production.",
+      "answer": "Deployments, StatefulSets, Jobs, scheduling, reconciliation, and disruption behavior must match workload semantics.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-workloads-and-controllers-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "kubernetes-workloads-and-controllers",
+        "design"
+      ],
+      "question": "Design a production approach for Kubernetes workloads and controllers. What decisions must be explicit?",
+      "answer": "Deployments, StatefulSets, Jobs, scheduling, reconciliation, and disruption behavior must match workload semantics.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-workloads-and-controllers-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-workloads-and-controllers",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Kubernetes workloads and controllers?",
+      "answer": "Deployments, StatefulSets, Jobs, scheduling, reconciliation, and disruption behavior must match workload semantics.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-workloads-and-controllers-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-workloads-and-controllers",
+        "debugging"
+      ],
+      "question": "A production issue appears around Kubernetes workloads and controllers. How do you investigate it?",
+      "answer": "Deployments, StatefulSets, Jobs, scheduling, reconciliation, and disruption behavior must match workload semantics.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-workloads-and-controllers-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-workloads-and-controllers",
+        "performance"
+      ],
+      "question": "How can Kubernetes workloads and controllers become a performance bottleneck, and how would you improve it?",
+      "answer": "Deployments, StatefulSets, Jobs, scheduling, reconciliation, and disruption behavior must match workload semantics.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-workloads-and-controllers-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-workloads-and-controllers",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Kubernetes workloads and controllers?",
+      "answer": "Deployments, StatefulSets, Jobs, scheduling, reconciliation, and disruption behavior must match workload semantics.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-workloads-and-controllers-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-workloads-and-controllers",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Kubernetes workloads and controllers?",
+      "answer": "Deployments, StatefulSets, Jobs, scheduling, reconciliation, and disruption behavior must match workload semantics.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-workloads-and-controllers-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-workloads-and-controllers",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Kubernetes workloads and controllers safely in an existing system?",
+      "answer": "Deployments, StatefulSets, Jobs, scheduling, reconciliation, and disruption behavior must match workload semantics.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-workloads-and-controllers-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "kubernetes-workloads-and-controllers",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Kubernetes workloads and controllers?",
+      "answer": "Deployments, StatefulSets, Jobs, scheduling, reconciliation, and disruption behavior must match workload semantics.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-workloads-and-controllers-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-workloads-and-controllers",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Kubernetes workloads and controllers. Walk through your reasoning.",
+      "answer": "Deployments, StatefulSets, Jobs, scheduling, reconciliation, and disruption behavior must match workload semantics.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-probes-and-resource-management-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "kubernetes-probes-and-resource-management",
+        "mechanics"
+      ],
+      "question": "Explain how Kubernetes probes and resource management works internally and which details matter in production.",
+      "answer": "Startup, readiness, and liveness have different purposes; requests, limits, throttling, and OOM behavior affect reliability.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-probes-and-resource-management-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "kubernetes-probes-and-resource-management",
+        "design"
+      ],
+      "question": "Design a production approach for Kubernetes probes and resource management. What decisions must be explicit?",
+      "answer": "Startup, readiness, and liveness have different purposes; requests, limits, throttling, and OOM behavior affect reliability.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-probes-and-resource-management-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-probes-and-resource-management",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around Kubernetes probes and resource management?",
+      "answer": "Startup, readiness, and liveness have different purposes; requests, limits, throttling, and OOM behavior affect reliability.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-probes-and-resource-management-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-probes-and-resource-management",
+        "debugging"
+      ],
+      "question": "A production issue appears around Kubernetes probes and resource management. How do you investigate it?",
+      "answer": "Startup, readiness, and liveness have different purposes; requests, limits, throttling, and OOM behavior affect reliability.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-probes-and-resource-management-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-probes-and-resource-management",
+        "performance"
+      ],
+      "question": "How can Kubernetes probes and resource management become a performance bottleneck, and how would you improve it?",
+      "answer": "Startup, readiness, and liveness have different purposes; requests, limits, throttling, and OOM behavior affect reliability.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-probes-and-resource-management-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-probes-and-resource-management",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using Kubernetes probes and resource management?",
+      "answer": "Startup, readiness, and liveness have different purposes; requests, limits, throttling, and OOM behavior affect reliability.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-probes-and-resource-management-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-probes-and-resource-management",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around Kubernetes probes and resource management?",
+      "answer": "Startup, readiness, and liveness have different purposes; requests, limits, throttling, and OOM behavior affect reliability.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-probes-and-resource-management-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-probes-and-resource-management",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate Kubernetes probes and resource management safely in an existing system?",
+      "answer": "Startup, readiness, and liveness have different purposes; requests, limits, throttling, and OOM behavior affect reliability.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-probes-and-resource-management-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "kubernetes-probes-and-resource-management",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on Kubernetes probes and resource management?",
+      "answer": "Startup, readiness, and liveness have different purposes; requests, limits, throttling, and OOM behavior affect reliability.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-kubernetes-probes-and-resource-management-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "kubernetes-probes-and-resource-management",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving Kubernetes probes and resource management. Walk through your reasoning.",
+      "answer": "Startup, readiness, and liveness have different purposes; requests, limits, throttling, and OOM behavior affect reliability.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-infrastructure-as-code-and-configuration-management-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "infrastructure-as-code-and-configuration-management",
+        "mechanics"
+      ],
+      "question": "Explain how infrastructure as code and configuration management works internally and which details matter in production.",
+      "answer": "Declarative infrastructure needs review, state protection, drift detection, modularity, and controlled change.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-infrastructure-as-code-and-configuration-management-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "infrastructure-as-code-and-configuration-management",
+        "design"
+      ],
+      "question": "Design a production approach for infrastructure as code and configuration management. What decisions must be explicit?",
+      "answer": "Declarative infrastructure needs review, state protection, drift detection, modularity, and controlled change.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-infrastructure-as-code-and-configuration-management-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "infrastructure-as-code-and-configuration-management",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around infrastructure as code and configuration management?",
+      "answer": "Declarative infrastructure needs review, state protection, drift detection, modularity, and controlled change.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-infrastructure-as-code-and-configuration-management-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "infrastructure-as-code-and-configuration-management",
+        "debugging"
+      ],
+      "question": "A production issue appears around infrastructure as code and configuration management. How do you investigate it?",
+      "answer": "Declarative infrastructure needs review, state protection, drift detection, modularity, and controlled change.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-infrastructure-as-code-and-configuration-management-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "infrastructure-as-code-and-configuration-management",
+        "performance"
+      ],
+      "question": "How can infrastructure as code and configuration management become a performance bottleneck, and how would you improve it?",
+      "answer": "Declarative infrastructure needs review, state protection, drift detection, modularity, and controlled change.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-infrastructure-as-code-and-configuration-management-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "infrastructure-as-code-and-configuration-management",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using infrastructure as code and configuration management?",
+      "answer": "Declarative infrastructure needs review, state protection, drift detection, modularity, and controlled change.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-infrastructure-as-code-and-configuration-management-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "infrastructure-as-code-and-configuration-management",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around infrastructure as code and configuration management?",
+      "answer": "Declarative infrastructure needs review, state protection, drift detection, modularity, and controlled change.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-infrastructure-as-code-and-configuration-management-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "infrastructure-as-code-and-configuration-management",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate infrastructure as code and configuration management safely in an existing system?",
+      "answer": "Declarative infrastructure needs review, state protection, drift detection, modularity, and controlled change.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-infrastructure-as-code-and-configuration-management-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "infrastructure-as-code-and-configuration-management",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on infrastructure as code and configuration management?",
+      "answer": "Declarative infrastructure needs review, state protection, drift detection, modularity, and controlled change.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-infrastructure-as-code-and-configuration-management-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "infrastructure-as-code-and-configuration-management",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving infrastructure as code and configuration management. Walk through your reasoning.",
+      "answer": "Declarative infrastructure needs review, state protection, drift detection, modularity, and controlled change.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-capacity-planning-and-autoscaling-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "capacity-planning-and-autoscaling",
+        "mechanics"
+      ],
+      "question": "Explain how capacity planning and autoscaling works internally and which details matter in production.",
+      "answer": "Scaling decisions require demand signals, bottlenecks, startup time, headroom, quotas, and protection from oscillation.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-capacity-planning-and-autoscaling-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "capacity-planning-and-autoscaling",
+        "design"
+      ],
+      "question": "Design a production approach for capacity planning and autoscaling. What decisions must be explicit?",
+      "answer": "Scaling decisions require demand signals, bottlenecks, startup time, headroom, quotas, and protection from oscillation.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-capacity-planning-and-autoscaling-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "capacity-planning-and-autoscaling",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around capacity planning and autoscaling?",
+      "answer": "Scaling decisions require demand signals, bottlenecks, startup time, headroom, quotas, and protection from oscillation.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-capacity-planning-and-autoscaling-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "capacity-planning-and-autoscaling",
+        "debugging"
+      ],
+      "question": "A production issue appears around capacity planning and autoscaling. How do you investigate it?",
+      "answer": "Scaling decisions require demand signals, bottlenecks, startup time, headroom, quotas, and protection from oscillation.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-capacity-planning-and-autoscaling-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "capacity-planning-and-autoscaling",
+        "performance"
+      ],
+      "question": "How can capacity planning and autoscaling become a performance bottleneck, and how would you improve it?",
+      "answer": "Scaling decisions require demand signals, bottlenecks, startup time, headroom, quotas, and protection from oscillation.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-capacity-planning-and-autoscaling-reliability",
+      "type": "reliability",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "capacity-planning-and-autoscaling",
+        "reliability"
+      ],
+      "question": "What failure modes should a Senior engineer anticipate when using capacity planning and autoscaling?",
+      "answer": "Scaling decisions require demand signals, bottlenecks, startup time, headroom, quotas, and protection from oscillation.\n\n**Strong Senior answer:** Cover partial failure, retries, duplication, timeouts, overload, recovery, and degraded operation. Make assumptions and guarantees observable.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-capacity-planning-and-autoscaling-security",
+      "type": "security",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "capacity-planning-and-autoscaling",
+        "security"
+      ],
+      "question": "What security risks and trust boundaries exist around capacity planning and autoscaling?",
+      "answer": "Scaling decisions require demand signals, bottlenecks, startup time, headroom, quotas, and protection from oscillation.\n\n**Strong Senior answer:** Identify assets, actors, inputs, privileges, and abuse cases. Apply least privilege, validation, safe defaults, auditability, and tested recovery.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-capacity-planning-and-autoscaling-migration",
+      "type": "migration",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "capacity-planning-and-autoscaling",
+        "migration"
+      ],
+      "question": "How would you introduce or migrate capacity planning and autoscaling safely in an existing system?",
+      "answer": "Scaling decisions require demand signals, bottlenecks, startup time, headroom, quotas, and protection from oscillation.\n\n**Strong Senior answer:** Use incremental, reversible steps with compatibility periods, controlled rollout, metrics, and an explicit rollback path.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-capacity-planning-and-autoscaling-testing",
+      "type": "testing",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "capacity-planning-and-autoscaling",
+        "testing"
+      ],
+      "question": "How would you test and validate a system that relies on capacity planning and autoscaling?",
+      "answer": "Scaling decisions require demand signals, bottlenecks, startup time, headroom, quotas, and protection from oscillation.\n\n**Strong Senior answer:** Test contracts, edge cases, concurrency, failures, and recovery. Combine focused tests with production-like integration and observability.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-capacity-planning-and-autoscaling-scenario",
+      "type": "scenario",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "capacity-planning-and-autoscaling",
+        "scenario"
+      ],
+      "question": "You must make an architectural decision involving capacity planning and autoscaling. Walk through your reasoning.",
+      "answer": "Scaling decisions require demand signals, bottlenecks, startup time, headroom, quotas, and protection from oscillation.\n\n**Strong Senior answer:** Clarify goals and constraints, propose alternatives, choose deliberately, identify risks, and define how success and failure will be measured.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-disaster-recovery-and-operational-readiness-mechanics",
+      "type": "mechanics",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "disaster-recovery-and-operational-readiness",
+        "mechanics"
+      ],
+      "question": "Explain how disaster recovery and operational readiness works internally and which details matter in production.",
+      "answer": "Runbooks, backups, restore tests, failover exercises, access, communication, and ownership determine real recoverability.\n\n**Strong Senior answer:** Explain the execution model, lifecycle, guarantees, and boundaries. Distinguish specified behavior from implementation detail.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-disaster-recovery-and-operational-readiness-design",
+      "type": "design",
+      "level": "middle",
+      "tags": [
+        "devops-observability",
+        "disaster-recovery-and-operational-readiness",
+        "design"
+      ],
+      "question": "Design a production approach for disaster recovery and operational readiness. What decisions must be explicit?",
+      "answer": "Runbooks, backups, restore tests, failover exercises, access, communication, and ownership determine real recoverability.\n\n**Strong Senior answer:** Start from requirements and constraints. Define ownership, contracts, failure behavior, and operational responsibilities before selecting tools.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-disaster-recovery-and-operational-readiness-tradeoffs",
+      "type": "tradeoffs",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "disaster-recovery-and-operational-readiness",
+        "tradeoffs"
+      ],
+      "question": "What are the main trade-offs and alternatives around disaster recovery and operational readiness?",
+      "answer": "Runbooks, backups, restore tests, failover exercises, access, communication, and ownership determine real recoverability.\n\n**Strong Senior answer:** Compare options using correctness, latency, throughput, complexity, cost, and team capability. State when your preferred option stops being appropriate.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-disaster-recovery-and-operational-readiness-debugging",
+      "type": "debugging",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "disaster-recovery-and-operational-readiness",
+        "debugging"
+      ],
+      "question": "A production issue appears around disaster recovery and operational readiness. How do you investigate it?",
+      "answer": "Runbooks, backups, restore tests, failover exercises, access, communication, and ownership determine real recoverability.\n\n**Strong Senior answer:** Begin with impact and evidence. Reproduce or correlate the issue, narrow hypotheses with measurements, mitigate safely, then verify the root cause.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    },
+    {
+      "id": "devops-observability-disaster-recovery-and-operational-readiness-performance",
+      "type": "performance",
+      "level": "senior",
+      "tags": [
+        "devops-observability",
+        "disaster-recovery-and-operational-readiness",
+        "performance"
+      ],
+      "question": "How can disaster recovery and operational readiness become a performance bottleneck, and how would you improve it?",
+      "answer": "Runbooks, backups, restore tests, failover exercises, access, communication, and ownership determine real recoverability.\n\n**Strong Senior answer:** Measure before optimizing. Separate latency, throughput, resource use, contention, and tail behavior. Validate improvements against realistic load.\n\nConnect the answer to a real production example. State assumptions, identify the most dangerous failure mode, and explain what telemetry or test would prove the decision works."
+    }
+  ]
+}
